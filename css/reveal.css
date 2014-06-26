@@ -250,7 +250,8 @@ body {
 
 .reveal em,
 .reveal i {
-	font-style: italic;
+  font-family: 'FontAwesome';
+  font-style: normal;
 }
 
 .reveal ol,
