@@ -4,10 +4,10 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>Mesos - Elastically Scalable Operations, Simplified.</title>
+		<title>Mesos - An SDK for Distributed Systems Developers</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Adam Bordelon, Niklas Quarfot Nielsen">
+		<meta name="description" content="">
+		<meta name="author" content="Adam Bordelon, Connor Doyle, Niklas Quarfot Nielsen">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -46,109 +46,85 @@
 			<div class="slides">
         <section data-background="assets/front-page.jpg">
 					<h1>Mesos</h1>
-					<h3>Elastically Scalable Operations,<br/>Simplified.</h3>
+					<h3>An SDK for Distributed Systems<br/> Developers</h3>
 					<p>
 						<small><a href="mailto:adam@mesosphere.io">Adam Bordelon</a></small>
 						<small><a href="mailto:niklas@mesosphere.io">Niklas Quarfot Nielsen</a></small>
+						<small><a href="mailto:connor@mesosphere.io">Connor Doyle</a></small>
 					</p>
 				</section>
 
-        <section data-background="assets/front-page.jpg">
-					<h2>Go launch a cluster</h2>
-          <img src="assets/dc.png"/>
-          <h3><a href="http://elastic.mesosphere.io">elastic.mesosphere.io</a></h3>
+        <section>
+          <div style="font-size: 6em;">
+            <div style="display: inline-block; width: 25%;">
+              <p><i class="fa fa-life-ring"></i></p>
+              <p style="font-size: 30px;">Don't panic - A gentle introduction</p>
+            </div>
 
+            <div style="display: inline-block; width: 25%;" class="fragment">
+              <p><i class="fa fa-cogs"></i></p>
+              <p style="font-size: 30px;">How Mesos frameworks works</p>
+            </div>
+
+            <div style="display: inline-block; width: 25%;" class="fragment">
+              <p><i class="fa fa-terminal"></i></p>
+              <p style="font-size: 30px;">Hands on exercise</p>
+            </div>
+          </div>
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <!-- We have a talk on Wednesday -->
+          <p style="font-size: 10em;"><i class="fa fa-comment-o"></i></p>
+          <h2>Come to our talk on<br/> Wednesday</h2>
 					<aside class="notes"></aside>
 				</section>
 
         <section data-background="assets/office.png">
 					<h2>We are Mesospheroids</h2>
-					<p>
-					</p>
 
 					<aside class="notes"></aside>
 				</section>
 
-        <section>
-					<h2>Today is about Mesos <i class="fa fa-heart fa-inverse"></i> Ops</h2>
-          <p class="fragment">So we want to talk about three things</p>
+        <section data-background="assets/front-page.jpg">
+					<h2>In short</h2>
+					<aside class="notes"></aside>
+				</section>
+
+        <section data-background="assets/front-page.jpg">
+					<h2>Mesos let us treat a cluster of nodes...</h2>
+          <img src="assets/cluster.png" />
 
 					<aside class="notes"></aside>
 				</section>
 
+        <section data-background="assets/front-page.jpg">
+					<h2>As <u>one big computer</u></h2>
+          <img style="width: 70%;" src="assets/dc.png" />
+					<aside class="notes"></aside>
+				</section>
+
         <section>
-          <div style="font-size: 9em;">
-
-            <div style="display: inline-block;">
-              <p><i class="fa fa-lightbulb-o"></i></p>
-              <p style="font-size: 30px;">The idea</p>
+          <div style="font-size: 6em;">
+            <div style="display: inline-block; width: 25%;">
+              <!-- <p><i class="fa fa-hdd-o"></i></p> -->
+              <p><i class="fa fa-cube"></i></p>
+              <p style="font-size: 30px;">Not as individual machines</p>
             </div>
 
-            <div style="display: inline-block;" class="fragment">
-              <p><i class="fa fa-cogs"></i></p>
-              <p style="font-size: 30px;">How it works</p>
+            <div style="display: inline-block; width: 25%;" class="fragment">
+              <p><i class="fa fa-cubes"></i></p>
+              <p style="font-size: 30px;">Not as VMs</p>
             </div>
-
-            <div style="display: inline-block;" class="fragment">
-              <p><i class="fa fa-suitcase"></i></p>
-              <p style="font-size: 30px;">Who is using it</p>
-            </div>
-
           </div>
-
 					<aside class="notes"></aside>
 				</section>
 
-        <section data-background="assets/ibm-360.jpg">
-        <div style="background-color:rgba(0, 0, 0, 0.5)">
-					<h2>Let us take a look at how clusters run today</h2>
-        </div>
-
-					<aside class="notes"></aside>
-				</section>
-
-        <section data-background="assets/pc.jpg">
-        <div style="background-color:rgba(0, 0, 0, 0.5)">
-					<h2>We need clusters because our workloads outgrew single computers</h2>
-        </div>
-					<aside class="notes"></aside>
-				</section>
-
-        <section data-background="assets/google-dc.jpg">
+        <section data-background="assets/spices.jpg">
           <div style="background-color:rgba(0, 0, 0, 0.5)">
-				  	<h2>So, we bought more computers</h2>
+				  	<h2>But as computational resources like cores, memory, disk ...</h2>
           </div>
-
-					<aside class="notes"></aside>
-				</section>
-
-        <section>
-          <h2>Workloads not only grew in size</h2>
-          <h2 class="fragment">They grew in complexity</h2>
-
-          <aside class="notes"></aside>
-				</section>
-
-        <section>
-          <h2>We isolated moving pieces with virtual machines...</h2>
-					<aside class="notes"></aside>
-				</section>
-
-        <section>
-          <h2>And here we stopped</h2>
-          <h2 class="fragment">But this is only half the story</h2>
-					<aside class="notes"></aside>
-				</section>
-
-        <section>
-          <h2>VM's dealt with one kind of complexity replaced it with another</h2>
-          <h2 class="fragment">We now have even more computers to manage</h2>
-          <h2 class="fragment">And more often than not, we do this by hand</h2>
-					<aside class="notes"></aside>
-				</section>
-
-        <section>
-          <h2>Mesos lets us treat a cluster as one big computer</h2>
 					<aside class="notes"></aside>
 				</section>
 
@@ -178,9 +154,132 @@
 
         <section>
           <h2>Mesos enables dynamic resource sharing</h2>
-          <iframe style="width: 100%; height: 15em;" src="http://mesosphere.io/simulator/"></iframe>
 					<aside class="notes"></aside>
 				</section>
+
+        <section>
+          <h2>That was very abstract</h2>
+          <h2 class="fragment">Let us get concrete</h2>
+          <h2 class="fragment">What does this mean for you?</h2>
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <h2>Like an OS kernel</h2>
+          <h2 class="fragment">You rarely interact directly with Mesos</h2>
+          <h2 class="fragment">You interact with Mesos Frameworks on top</h2>
+					<aside class="notes">
+          </aside>
+				</section>
+
+        <section>
+          <h2>Say hi to Marathon</h2>
+          <img src="assets/marathon-logo.jpg"/>
+					<aside class="notes"></aside>
+				</section>
+        <section data-background="assets/marathon-01.png">
+          <h2></h2>
+					<aside class="notes"></aside>
+				</section>
+        <section data-background="assets/marathon-02.png">
+          <h2></h2>
+					<aside class="notes"></aside>
+				</section>
+        <section data-background="assets/marathon-03.png">
+          <h2></h2>
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <img src="assets/frameworks.png"/>
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <h2>Wait! This is a talk about<br/><u>writing</u> frameworks for Mesos</h2>
+          <h3>When do I want write my own?</h3>
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <!-- Reasons why -->
+          <!--  -->
+
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <h2>Why use Mesos for my next distributed system?</h2>
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <!-- Reasons why -->
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <!-- Reasons why -->
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <h2>We are going to explore Mesos framework development...</h2>
+          <div class="fragment">
+            <h2>Using RENDLER</h2>
+            <img style="width: 100%;" src="http://img.pandawhale.com/57451-Jim-Carrey-Riddler-upvote-gif-NVsA.gif"/>
+          </div>
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <h2>RENDLER is a web crawler and renderer</h2>
+          <img src="assets/rendler.png"/>
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <h2>RENDLER is a <u>distributed</u> web crawler and renderer</h2>
+          <img src="assets/rendler-01.png"/>
+          <h3 class="fragment">We are going to use RENDLER to deep dive into the Mesos Framework API</h3>
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <h2>Crawling is a closed loop of task generation</h2>
+          <img src="assets/rendler-02.png"/>
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <img src="assets/rendler-03.png"/>
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <img src="assets/rendler-04.png"/>
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <img src="assets/rendler-05.png"/>
+					<aside class="notes"></aside>
+				</section>
+<!--
+        <section data-background="assets/google-dc.jpg">
+          <div style="background-color:rgba(0, 0, 0, 0.5)">
+				  	<h2>So, we bought more computers</h2>
+          </div>
+
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <h2>Mesos lets us treat a cluster as one big computer</h2>
+					<aside class="notes"></aside>
+				</section>
+
+
 
         <section>
           <h2>Mesos is another layer of abstraction</h2>
@@ -226,7 +325,6 @@
           </aside>
 				</section>
 
-        <!-- Marathon walk through -->
         <section>
           <h2>Say hi to Marathon</h2>
           <img src="assets/marathon-logo.jpg"/>
@@ -284,8 +382,6 @@
           <img src="assets/isolation-03.png"/>
 					<aside class="notes"></aside>
 				</section>
-
-        <!-- Add slides on the 3 different isolation mechanisms -->
 
         <section>
           <img style="width: 200%;" src="assets/beaker.gif"/>
@@ -460,6 +556,7 @@ center efficiency.&rdquo; &mdash; Chris Fry, SVP of Engineering at Twitter
 
 					<aside class="notes"></aside>
 				</section>
+-->
 			</div>
 
 		</div>
