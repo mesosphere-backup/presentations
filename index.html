@@ -148,7 +148,7 @@
           <h2 class="fragment">Imagine if your computer ran like this...</h2>
 					<aside class="notes"></aside>
 				</section>
-        
+
         <section data-background="assets/windows.png">
         </section>
 
@@ -252,11 +252,13 @@
 				</section>
 
         <section>
+          <h2>Crawling is a closed loop of task generation</h2>
           <img src="assets/rendler-03.png"/>
 					<aside class="notes"></aside>
 				</section>
 
         <section>
+          <h2>Rendering generates pixels and announce result</h2>
           <img src="assets/rendler-04.png"/>
 					<aside class="notes"></aside>
 				</section>
@@ -265,6 +267,110 @@
           <img src="assets/rendler-05.png"/>
 					<aside class="notes"></aside>
 				</section>
+
+        <section>
+          <!-- Sequence diagram of registration -->
+          <!-- Emphasize that there are 2 pieces: calls and events -->
+        </section>
+
+        <section>
+          <h2>Framework calls</h2>
+          <table style="width: 100%;">
+            <tr>
+              <td><i class="fa fa-recycle"></i></td><td>Lifecycle management</td>
+              <td>Register, Reregister, Unregister</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-hdd-o"></i></td><td> Resource allocation
+              <td>Request, Decline, Revive</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-tasks"></i></td><td> Task management</td>
+              <td>Launch, Kill, Reconcile</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-exchange"></i></td><td> Communication</td>
+              <td>sendFrameworkMessage</td>
+            </tr>
+          </table>
+        </section>
+
+        <section>
+          <h2>Framework events</h2>
+          <table style="width: 100%;">
+            <tr>
+              <td><i class="fa fa-recycle"></i></td><td>Lifecycle management</td>
+              <td>Registered, Reregistered</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-hdd-o"></i></td><td> Resource allocation
+              <td>Offers, Rescind</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-tasks"></i></td><td> Task management</td>
+              <td>TaskStatus</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-exchange"></i></td><td> Communication</td>
+              <td>frameworkMessage</td>
+            </tr>
+          </table>
+        </section>
+
+        <section>
+        <h3>Progress is driven by launching on, or declining offers</h3>
+        <p></p>
+        <pre><code class="python" data-trim>
+class MyScheduler:
+  ...
+    def resourceOffers(self, driver, offers):
+      ...
+      driver.launchTasks(offer.id, tasks)
+      ...
+      driver.declineOffer(offer.id)
+        </code></pre>
+        </section>
+
+        <section>
+        <!-- Describe TaskInfo -->
+        </section>
+
+        <section>
+        <h3>Status updates describes the task life cycle</h3>
+        <p></p>
+        <pre><code class="python" data-trim>
+class MyScheduler:
+  ...
+  def statusUpdate(self, driver, update):
+    ...
+    # Where update.state can be
+    # 0: TASK_STARTING
+    # 1: TASK_RUNNING
+    # 2: TASK_FINISHED
+    # 3: TASK_FAILED
+    # 4: TASK_KILLED
+    # 5: TASK_LOST
+    # 6: TASK_STAGING
+        </code></pre>
+        </section>
+
+        <section>
+          <h2>Executor events</h2>
+          <table style="width: 100%;">
+            <tr>
+              <td><i class="fa fa-recycle"></i></td><td>Lifecycle management</td>
+              <td>Registered, Reregistered, Disconnected, Shutdown</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-tasks"></i></td><td> Task management</td>
+              <td>launchTask, killTask</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-exchange"></i></td><td> Communication</td>
+              <td>frameworkMessage</td>
+            </tr>
+          </table>
+        </section>
 <!--
         <section data-background="assets/google-dc.jpg">
           <div style="background-color:rgba(0, 0, 0, 0.5)">
