@@ -58,7 +58,7 @@
           <div style="font-size: 6em;">
             <div style="display: inline-block; width: 25%;">
               <p><i class="fa fa-life-ring"></i></p>
-              <p style="font-size: 30px;">Don't panic - A gentle introduction</p>
+              <p style="font-size: 30px;">Don't panic:<br/>A gentle introduction</p>
             </div>
 
             <div style="display: inline-block; width: 25%;" class="fragment">
@@ -106,18 +106,23 @@
 				</section>
 
         <section>
-          <div style="font-size: 6em;">
-            <div style="display: inline-block; width: 25%;">
+          <table style="font-size: 6em;">
+          <tr>
+          <td style="text-align: center;">
+            <div>
               <!-- <p><i class="fa fa-hdd-o"></i></p> -->
               <p><i class="fa fa-cube"></i></p>
               <p style="font-size: 30px;">Not as individual machines</p>
             </div>
-
-            <div style="display: inline-block; width: 25%;" class="fragment">
+          </td>
+          <td style="text-align: center;">
+            <div class="fragment">
               <p><i class="fa fa-cubes"></i></p>
               <p style="font-size: 30px;">Not as VMs</p>
             </div>
-          </div>
+          </td>
+          </tr>
+          </table>
 					<aside class="notes"></aside>
 				</section>
 
@@ -173,7 +178,7 @@
 				</section>
 
         <section>
-          <h2>Say hi to Marathon</h2>
+          <h2>Say Hi to Marathon</h2>
           <img src="assets/marathon-logo.jpg"/>
 					<aside class="notes"></aside>
 				</section>
@@ -191,35 +196,48 @@
 				</section>
 
         <section>
+          <h2>The Mesos ecosystem is<br/>growing</h2>
           <img src="assets/frameworks.png"/>
 					<aside class="notes"></aside>
 				</section>
 
         <section>
           <h2>Wait! This is a talk about<br/><u>writing</u> frameworks for Mesos</h2>
-          <h3>When do I want write my own?</h3>
 					<aside class="notes"></aside>
 				</section>
 
         <section>
-          <!-- Reasons why -->
-          <!--  -->
-
+          <h2>When do I want write my own?</h2>
+          <table class="fragment">
+            <tr>
+              <td><i class="fa fa-random"></i></td><td>Sophisticated scheduling algorithms and policies</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-signal"></i></td><td>Sophisticated scale policies</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-cogs"></i></td><td>Advanced task semantics</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-puzzle-piece"></i></td><td>Tighter intregration with Mesos</td>
+            </tr>
+          </table>
 					<aside class="notes"></aside>
 				</section>
 
         <section>
           <h2>Why use Mesos for my next distributed system?</h2>
-					<aside class="notes"></aside>
-				</section>
-
-        <section>
-          <!-- Reasons why -->
-					<aside class="notes"></aside>
-				</section>
-
-        <section>
-          <!-- Reasons why -->
+          <table class="fragment">
+            <tr>
+              <td><i class="fa fa-tasks"></i></td><td>Task distribution, launching, monitoring,  failure detection, killing, and cleanup</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-exchange"></i></td><td>Messaging between tasks</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-cogs"></i></td><td>Distributed state</td>
+            </tr>
+          </table>
 					<aside class="notes"></aside>
 				</section>
 
@@ -333,6 +351,28 @@ class MyScheduler:
 
         <section>
         <!-- Describe TaskInfo -->
+        <h2>TaskInfo describes <u>how</u> to run a task</h2>
+        <pre><code class="protobuf" data-trim>
+message TaskInfo {
+  required string name;
+  required TaskID task_id;
+  required SlaveID slave_id;
+  repeated Resource resources;
+  optional ExecutorInfo executor;
+  optional CommandInfo command;
+  optional bytes data;
+}
+
+message CommandInfo {
+  message URI {
+    required string value;
+    optional bool executable;
+  }
+  repeated URI uris;
+  optional Environment environment;
+  required string value;
+}
+        </code></pre>
         </section>
 
         <section>
