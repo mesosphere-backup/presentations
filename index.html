@@ -63,7 +63,7 @@
 
             <div style="display: inline-block; width: 25%;" class="fragment">
               <p><i class="fa fa-cogs"></i></p>
-              <p style="font-size: 30px;">How Mesos frameworks works</p>
+              <p style="font-size: 30px;">How Mesos frameworks work</p>
             </div>
 
             <div style="display: inline-block; width: 25%;" class="fragment">
@@ -159,6 +159,7 @@
 
         <section>
           <h2>Mesos enables dynamic resource sharing</h2>
+          <!-- Overlapping utilization curves graph? -->
 					<aside class="notes"></aside>
 				</section>
 
@@ -229,7 +230,11 @@
           <h2>Why use Mesos for my next distributed system?</h2>
           <table>
             <tr class="fragment">
-              <td><i class="fa fa-tasks"></i></td><td>Task distribution, launching, monitoring,  failure detection, killing, and cleanup</td>
+              <td><i class="fa fa-tasks"></i></td><td>Task distribution, launching, monitoring,<br>
+                failure detection, killing, and cleanup</td>
+            </tr>
+            <tr class="fragment">
+              <td><i class="fa fa-archive"></i></td><td>Resource isolation with containers</td>
             </tr>
             <tr class="fragment">
               <td><i class="fa fa-exchange"></i></td><td>Messaging between tasks</td>
@@ -304,6 +309,7 @@
             </td>
           </tr>
           </table>
+          <aside class="notes">What happens if request cannot be satisfied? Partial match, block?</aside>
         </section>
 
         <section>
@@ -434,7 +440,8 @@ class MyScheduler:
         </section>
 
         <section>
-        <h2>Hands-on with the Rendler</h2>
+          <h2>Hands-on with the Rendler</h2>
+          <h4><a href="https://github.com/mesosphere/RENDLER">https://github.com/mesosphere/RENDLER</a></h4>
         </section>
 
         <section data-background="assets/sf.jpg">
