@@ -10,7 +10,8 @@
  *********************************************/
 body {
 /*  background: rgb(50, 53, 57); */
-  background-color: #111111; }
+  background-color: #111111;
+  word-break: keep-all; }
 
 .reveal {
   font-family: Montserrat, Helvetica, Arial, sans-serif;
@@ -37,7 +38,7 @@ body {
   color: #eeeeee;
   font-family: Montserrat, Helvetica, Arial, sans-serif;
   font-weight: 400;
-  line-height: 0.9em;
+  line-height: 1em;
   letter-spacing: -0.03em;
   text-transform: none;
   text-shadow: none; }
