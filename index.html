@@ -76,7 +76,6 @@
 				</section>
 
         <section>
-          <!-- We have a talk on Wednesday -->
           <p style="font-size: 10em;"><i class="fa fa-comment-o"></i></p>
           <h2>Come to our Mesos for Ops talk</h2>
           <h3>Wednesday 2:30pm in Room E146</h3>
@@ -84,8 +83,7 @@
 				</section>
 
         <section data-background="assets/office.png">
-					<h2>We are Mesospheroids</h2>
-
+					<h2>We are Mesosphere</h2>
 					<aside class="notes"></aside>
 				</section>
 
@@ -112,7 +110,6 @@
           <tr>
           <td style="text-align: center;">
             <div>
-              <!-- <p><i class="fa fa-hdd-o"></i></p> -->
               <p><i class="fa fa-cube"></i></p>
               <p style="font-size: 30px;">Not as individual machines</p>
             </div>
@@ -130,22 +127,22 @@
 
         <section data-background="assets/spices.jpg">
           <div style="background-color:rgba(0, 0, 0, 0.5)">
-				  	<h2>But as computational resources like cores, memory, disk ...</h2>
+				  	<h2>But as computational resources like cores, memory, disks, etc.</h2>
           </div>
 					<aside class="notes"></aside>
 				</section>
 
         <section data-background="assets/cell.jpg">
           <div style="background-color:rgba(0, 0, 0, 0.5)">
-            <h2>Just like a cell is a crucial building block</h2>
+            <h2>Just like a cell is a crucial building block of a larger system</h2>
           </div>
 					<aside class="notes"></aside>
 				</section>
 
         <section data-background="assets/mnium.jpg">
           <div style="background-color:rgba(0, 0, 0, 0.5)">
-            <h2>The thing we see and care about is their aggregate as an organism</h2>
-            <h2 class="fragment">This is what Mesos let us do with clusters</h2>
+            <h2>But the thing we see and care about is their aggregate as an organism</h2>
+            <h2 class="fragment">This is what Mesos lets us do with clusters</h2>
           </div>
 					<aside class="notes"></aside>
 				</section>
@@ -169,7 +166,7 @@
           </tr><tr class="fragment">
             <td><h3><i class="fa fa-clock-o"></i></h3></td><td><h3>Inefficient</h3></td>
           </tr><tr class="fragment">
-            <td><h3><i class="fa fa-bomb"></i></h3></td><td><h3>Hostile environment for developers</h3></td>
+            <td><h3><i class="fa fa-bomb"></i></h3></td><td><h3>Hostile to developers</h3></td>
           </tr>
           </table>
         </section>
@@ -419,9 +416,9 @@
         </section>
 
         <section>
-        <h3>Progress is driven by launching on, or declining offers</h3>
-        <p></p>
-        <pre><code class="python" data-trim>
+          <h3>Progress is driven by launching on, or declining offers</h3>
+          <p></p>
+          <pre><code class="python" data-trim>
 class MyScheduler:
   ...
     def resourceOffers(self, driver, offers):
@@ -429,13 +426,18 @@ class MyScheduler:
       driver.launchTasks(offer.id, tasks)
       ...
       driver.declineOffer(offer.id)
-        </code></pre>
+          </code></pre>
+          <aside class="notes">Multiple tasks can launch on a single offer.<br>
+          Not all resources in an offer need to be used and remainder will be
+          reoffered.</aside>
         </section>
 
         <section>
         <!-- Describe TaskInfo -->
         <h2>TaskInfo describes <u>how</u> to run a task</h2>
-        <pre><code class="protobuf" data-trim>
+          <table style="width: 100%;">
+            <tr>
+              <td><pre><code class="protobuf" data-trim>
 message TaskInfo {
   required string name;
   required TaskID task_id;
@@ -445,17 +447,17 @@ message TaskInfo {
   optional CommandInfo command;
   optional bytes data;
 }
-
+        </code></pre></td>
+        <td><pre><code class="protobuf" data-trim>
 message CommandInfo {
-  message URI {
-    required string value;
-    optional bool executable;
-  }
+  required string value;
   repeated URI uris;
   optional Environment environment;
-  required string value;
+  optional ContainerInfo container;
+  optional string user;
 }
-        </code></pre>
+        </code></pre></td>
+        </tr></table>
         </section>
 
         <section>
