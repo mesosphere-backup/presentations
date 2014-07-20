@@ -217,7 +217,7 @@
 
         <section>
           <h2>Cluster scheduling is a hard problem</h2>
-          <h3><em>NP-hard in fact!</em></h3>
+          <h3><u>NP-hard in fact!</u></h3>
           <br />
           <h3 class="fragment">Monolithic scheduling?</h3>
           <h3 class="fragment">Two Level Scheduling!</h3>
@@ -485,6 +485,20 @@ class MyScheduler:
             <tr>
               <td><i class="fa fa-exchange"></i></td><td> Communication</td>
               <td>frameworkMessage</td>
+            </tr>
+          </table>
+        </section>
+
+        <section>
+          <h2>Executor calls</h2>
+          <table style="width: 100%;">
+            <tr>
+              <td><i class="fa fa-tasks"></i></td><td> Task management</td>
+              <td>sendStatusUpdate</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-exchange"></i></td><td> Communication</td>
+              <td>sendFrameworkMessage</td>
             </tr>
           </table>
         </section>
