@@ -216,6 +216,18 @@
 				</section>
 
         <section>
+          <h2>Cluster scheduling is a hard problem</h2>
+          <h3><em>NP-hard in fact!</em></h3>
+          <br />
+          <h3 class="fragment">Monolithic scheduling?</h3>
+          <h3 class="fragment">Two Level Scheduling!</h3>
+        </section>
+
+        <section>
+          <img src="assets/mesos-simple.png"/>
+        </section>
+
+        <section>
           <h2>Say Hi to Marathon</h2>
           <img src="assets/marathon-logo.jpg"/>
 					<aside class="notes"></aside>
@@ -357,7 +369,7 @@
         </section>
 
         <section>
-          <h2>Framework calls</h2>
+          <h2>Scheduler calls</h2>
           <table style="width: 100%;">
             <tr>
               <td><i class="fa fa-recycle"></i></td><td>Lifecycle management</td>
@@ -379,7 +391,7 @@
         </section>
 
         <section>
-          <h2>Framework events</h2>
+          <h2>Scheduler events</h2>
           <table style="width: 100%;">
             <tr>
               <td><i class="fa fa-recycle"></i></td><td>Lifecycle management</td>
@@ -441,7 +453,7 @@ message CommandInfo {
         </section>
 
         <section>
-        <h3>Status updates describes the task life cycle</h3>
+        <h3>Status updates describe the task life cycle</h3>
         <p></p>
         <pre><code class="python" data-trim>
 class MyScheduler:
