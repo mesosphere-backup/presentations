@@ -328,16 +328,8 @@ Overview slide (with wires) comes here
           <br />
           <h3 class="fragment">Monolithic scheduling?</h3>
           <h3 class="fragment">Two-Level Scheduling!</h3>
-        </section>
-
-        <section>
-        <img src="assets/mesos-simple.png"/>
-        </section>
-
-        <section>
-          <img src="assets/architecture-01.png"/>
 					<aside class="notes"></aside>
-				</section>
+        </section>
 
         <section>
           <!-- Resource offers -->
@@ -362,25 +354,67 @@ Overview slide (with wires) comes here
         </section>
 
         <section>
-          <img src="assets/isolation-01.png"/>
+          <img src="assets/mesos-simple.png"/>
 					<aside class="notes"></aside>
+        </section>
+
+        <section>
+          <img src="assets/architecture-01.png"/>
+					<aside class="notes">
+          <p>Mesos consists of master and slave nodes which
+          assist an application in running tasks in a cluster.</p>
+
+          <p>In Mesos, we refer to applications as "frameworks"</p>
+
+          <p>Here, we have the Hadoop and Marathon frameworks interacting with
+          the Mesos master.</p>
+
+          <p>Tasks are the unit of execution and
+          the master schedules those tasks to run on slaves’ available
+          resources.<br/>
+
+          Mesos slaves use executors to coordinate the execution of tasks.
+          Each framework can define its own executors to specify how slaves
+          handle their tasks.</p>
+
+          </aside>
 				</section>
 
+        <section>
+          <img src="assets/isolation-01.png"/>
+					<aside class="notes">
+          <p>The mesos slave isolates executors and their running tasks in
+          light-weight containers using linux cgroups.
+          Here it is marked with the dotted line.</p>
+
+          <p>In this figure, a Hadoop TaskTracker executor and the Mesos default
+          executor are running Map/Reduce tasks and a ruby script
+          respectively.</p>
+
+          <p>Containers can grow and shrink as tasks run and complete.</p>
+          </aside>
+				</section>
+ <!--
         <section>
           <img src="assets/isolation-02.png"/>
 					<aside class="notes"></aside>
 				</section>
-
+-->
         <section>
           <img src="assets/isolation-03.png"/>
 					<aside class="notes"></aside>
 				</section>
 
+        <section>
+          <h2>Mesos has multiple ways of achiving resource isolation</h2>
+          <h3 class="fragment">Mesos Containerizer</h3>
+          <h3 class="fragment">External Containerizer</h3>
+          <h3 class="fragment">Coming up: First class Docker Containerizer!</h3>
+        </section>
         <!-- Add slides on the 3 different isolation mechanisms -->
 
         <section>
           <img style="width: 200%;" src="assets/beaker.gif"/>
-					<aside class="notes"></aside>
 				</section>
 
         <section>
@@ -388,6 +422,18 @@ Overview slide (with wires) comes here
             &ldquo;Everything fails all the time&rdquo; &mdash; Werner Vogels (Amazon
 CTO)
           </blockquote>
+					<aside class="notes">
+          <p>Machines die or become unreachable due to hardware, OS, or network
+          failures.</p>
+
+          <p>The different processes within Mesos could die due to bugs or other
+          unpredictable events.</p>
+
+          <p>Or maybe the machine or process just needs to be restarted for an
+          upgrade.</p>
+
+          <p>You always have to have a recovery plan.</p>
+          </aside>
         </section>
 
         <section>
@@ -432,7 +478,11 @@ CTO)
 
         <section>
           <img src="assets/hubspot.png"/>
-					<aside class="notes"></aside>
+				 	<aside class="notes">
+            HubSpot develops a software-as-a-service product for inbound
+            marketing, with features for social media, email, content
+            management, web analytics and search engine optimization.
+          </aside>
 				</section>
 
         <section>
@@ -440,6 +490,16 @@ CTO)
             &ldquo;HubSpot deploys 300 times a day on a minimal number of server
 instances by using Apache Mesos.&rdquo; &mdash; Elias Torres, HubSpot VP of Engineering
           </blockquote>
+          <aside class="notes">
+          <p>Hubspot runs a mixture of web services, long-running processes,
+          one-off tasks, and scheduled jobs.
+          They have over 150 services running inside of Mesos, on hundreds of
+          servers inside Amazon EC2.</p>
+
+          <p>According to Elias Torres,
+          Hubspot deploys 300 times a day on a minimal number of server
+          instances by using Apache Mesos</p>
+          </aside>
         </section>
 
         <section>
@@ -468,12 +528,35 @@ instances by using Apache Mesos.&rdquo; &mdash; Elias Torres, HubSpot VP of Engi
           </td>
           </tr>
           </table>
-					<aside class="notes"></aside>
+					<aside class="notes">
+          <p>Developers no longer need to understand the process for requisitioning
+          hardware or servers.</p>
+
+          <p>Increased reliability: Hardware failures are more transparent to
+          developers, as services are automatically replaced when tasks are
+          lost. In other words, developers are no longer paged because of a
+          simple hardware failure.</p>
+
+          <p>Resource utilization is improved which directly corresponds with
+          reducing costs. Services which were previously running on
+          over-provisioned hardware now use the exact amount of resources
+          requested.</p>
+          </aside>
 				</section>
 
         <section>
           <img src="assets/airbnb.png"/>
-					<aside class="notes"></aside>
+					<aside class="notes">
+<p>Most of you are probably familiar with AirBnB.
+But for those of you who aren’t, it is an very successful startup in San
+Francisco that makes it very easy to share your apartment or be a guest in
+another persons home.</p>
+
+<p>But you may not realized that AirBnB is a very data driven company that
+processes petabytes of data.</p>
+
+<p>And they do this on top of Mesos.</p>
+          </aside>
 				</section>
 
         <section>
@@ -504,17 +587,57 @@ instances by using Apache Mesos.&rdquo; &mdash; Elias Torres, HubSpot VP of Engi
           </tr>
           </table>
 
-					<aside class="notes"></aside>
+					<aside class="notes">
+          <p>
+          Airbnb now runs a multi-tenant cluster with Hadoop coexisting with
+          Chronos, Spark, and Storm.
+          No longer needing independent Hadoop clusters.
+          </p>
+
+          <p>
+          It enables small teams to build distributed systems faster.
+          </p>
+
+          <p>
+          And all of this runs on hundreds of Amazon EC2 instances.
+          </p>
+
+          <p>
+          We want to thank Brenden Mathews from Airbnb for sharing data about
+          their Mesos cluster.
+          </p>
+          </aside>
 				</section>
 
         <section>
           <img src="assets/airbnb-stack.png"/>
-					<aside class="notes"></aside>
+					<aside class="notes">
+          <p>
+          Only thing we were asked not to, was to share pictures and figures
+          so we have put together this rough and crude overview of their stack.
+          </p>
+
+          <p>
+          Notably, multiple Hadoops, Spark/Shark, Presto, Redis, Rails, and much
+          more, all on top of Marathon and Chronos.
+          </p>
+
+          <p>
+          Airbnb’s Mesos cluster is used for building search indices, reorder
+          search rankings; Rental pricing suggestion system; Trust and safety,
+          fraud detection; Business analytics
+          </p>
+          </aside>
 				</section>
 
         <section>
           <img src="assets/twitter.png"/>
-					<aside class="notes"></aside>
+					<aside class="notes">
+          <p>Now on to the biggest Mesos user and contributer, Twitter.</p>
+
+          <p>You all know what Twitter is, but you probably don’t realize the scale
+          of their operations.</p>
+          </aside>
 				</section>
 
         <section>
@@ -522,6 +645,9 @@ instances by using Apache Mesos.&rdquo; &mdash; Elias Torres, HubSpot VP of Engi
           <h2 class="fragment">500 million tweets per day</h2>
           <h2 class="fragment">Up to 150k tweets per second</h2>
           <h2 class="fragment">More than 100TB per day of compressed data</h2>
+					<aside class="notes">
+          But how does Mesos tie into that?
+          </aside>
 				</section>
 
         <section>
@@ -549,14 +675,38 @@ center efficiency.&rdquo; &mdash; Chris Fry, SVP of Engineering at Twitter
           </td>
           </tr>
           </table>
-					<aside class="notes"></aside>
+					<aside class="notes">
+          <p>Mesos allows services to scale to thousands of bare-metal machines and
+          leverage a shared pool of servers across data centers
+          Twitter is in fact running the largest-known production Mesos
+          cluster.</p>
+
+          <p>As Chris said, “Mesos has transformed the way developers think about
+          launching new services at Twitter. Instead of thinking about static
+          machines, engineers think about resources like CPU, memory and disk.
+          The result has been a reduction in the time between prototyping and
+          launching new services.”</p>
+
+          <p>pause</p>
+
+          <p>That’s just a few of the many companies that rely on Mesos as a
+          part of their infrastructure, and rounds out our final section of the
+          talk.</p>
+          </aside>
 				</section>
 
         <section>
           <h2>Last but not least</h2>
           <iframe style="width: 100%; height: 20em;" src="http://mesosphere.io/learn"></iframe>
           <h3><a href="http://mesosphere.io/learn">http://mesosphere.io/learn</a></h3>
-					<aside class="notes"></aside>
+					<aside class="notes">
+          <p>Last but not least, we have a couple of suggestions for those of you
+          who started a cluster in the beginning of this talk.</p>
+
+          <p>The email you got when you provisioned your Elastic Mesos cluster will
+          have links to tons of personalized tutorials for running spark, storm,
+          hadoop, aurora and much more.</p>
+          </aside>
 				</section>
 
         <section data-background="assets/sf.jpg">
@@ -579,7 +729,9 @@ center efficiency.&rdquo; &mdash; Chris Fry, SVP of Engineering at Twitter
           </tr>
           </table>
 
-					<aside class="notes"></aside>
+					<aside class="notes">
+          With that being said, I think it’s is time for a QA
+          </aside>
 				</section>
 			</div>
 
