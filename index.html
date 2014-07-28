@@ -48,7 +48,7 @@
         <section data-background="assets/front-page.jpg">
           <h1>Marathon</h1>
           <br />
-          <h3>A self-serve interface<br />to your datacenter</h3>
+          <h3>A self-serve interface<br />to your cluster</h3>
           <br />
           <p><small><a href="mailto:connor@mesosphere.io">Connor Doyle</a> @ Mesosphere, Inc.</small></p>
           <aside class="notes"></aside>
@@ -120,7 +120,17 @@
         <section data-background="assets/front-page.jpg">
           <h2>Say hi to Marathon</h2>
           <br />
-          <h3 class="fragment">A self-serve interface to your datacenter</h3>
+          <h3 class="fragment">A self-serve interface to your cluster</h3>
+          <h3 class="fragment">Distributed &quot;init&quot; for long-running services</h3>
+          <h3 class="fragment">A private fault-tolerant Paas</h3>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Marathon Concepts</h2>
+          <br />
+          <h3 class="fragment">An app describes a task</h3>
+          <h3 class="fragment">A task is an instance of an app</h3>
+          <h3 class="fragment">Marathon creates tasks for apps</h3>
         </section>
 
         <section>
@@ -157,18 +167,103 @@
           <h2>Marathon does it!</h2>
           <br />
           <h3 class="fragment">Event bus</h3>
-          <h3 class="fragment">Task health checks (TCP, HTTP)</h3>
+          <h3 class="fragment">App versioning</h3>
+          <h3 class="fragment">Highly available, no SPoF</h3>
           <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Marathon does it!</h2>
+          <br />
+          <h3>Placement constraints</h3>
+          <br />
+          <pre><code class="javascript" data-trim>
+// usage
+
+{ "constraints": [["attribute", "OPERATOR", "value"]] }
+
+// examples
+
+{ "constraints": [["hostname", "UNIQUE"]] }
+
+{ "constraints": [["rack_id", "CLUSTER", "rack-1"]] }
+
+{ "constraints": [["rack_id", "GROUP_BY"]] }
+          </code></pre>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Marathon does it!</h2>
+          <br />
+          <h3>Task health checks (TCP, HTTP)</h3>
+          <br />
+          <pre><code class="javascript" data-trim>
+{
+  "id": "my-app",
+  ...,
+  "healthChecks": [
+    {
+      "protocol": "HTTP",
+      "portIndex": 0,
+      "path": "/health",
+      "maxConsecutiveFailures": 3,
+      "gracePeriodSeconds": 10,
+      "intervalSeconds": 20,
+      "timeoutSeconds": 5
+    }
+  ]
+}
+          </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Marathon does it!</h2>
+          <br />
+          <h3>Task health checks (TCP, HTTP)</h3>
+          <br />
+          <pre><code class="javascript" data-trim>
+{
+  "appId": "my-app", 
+  "healthCheckResults": [
+    {
+      "alive": true, 
+      "consecutiveFailures": 0, 
+      "firstSuccess": "2014-07-28T16:21:58.054Z", 
+      "lastFailure": null, 
+      "lastSuccess": "2014-07-28T16:22:17.225Z", 
+      "taskId": "my-app.45dba483-1673-11e4-8316-685b35a05cac"
+    }
+  ], 
+  "host": "localhost", 
+  "id": "my-app.45dba483-1673-11e4-8316-685b35a05cac", 
+  "ports": [ 31693 ], 
+  "stagedAt": "2014-07-28T16:21:47.704Z", 
+  "startedAt": "2014-07-28T16:22:01.608Z", 
+  "version": "2014-07-28T16:21:37.005Z"
+}
+          </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Get excited -- new features!</h2>
+          <br />
+          <h3 class="fragment">Rolling deploy / restart</h3>
+          <h3 class="fragment">Namespaced apps</h3>
+          <h3 class="fragment">Dependencies</h3>
+          <h3 class="fragment">Executor health checks</h3>
+          <h3 class="fragment">Artifact staging</h3>
+          <h3 class="fragment">Configurable exponential backoff</h3>
         </section>
 
         <section data-background="assets/front-page.jpg">
           <h2>Marathon <i class="fa fa-heart"></i> REST</h2>
           <br />
-          <h3 class="fragment">`POST /v2/apps`</h3>
-          <h3 class="fragment">`GET /v2/apps`</h3>
-          <h3 class="fragment">`PUT /v2/apps/{appId}`</h3>
-          <h3 class="fragment">`GET /v2/apps/{appId}/tasks`</h3>
-          <h3 class="fragment">`DELETE /v2/apps/{appId}/tasks/{taskId}`</h3>
+          <h3 class="fragment">POST /v2/apps</h3>
+          <h3 class="fragment">GET /v2/apps</h3>
+          <h3 class="fragment">PUT /v2/apps/{appId}</h3>
+          <h3 class="fragment">GET /v2/apps/{appId}/tasks</h3>
+          <h3 class="fragment">DELETE /v2/apps/{appId}/tasks/{taskId}</h3>
           <h3 class="fragment">...</h3>
           <aside class="notes"></aside>
         </section>
@@ -184,16 +279,21 @@
           <aside class="notes"></aside>
         </section>
 
-        <section data-background="assets/front-page.jpg">
-          <h2>Get excited -- new features!</h2>
+        <section>
+          <h2>Tasks Resource</h2>
           <br />
-          <h3 class="fragment">Rolling deploy / restart</h3>
-          <h3 class="fragment">Namespaced apps</h3>
-          <h3 class="fragment">Dependencies</h3>
-          <h3 class="fragment">Executor health checks</h3>
-          <h3 class="fragment">Artifact staging</h3>
-          <h3 class="fragment">Configurable exponential backoff</h3>
-          <aside class="notes"></aside>
+          <pre><code data-trim>
+GET /v2/tasks HTTP/1.1
+Accept: text/plain
+
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Server: Jetty(8.y.z-SNAPSHOT)
+Transfer-Encoding: chunked
+
+my-app   19385   localhost:31336  localhost:31364
+my-app   11186   localhost:31337  localhost:31365
+          </code></pre>
         </section>
 
         <section data-background="assets/front-page.jpg">
@@ -205,6 +305,19 @@
           <br />
           <h3 class="fragment">Mesos to the rescue!</h3>
           <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>POST /v2/apps</h2>
+          <pre><code class="javascript" data-trim>
+{
+  “id”: “cassandra",
+  “container”: {
+    “image”: “docker:///mesosphere/cassandra:2.0.6”,
+    “options”: [“-v”, “/mnt:/mnt:rw”, “-e”, “CLUSTER_NAME=prod”]
+  }
+}
+          </code></pre>
         </section>
 
         <section data-background="assets/front-page.jpg">
@@ -245,6 +358,9 @@
         progress: false,
         history: true,
         center: true,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.05,
 
         theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
         transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
