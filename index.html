@@ -7,7 +7,7 @@
     <title>Marathon</title>
 
     <meta name="description" content="">
-    <meta name="author" content="Connor Doyle">
+
 
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -47,47 +47,70 @@
 
         <section data-background="assets/front-page.jpg">
           <h1>Marathon</h1>
-          <h3>Some clever sub-title</h3>
-          <p><small><a href="mailto:connor@mesosphere.io">Connor Doyle</a></small></p>
+          <br />
+          <h3>A self-serve interface<br />to your datacenter</h3>
+          <br />
+          <p><small><a href="mailto:connor@mesosphere.io">Connor Doyle</a> @ Mesosphere, Inc.</small></p>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/office.png">
+          <h2>We are Mesosphere</h2>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Mesos is...</h2>
+          <br />
+          <h3 class="fragment">a top-level Apache project</h3>
+          <h3 class="fragment">a cluster resource broker</h3>
+          <h3 class="fragment">scalable, fault-tolerant, battle-tested</h3>
+          <h3 class="fragment">an SDK for distributed apps</h3>
+          <h3 class="fragment">neither an IaaS nor a PaaS :)</h3>
           <aside class="notes"></aside>
         </section>
 
         <section data-background="assets/front-page.jpg">
           <h2>Why Mesos?</h2>
           <br />
-          <h3>Static partitioning doesn't scale</h3>
-          <h3>Use dynamic allocation instead</h3>
-          <aside class="notes"></aside>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-          <h2>Mesos Intro</h2>
-          <br />
-          <h3 class="fragment">Mesos is a resource broker and isolator</h3>
-          <h3 class="fragment">Also provides an SDK for distributed apps</h3>
-          <h3 class="fragment">Apps that interact with Mesos are called Frameworks</h3?
-          <aside class="notes"></aside>
+          <h3 class="fragment">Static partitioning doesn't scale</h3>
+          <h3 class="fragment">Use dynamic allocation instead</h3>
+          <aside class="notes">
+            <ul>
+              <li>Ops mantra: &quot;automate everything?&quot;</li>
+              <li>Static: slow, inefficient, brittle</li>
+              <li>Dynamic: quick, efficient, robust</li>
+              <li>Dynamic allocation, also known as &quot;scheduling&quot;!</li>
+            </ul>
+          </aside>
         </section>
 
         <section data-background="assets/front-page.jpg">
           <h2>Cluster scheduling is a hard problem</h2>
           <h3><u>NP-hard in fact!</u></h3>
           <br />
-          <h3 class="fragment">It's hard (NP-Hard)</h3>
-          <h3 class="fragment">Approaches boil down to heuristics</h3>
-          <h3 class="fragment">Monolithic algorithms need lots of info to make decisions</h3>
-          <h3 class="fragment">Mesos breaks this into two levels</h3>
-          <h3 class="fragment">Decisions happen where that information is (the app)<h3>
+          <h3 class="fragment">Monolithic schedulers need context</h3>
+          <br />
+          <h3 class="fragment">Idea: the &quot;Resource Offer&quot;</h3>
+          <br />
+          <div class="fragment">
+            <h3>Centralize accounting &amp; allocation</h3>
+            <h3>Push some logic down to apps<h3>
+          </div>
         </section>
 
         <section data-background="assets/front-page.jpg">
           <h2>High Level View of Mesos</h2>
           <br />
-          <h3 class="fragment">A framework consists of a scheduler and an executor</h3>
-          <h3 class="fragment">Schedulers receive resource offers from Mesos</h3>
+          <br />
+          <h3 class="fragment">Framework = scheduler + executor</h3>
+          <br />
+          <br />
+          <h3 class="fragment">Schedulers get resource offers</h3>
           <h3 class="fragment">Executors run tasks</h3>
-          <h3 class="fragment">Task semantics depend on the framework</h3>
-          <aside class="notes"></aside>
+          <aside class="notes">
+            <p>Task semantics depend on the framework</p>
+          </aside>
         </section>
 
         <section>
@@ -97,50 +120,48 @@
         <section data-background="assets/front-page.jpg">
           <h2>Say hi to Marathon</h2>
           <br />
-          <h3 class="fragment">A self-serve interface for developers to run code in your datacenter</h3>
+          <h3 class="fragment">A self-serve interface to your datacenter</h3>
+        </section>
+
+        <section>
+          <img src="assets/marathon-arch.png"/>
+        </section>
+
+        <section>
+          <img src="assets/marathon-0.png"/>
+        </section>
+
+        <section>
+          <img src="assets/marathon-1.png"/>
+        </section>
+
+        <section>
+          <img src="assets/marathon-2.png"/>
+        </section>
+
+        <section>
+          <img src="assets/marathon-3.png"/>
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <h2>Apps for your tasks</h2>
+          <h2>High level features</h2>
           <br />
-          <h3 class="fragment">Provides an abstraction over Mesos tasks</h3>
+          <h3 class="fragment">Start, stop, scale, update apps</h3>
+          <h3 class="fragment">View running tasks</h3>
+          <h3 class="fragment">Kill an individual task</h3>
+          <h3 class="fragment">Nice UI, Nice API</h3>
           <aside class="notes"></aside>
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <h2>UI Preview!</h2>
-          <br />
-          <h3 class="fragment">List of apps</h3>
-          <h3 class="fragment">Task detail</h3>
-          <h3 class="fragment">Create new Task button</h3>
-          <aside class="notes"></aside>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-          <h2>It's RESTful!</h2>
+          <h2>Marathon <i class="fa fa-heart"></i> REST</h2>
           <br />
           <h3 class="fragment">`POST /v2/apps`</h3>
-          <h3 class="fragment">`GET /v2/apps</h3>
-          <aside class="notes"></aside>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-          <h2>Feature Overview</h2>
-          <br />
-          <h3 class="fragment">App creation</h3>
-          <h3 class="fragment">Automatic restart</h3>
-          <aside class="notes"></aside>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-          <h2>Live Demo!</h2>
-          <br />
-          <h3 class="fragment">A simple python web app...</h3>
-          <h3 class="fragment">Marathon JSON to describe the app</h3>
-          <h3 class="fragment">A one-line launch script</h3>
-          <h3 class="fragment">Voilá!</h3>
-          <h3 class="fragment">Toggle a task's health</h3>
-          <h3 class="fragment">Watch it turn unhealthy, and get killed</h3>
+          <h3 class="fragment">`GET /v2/apps`</h3>
+          <h3 class="fragment">`PUT /v2/apps/{appId}`</h3>
+          <h3 class="fragment">`GET /v2/apps/{appId}/tasks`</h3>
+          <h3 class="fragment">`DELETE /v2/apps/{appId}/tasks/{taskId}`</h3>
+          <h3 class="fragment">...</h3>
           <aside class="notes"></aside>
         </section>
 
@@ -148,77 +169,50 @@
           <h2>Service Discovery</h2>
           <br />
           <h3 class="fragment">Set environment variables</h3>
-          <h3 class="fragment">Read config from device (rsync to fs?)</h3>
-          <h3 class="fragment">Read from highly available K-V store</h3>
+          <h3 class="fragment">Read config from device (rsync'ed to fs)</h3>
+          <h3 class="fragment">Read from K-V store</h3>
           <h3 class="fragment">Use DNS</h3>
-          <h3 class="fragment">HAProxy solution</h3>
+          <h3 class="fragment">HAProxy works pretty well</h3>
           <aside class="notes"></aside>
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <h2>Get excited for new features</h2>
+          <h2>Get excited -- new features!</h2>
           <br />
-          <h3 class="fragment">Namespaces</h3>
+          <h3 class="fragment">Rolling deploy / restart</h3>
+          <h3 class="fragment">Namespaced apps</h3>
           <h3 class="fragment">Dependencies</h3>
-          <h3 class="fragment">Rolling deployments</h3>
-          <h3 class="fragment">Artifact staging</h3>
           <h3 class="fragment">Executor health checks</h3>
+          <h3 class="fragment">Artifact staging</h3>
           <h3 class="fragment">Configurable exponential backoff</h3>
           <aside class="notes"></aside>
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <h2>Does it Docker?</h2>
+          <h2>What about Docker?</h2>
           <br />
-          <h3 class="fragment">Yes!</h3>
-          <aside class="notes"></aside>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-          <h2>Wait, Docker?</h2>
-          <br />
-          <h3 class="fragment">decouple dev &amp; deployment</h3>
+          <h3 class="fragment">Decouples dev from deployment</h3>
           <h3 class="fragment">`docker build`</h3>
-          <h3 class="fragment">DockerHub, or private Docker registry</h3>
+          <h3 class="fragment">Now what?  Deploy... somehow</h3>
+          <br />
+          <h3 class="fragment">Mesos to the rescue!</h3>
           <aside class="notes"></aside>
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <h2>Initial support</h2>
+          <h2>Existing support</h2>
           <br />
-          <h3 class="fragment">Uses existing ContainerInfo</h3>
-          <h3 class="fragment">Hangs off of docker:// protocol prefix</h3>
-          <h3 class="fragment">Works with releases of Marathon back to 0.6.0</h3>
+          <h3 class="fragment">External containerizer called Deimos</h3>
+          <h3 class="fragment">Calls out to Docker on task launch</h3>
           <aside class="notes"></aside>
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <h2>Planned support</h2>
+          <h2>For imminent release</h2>
           <br />
-          <h3 class="fragment">Plans to support Docker as a 1st class citizen</h3>
-          <h3 class="fragment">New DockerInfo protobuf message</h3>
+          <h3 class="fragment">Docker as a 1st class citizen</h3>
+          <h3 class="fragment">ContainerInfo vs DockerInfo?</h3>
           <h3 class="fragment">One of these two will land (0.19.1 or 0.20.0 at the latest)</h3>
-          <aside class="notes"></aside>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-          <h2>Say Hi to Marathon</h2>
-          <img src="assets/marathon-logo.jpg"/>
-          <aside class="notes"></aside>
-        </section>
-
-        <section data-background="assets/marathon-01.png">
-          <h2></h2>
-          <aside class="notes"></aside>
-        </section>
-    
-        <section data-background="assets/marathon-02.png">
-          <h2></h2>
-          <aside class="notes"></aside>
-        </section>
-
-        <section data-background="assets/marathon-03.png">
-          <h2></h2>
           <aside class="notes"></aside>
         </section>
 
