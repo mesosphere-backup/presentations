@@ -4,10 +4,10 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>Mesos - Elastically Scalable Operations, Simplified.</title>
+		<title>Mesosphere on AWS</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Adam Bordelon, Niklas Quarfot Nielsen">
+		<meta name="description" content="Marathon and Apache Mesos for Amazon Web Services">
+		<meta name="author" content="Adam Bordelon">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -45,24 +45,16 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
         <section data-background="assets/front-page.jpg">
-					<h1>Mesos</h1>
-					<h3>Elastically Scalable Operations,<br/>Simplified.</h3>
+					<h1>Mesos on AWS</h1>
+					<h3>Multi-tenancy, Fault-tolerance, Scalability</h3>
 					<p>
-						<small><a href="mailto:adam@mesosphere.io">Adam Bordelon</a></small>
-						<small><a href="mailto:niklas@mesosphere.io">Niklas Quarfot Nielsen</a></small>
+						<a href="mailto:adam@mesosphere.io">Adam Bordelon</a>
 					</p>
 				</section>
 
         <section data-background="assets/front-page.jpg">
-					<h2>Go launch a cluster</h2>
-          <img src="assets/dc.png"/>
-          <h3><a href="http://elastic.mesosphere.io">elastic.mesosphere.io</a></h3>
-
-					<aside class="notes"></aside>
-				</section>
-
-        <section>
           <img src="assets/elastic.png"/>
+          <h2><a href="http://elastic.mesosphere.io">elastic.mesosphere.io</a></h2>
 					<aside class="notes"></aside>
 				</section>
 
@@ -88,12 +80,6 @@
           </table>
           <aside class="notes"></aside>
         </section>
-
-        <section>
-					<h2>Today is about Mesos <i class="fa fa-heart fa-inverse"></i> Ops</h2>
-
-					<aside class="notes"></aside>
-				</section>
 
         <section>
           <div style="font-size: 9em;">
@@ -512,33 +498,7 @@ CTO)
 					<aside class="notes"></aside>
 				</section>
 
-        <section>
-          <img src="assets/hubspot.png"/>
-				 	<aside class="notes">
-            HubSpot develops a software-as-a-service product for inbound
-            marketing, with features for social media, email, content
-            management, web analytics and search engine optimization.
-          </aside>
-				</section>
-
-        <section>
-          <blockquote>
-            &ldquo;HubSpot deploys 300 times a day on a minimal number of server
-instances by using Apache Mesos.&rdquo; &mdash; Elias Torres, HubSpot VP of Engineering
-          </blockquote>
-          <aside class="notes">
-          <p>Hubspot runs a mixture of web services, long-running processes,
-          one-off tasks, and scheduled jobs.
-          They have over 150 services running inside of Mesos, on hundreds of
-          servers inside Amazon EC2.</p>
-
-          <p>According to Elias Torres,
-          Hubspot deploys 300 times a day on a minimal number of server
-          instances by using Apache Mesos</p>
-          </aside>
-        </section>
-
-        <section>
+        <!--section>
           <table style="font-size: 4em;">
           <tr>
           <td style="text-align: center;">
@@ -578,20 +538,20 @@ instances by using Apache Mesos.&rdquo; &mdash; Elias Torres, HubSpot VP of Engi
           over-provisioned hardware now use the exact amount of resources
           requested.</p>
           </aside>
-				</section>
+				</section-->
 
         <section>
           <img src="assets/airbnb.png"/>
 					<aside class="notes">
-<p>Most of you are probably familiar with AirBnB.
-But for those of you who aren’t, it is an very successful startup in San
-Francisco that makes it very easy to share your apartment or be a guest in
-another persons home.</p>
+            <p>Most of you are probably familiar with AirBnB.
+            But for those of you who aren’t, it is an very successful startup in San
+            Francisco that makes it very easy to share your apartment or be a guest in
+            another persons home.</p>
 
-<p>But you may not realized that AirBnB is a very data driven company that
-processes petabytes of data.</p>
+            <p>But you may not realized that AirBnB is a very data driven company that
+            processes petabytes of data.</p>
 
-<p>And they do this on top of Mesos.</p>
+            <p>And they do this on top of Mesos.</p>
           </aside>
 				</section>
 
@@ -624,24 +584,16 @@ processes petabytes of data.</p>
           </table>
 
 					<aside class="notes">
-          <p>
-          Airbnb now runs a multi-tenant cluster with Hadoop coexisting with
+          <p>Airbnb now runs a multi-tenant cluster with Hadoop coexisting with
           Chronos, Spark, and Storm.
-          No longer needing independent Hadoop clusters.
-          </p>
+          No longer needing independent Hadoop clusters.  </p>
 
-          <p>
-          It enables small teams to build distributed systems faster.
-          </p>
+          <p> It enables small teams to build distributed systems faster.  </p>
 
-          <p>
-          And all of this runs on hundreds of Amazon EC2 instances.
-          </p>
+          <p> And all of this runs on hundreds of Amazon EC2 instances.  </p>
 
-          <p>
-          We want to thank Brenden Mathews from Airbnb for sharing data about
-          their Mesos cluster.
-          </p>
+          <p>We want to thank Brenden Mathews from Airbnb for sharing data about
+          their Mesos cluster.</p>
           </aside>
 				</section>
 
@@ -765,10 +717,22 @@ center efficiency.&rdquo; &mdash; Chris Fry, Former SVP of Engineering at Twitte
           </tr>
           </table>
 
-					<aside class="notes">
-          With that being said, I think it’s is time for a QA
-          </aside>
+					<aside class="notes"></aside>
 				</section>
+
+        <section data-background="assets/front-page.jpg">
+          <a href="http://events.linuxfoundation.org/events/mesoscon/">
+          <img width="90%" src="assets/mesoscon-banner-small.png"/>
+          </a>
+					<aside class="notes"></aside>
+				</section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>We're hiring!</h2>
+          <p><a href="http://mesosphere.io/jobs/">mesosphere.io/jobs</a></p>
+					<aside class="notes"></aside>
+				</section>
+
 			</div>
 
 		</div>
