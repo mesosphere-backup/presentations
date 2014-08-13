@@ -246,27 +246,7 @@
         </section>
 
         <section>
-          <table style="font-size: 4em;">
-          <tr>
-          <td style="text-align: center;">
-            <div>
-              <p><i class="fa fa-sitemap fa-rotate-180"></i></p>
-              <p style="font-size: 25px;">Multi-tenant clusters</p>
-            </div>
-          </td><td style="text-align: center;">
-            <div class="fragment">
-              <p><i class="fa fa-clock-o"></i></p>
-              <p style="font-size: 25px;">Small teams can move fast</p>
-            </div>
-          </td><td style="text-align: center;">
-            <div class="fragment">
-              <p><img src="assets/amazon.png"/></p>
-              <p style="font-size: 25px;">AWS-based infrastructure beyond just Hadoop</p>
-            </div>
-          </td>
-          </tr>
-          </table>
-
+          <img src="assets/airbnb-stack.png"/>
 					<aside class="notes">
           <p>Airbnb now runs a multi-tenant cluster with Hadoop coexisting with
           Chronos, Spark, and Storm.
@@ -275,19 +255,6 @@
           <p> It enables small teams to build distributed systems faster.  </p>
 
           <p> And all of this runs on hundreds of Amazon EC2 instances.  </p>
-
-          <p>We want to thank Brenden Mathews from Airbnb for sharing data about
-          their Mesos cluster.</p>
-          </aside>
-				</section>
-
-        <section>
-          <img src="assets/airbnb-stack.png"/>
-					<aside class="notes">
-          <p>
-          Only thing we were asked not to, was to share pictures and figures
-          so we have put together this rough and crude overview of their stack.
-          </p>
 
           <p>
           Notably, multiple Hadoops, Spark/Shark, Presto, Redis, Rails, and much
@@ -310,24 +277,6 @@ Twitter's continued success at scale. It's one of the primary keys to our data
 center efficiency.&rdquo;<br> &mdash; Chris Fry, Former SVP of Engineering at Twitter
           </blockquote>
           <img src="assets/twitter.png" width="20%"/>
-        </section>
-
-        <section>
-          <table style="font-size: 4em;">
-          <tr>
-          <td style="text-align: center;">
-            <div>
-              <p><i class="fa fa-signal"></i></p>
-              <p style="font-size: 25px;">Allow services to scale</p>
-            </div>
-          </td><td style="text-align: center;">
-            <div class="fragment">
-              <p><i class="fa fa-tachometer"></i></p>
-              <p style="font-size: 25px;">Engineers think about resources,<br> not machines</p>
-            </div>
-          </td>
-          </tr>
-          </table>
 					<aside class="notes">
           <p>Mesos allows services to scale to thousands of bare-metal machines and
           leverage a shared pool of servers across data centers
@@ -343,7 +292,7 @@ center efficiency.&rdquo;<br> &mdash; Chris Fry, Former SVP of Engineering at Tw
 				</section>
 
         <section>
-          <h2>Making life easier for the cloud admin</h2>
+          <h2>Life is better with Mesos</h2>
           <table>
           <tr>
             <td><h3><i class="fa fa-sitemap"></i></h3></td><td><h3>Multi-tenancy</h3></td>
