@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>Simplifying Analytics, Machine Learning, and Big Data</title>
+
+    <meta name="description" content="">
+
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/mesosphere.css" id="theme">
+
+    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+      if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+      }
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="reveal">
+
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+
+<!-- Intro -->
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Simplifying Analytics, Machine Learning, and Big Data</h2>
+          <br />
+          <h3>Mesos, Chronos, and HDFS</h3>
+          <br />
+          <p><a href="mailto:elizabeth@mesosphere.io">Elizabeth Lingg</a> @ Mesosphere, Inc.</p>
+        </section>
+
+<!-- Overview -->
+
+        <section>
+          <div style="font-size: 6em;">
+            <div style="display: inline-block; width: 20%;">
+              <p><i class="fa fa-bar-chart-o"></i></p>
+              <p style="font-size: 30px; font-weight: bold;">Distributed Computing Meets Analytics</p>
+            </div>
+
+            <div style="display: inline-block; width: 20%;" class="fragment">
+              <p><i class="fa fa-calendar"></i></p>
+              <p style="font-size: 30px; font-weight: bold;">Chronos</p>
+            </div>
+            
+            <div style="display: inline-block; width: 20%;" class="fragment">
+                <p><i class="fa fa-cubes"></i></p>
+                <p style="font-size: 30px; font-weight: bold;">HDFS</p>
+            </div>
+
+            <div style="display: inline-block; width: 20%;" class="fragment">
+              <p><i class="fa fa-flag-checkered"></i></p>
+              <p style="font-size: 30px; font-weight: bold;">Live Demo</p>
+            </div>
+          </div>
+          <aside class="notes"></aside>
+        </section>
+        
+    
+<!-- Internet of Things and Big Data -->
+
+        <section data-background="assets/google-dc.jpg">
+            <div style="display: inline-block; width: 60%;" class="fragment">
+                <p style="font-size: 80px; font-weight: bold;">How Big is Big Data?</p>
+            </div>
+          </section>
+        <section data-transition="none">
+          <img src="assets/big-data-1.jpg"/>
+        </section>
+        <section data-transition="none">
+            <img src="assets/big-data-2.jpg"/>
+        </section>
+
+
+<!-- Why do we need distributed computing for big data analytics such as Machine Learning? -->
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Why Distributed Computing?</h2>
+          <br />
+          <br />
+          <h3 class="fragment"> Map: Break down analysis into tasks to be executed</h3>
+          <br />
+          <h3 class="fragment"> Reduce: Aggregate and apply a specific function on executed tasks</h3>
+        </section>
+        
+        
+        <section data-background="assets/front-page.jpg">
+            <h2>Why Distributed Computing?</h2>
+            <br />
+            <br />
+            <h3 class="fragment">- Work in parallel to improve speed and performance</h3>
+            <br />
+            <h3 class="fragment">- Fault tolerance / Relaunch if there are failures</h3>
+        </section>
+
+        <section data-transition="none">
+          <img src="assets/mesos-simple.png"/>
+         </section>
+
+
+<!-- How does Chronos solve analytics at scale? -->
+
+
+        <section>
+         <div style="font-size: 6em;">
+          <div style="display: inline-block; width: 25%;">
+            <p><i class="fa fa-calendar"></i></p>
+            <p style="font-size: 30px; font-weight: bold;">Chronos</p>
+          </div>
+        
+          <div style="display: inline-block; width: 25%; opacity:0.5;">
+             <p><i class="fa fa-cubes"></i></p>
+             <p style="font-size: 30px; font-weight: bold;">HDFS</p>
+           </div>
+        
+          <div style="display: inline-block; width: 25%; opacity:0.5;">
+            <p><i class="fa fa-flag-checkered"></i></p>
+            <p style="font-size: 30px; font-weight: bold;">Live Demo</p>
+           </div>
+          </div>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Introducing Chronos</h2>
+          <img src="assets/chronos.png"/>
+          <h3 class="fragment">Chron Scheduler for short running jobs</h3>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+            <h2>Introducing Chronos</h2>
+            <img src="assets/chronos-dependency-graph.png"/>
+            <h3 class="fragment">Scheduling with repeating intervals</h3>
+            <h3 class="fragment">Dependency graph for execution</h3>
+        </section>
+
+<!-- Basic Usage -->
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Launch a task</h2>
+          <br />
+          <pre><code class="javascript" data-trim>
+          POST -d '{
+          "schedule": "R10/2012-10-01T05:52:00Z/PT2S",
+          "name": "SAMPLE_JOB1",
+          "epsilon": "PT15M",
+          "command": "echo 'FOO' >> /tmp/JOB1_OUT",
+          "owner": "bob@airbnb.com",
+          "async": false
+         }' localhost:8081/scheduler/iso8601
+          </code></pre>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+            <h2>Launch a more complex task with parents</h2>
+            <br />
+            <pre><code class="javascript" data-trim>
+            POST -d '{
+            "async": true,
+            "command": "bash -x /jobs/hive_query.bash
+            run_hive hostings-earnings-summary",
+            "epsilon": "PT30M",
+            "errorCount": 0,
+            "name": "hostings_earnings_summary",
+            "owner": "bob@airbnb.com",
+            "parents": [
+            "db_export-airbed_hostings"
+            ],
+            "retries": 2,
+            "successCount": 100
+         }' localhost:8081/scheduler/dependency
+            </code></pre>
+            <aside class="notes"></aside>
+        </section>
+        
+        <section data-background="assets/front-page.jpg">
+            <h2>Run Docker Containers</h2>
+            <br />
+            <pre><code>--containerizers=docker,mesos</code></pre>
+            <pre><code class="javascript" data-trim>
+            POST -d '{
+            "schedule": "R\/2014-09-25T17:22:00Z\/PT2M",
+            "name": "dockerjob",
+            "container": {
+              "type": "DOCKER",
+              "image": "python:3",
+              "network": "BRIDGE"
+            },
+            "cpus": "0.5",
+            "mem": "512",
+            "uris": [],
+            "command": "python3 -m http.server 8080"
+         }' localhost:8081/scheduler/iso8601
+            </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Chronos <i class="fa fa-heart"></i> REST</h2>
+          <br />
+          <div class="fragment"><pre><code>PUT chronos-node:8080/scheduler/job/job1</code></pre></div>
+          <div class="fragment"><pre><code>GET chronos-node:8080/scheduler/jobs</code></pre></div>
+          <div class="fragment"><pre><code>DELETE chronos-node:8080/scheduler/task/kill/job2</code></pre></div>
+        </section>
+        
+        
+<!-- New HDFS Framework in HA mode -->
+        
+        <section>
+            <div style="font-size: 6em;">
+                <div style="display: inline-block; width: 25%; opacity: 0.5;">
+                    <p><i class="fa fa-calendar"></i></p>
+                    <p style="font-size: 30px; font-weight: bold;">Chronos</p>
+                </div>
+                
+                <div style="display: inline-block; width: 25%;">
+                    <p><i class="fa fa-cubes"></i></p>
+                    <p style="font-size: 30px; font-weight: bold;">HDFS</p>
+                </div>
+                
+                <div style="display: inline-block; width: 25%; opacity:0.5;">
+                    <p><i class="fa fa-flag-checkered"></i></p>
+                    <p style="font-size: 30px; font-weight: bold;">Live Demo</p>
+                </div>
+            </div>
+            <aside class="notes"></aside>
+        </section>
+        
+        <section data-background="assets/front-page.jpg">
+            <h2>Introducing the Mesos HDFS Framework</h2>
+            <img src="assets/HDFS.png"/>
+            <h3 class="fragment">A new HDFS framework running directly on Mesos</h3>
+        </section>
+        
+        <section data-background="assets/front-page.jpg">
+            <h2>Introducing the Mesos HDFS Framework</h2>
+            <img src="assets/hdfs-framework.png"/>
+            <h3 class="fragment">Fault Tolerance is Managed by Mesos</h3>
+            <h3 class="fragment">High Availability (HA) Mode</h3>
+        </section>
+
+<!-- Basic Usage -->
+
+        <section data-background="assets/front-page.jpg">
+            <h2>HDFS Framework Components</h2>
+            <br />
+            <h3 class="fragment">- DataNodes which manage the data</h3>
+            <br />
+            <h3 class="fragment">- Two NameNodes Machines for HA</h3>
+            <br />
+            <h3 class="fragment">- A JournalNode to create a quorum</h3>
+        </section>
+        
+        <section data-background="assets/front-page.jpg">
+            <h2>HDFS Framework Components</h2>
+            <br />
+            <h3 class="fragment">Each NameNode Machine contains: </h3>
+            <br />
+            <h3 class="fragment"> - NameNode (manages the Datanodes) </h3>
+            <h3 class="fragment"> - JournalNode (for logging the edits to the NameNodes) </h3>
+            <h3 class="fragment"> - ZKFCNode (Zookeeper Node) </h3>
+         </section>
+        
+        <section data-background="assets/front-page.jpg">
+            <h2>HDFS Framework</h2>
+            <img src="assets/hdfs-log.png"/>
+            <h3 class="fragment">Management of HDFS is done by the framework itself</h3>
+            <h3 class="fragment">Logging and management of failures</h3>
+
+        </section>
+
+
+<!-- Live Demo -->
+        <section>
+            <div style="font-size: 6em;">
+                <div style="display: inline-block; width: 25%; opacity:0.5;">
+                    <p><i class="fa fa-calendar"></i></p>
+                    <p style="font-size: 30px; font-weight: bold;">Chronos</p>
+                </div>
+                
+                <div style="display: inline-block; width: 25%; opacity:0.5;">
+                    <p><i class="fa fa-cubes"></i></p>
+                    <p style="font-size: 30px; font-weight: bold;">HDFS</p>
+                </div>
+                
+                <div style="display: inline-block; width: 25%;">
+                    <p><i class="fa fa-flag-checkered"></i></p>
+                    <p style="font-size: 30px; font-weight: bold;">Live Demo</p>
+                </div>
+            </div>
+            <aside class="notes"></aside>
+        </section>
+
+
+<!-- Q & A, Conclusion -->
+
+
+        <section data-background="assets/sf.jpg">
+          <h2>Thanks!</h2>
+          <h3>Join the Mesos community</h3>
+
+          <table>
+          <tr>
+          <td style="vertical-align: top;">
+          <img src="assets/mesos.png"/></td>
+          <td style="vertical-align: top;">
+            <p><a href="http://mesos.apache.org">http://mesos.apache.org</a></p>
+            <p><a href="mailto:user@mesos.apache.org">user@,</a> <a href="mailto:dev@mesos.apache.org">dev@mesos.apache.org</a></p>
+            <p><a href="https://github.com/apache/mesos/">https://github.com/apache/mesos/</a></p>
+            <p><a href="https://github.com/mesosphere/chronos">https://github.com/mesosphere/chronos/</a></p>
+            <p><a href="https://github.com/mesosphere/hdfs">https://github.com/mesosphere/hdfs/</a></p>
+            <p><a href="http://mesosphere.io">http://mesosphere.io</a></p>
+          </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <p>&nbsp;</p>
+              <p>Get Mesos packages: <a href="http://mesosphere.io/downloads">http://mesosphere.io/downloads</a></p>
+              <p>Get hired: <a href="http://mesosphere.io/jobs">http://mesosphere.io/jobs</a></p>
+            </td>
+          </tr>
+          </table>
+        </section>
+
+      </div>
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.min.js"></script>
+
+    <script>
+
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: false,
+        progress: false,
+        history: true,
+        center: true,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.05,
+
+        theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Parallax scrolling
+        // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+        // parallaxBackgroundSize: '2100px 900px',
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+          { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
