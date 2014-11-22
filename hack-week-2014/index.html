@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>Mesos Frameworks</title>
+
+    <meta name="description" content="">
+    <meta name="author" content="Connor Doyle">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/mesosphere.css" id="theme">
+
+    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+      if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+      }
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="reveal">
+
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+        <section data-background="assets/front-page.jpg">
+          <h1>Mesos Frameworks</h1>
+          <h3>A quick intro</h3>
+          <p>
+            <a href="mailto:connor@mesosphere.io">Connor Doyle</a>
+          </p>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <div style="font-size: 6em;">
+            <div style="display: inline-block; width: 25%;">
+              <p><i class="fa fa-life-ring"></i></p>
+              <p style="font-size: 30px;">Mesos Frameworks</p>
+            </div>
+
+            <div style="display: inline-block; width: 25%;" class="fragment">
+              <p><i class="fa fa-terminal"></i></p>
+              <p style="font-size: 30px;">RENDLER Example</p>
+            </div>
+
+            <div style="display: inline-block; width: 25%;" class="fragment">
+              <p><i class="fa fa-cogs"></i></p>
+              <p style="font-size: 30px;">Advanced Framework Topics</p>
+            </div>
+
+          </div>
+          <aside class="notes"></aside>
+        </section>
+
+<!-- Concepts -->
+
+        <section>
+          <!-- Resource offers -->
+          <table style="width: 100%;">
+          <tr>
+            <td style="text-align: center;">Request model
+            </td>
+            <td style="text-align: center;">2-level model
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              <img src="assets/offer-01.png"/>
+            </td>
+            <td style="text-align: center;">
+              <img src="assets/offer-02.png"/>
+            </td>
+          </tr>
+          </table>
+        </section>
+
+        <section>
+          <img src="assets/mesos-simple.png"/>
+        </section>
+
+<!-- Ecosystem -->
+        <section>
+          <img src="assets/languages.png">
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <div style="font-size: 6em;">
+            <div style="display: inline-block; width: 25%; opacity:0.5;">
+              <p><i class="fa fa-life-ring"></i></p>
+              <p style="font-size: 30px;">Mesos Frameworks</p>
+            </div>
+
+            <div style="display: inline-block; width: 25%;">
+              <p><i class="fa fa-terminal"></i></p>
+              <p style="font-size: 30px;">RENDLER Example</p>
+            </div>
+
+            <div style="display: inline-block; width: 25%; opacity:0.5;">
+              <p><i class="fa fa-cogs"></i></p>
+              <p style="font-size: 30px;">Advanced Framework Topics</p>
+            </div>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <h2>Enter...</h2>
+          <div class="fragment">
+            <h2>The RENDLER</h2>
+            <img style="width: 100%;" src="assets/riddler.gif"/>
+          </div>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <h2>RENDLER is a web crawler and renderer</h2>
+          <img src="assets/rendler.png"/>
+          <aside class="notes">With an entry-point url, crawl it for links, render each page, repeat<br>
+            Task parallelism (crawl vs. render), data parallelism (list of urls).
+          </aside>
+        </section>
+
+        <section>
+          <h2>RENDLER is a <u>distributed</u> web crawler and renderer</h2>
+          <img src="assets/rendler-01.png"/>
+          <!-- <h3 class="fragment">We are going to use RENDLER to deep dive into the Mesos Framework API</h3> -->
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <h2>Crawling is a closed loop of task generation</h2>
+          <img src="assets/rendler-02.png"/>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <h2>Crawling is a closed loop of task generation</h2>
+          <img src="assets/rendler-03.png"/>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <h2>Rendering generates pixels, announces result</h2>
+          <img src="assets/rendler-04.png"/>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <img src="assets/rendler-05.png"/>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <!-- Sequence diagram of registration -->
+          <!-- Emphasize that there are 2 pieces: calls and events -->
+          <img src="assets/flow-sequence.png"/>
+        </section>
+
+        <section>
+          <h2>Scheduler calls</h2>
+          <table style="width: 100%;">
+            <tr>
+              <td><i class="fa fa-recycle"></i></td><td>Lifecycle management</td>
+              <td>Register, Reregister, Unregister</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-hdd-o"></i></td><td> Resource allocation
+              <td>Request, Decline, Revive</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-tasks"></i></td><td> Task management</td>
+              <td>Launch, Kill, Reconcile</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-exchange"></i></td><td> Communication</td>
+              <td>sendFrameworkMessage</td>
+            </tr>
+          </table>
+        </section>
+
+        <section>
+          <h2>Scheduler events</h2>
+          <table style="width: 100%;">
+            <tr>
+              <td><i class="fa fa-recycle"></i></td><td>Lifecycle management</td>
+              <td>Registered, Reregistered</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-hdd-o"></i></td><td> Resource allocation
+              <td>Offers, Rescind</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-tasks"></i></td><td> Task management</td>
+              <td>TaskStatus</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-exchange"></i></td><td> Communication</td>
+              <td>frameworkMessage</td>
+            </tr>
+          </table>
+        </section>
+
+        <section>
+        <!-- Describe TaskInfo -->
+        <h2>TaskInfo describes <u>how</u> to run a task</h2>
+          <table style="width: 100%;">
+            <tr>
+              <td><pre><code class="protobuf" data-trim>
+message TaskInfo {
+  required string name;
+  required TaskID task_id;
+  required SlaveID slave_id;
+  repeated Resource resources;
+  optional ExecutorInfo executor;
+  optional CommandInfo command;
+  optional ContainerInfo container;
+  optional HealthCheck health_check;
+  optional bytes data;
+}
+        </code></pre></td>
+        <td><pre><code class="protobuf" data-trim>
+message CommandInfo {
+  required string value;
+  repeated URI uris;
+  optional Environment environment;
+  optional string user;
+  optional bool shell;
+  repeated string arguments;
+  //deprecated ContainerInfo container;
+}
+message ContainerInfo {
+  required Type type;
+  repeated Volume volumes;
+  optional DockerInfo docker; //image string
+}
+message Volume {
+  required string container_path;
+  optional string host_path;
+  required Mode mode; //RW,RO
+}
+        </code></pre></td>
+        </tr></table>
+        </section>
+
+        <section>
+        <h3>Status updates describe the task life cycle</h3>
+        <p></p>
+        <pre><code class="python" data-trim>
+class MyScheduler:
+  ...
+  def statusUpdate(self, driver, update):
+    ...
+    # Where update.state can be
+    # 0: TASK_STARTING
+    # 1: TASK_RUNNING
+    # 2: TASK_FINISHED
+    # 3: TASK_FAILED
+    # 4: TASK_KILLED
+    # 5: TASK_LOST
+    # 6: TASK_STAGING
+        </code></pre>
+        </section>
+
+        <section>
+          <h2>Executor events</h2>
+          <table style="width: 100%;">
+            <tr>
+              <td><i class="fa fa-recycle"></i></td><td>Lifecycle management</td>
+              <td>Registered, Reregistered, Disconnected, Shutdown</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-tasks"></i></td><td> Task management</td>
+              <td>launchTask, killTask</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-exchange"></i></td><td> Communication</td>
+              <td>frameworkMessage</td>
+            </tr>
+          </table>
+        </section>
+
+        <section>
+          <h2>Executor calls</h2>
+          <table style="width: 100%;">
+            <tr>
+              <td><i class="fa fa-tasks"></i></td><td> Task management</td>
+              <td>sendStatusUpdate</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-exchange"></i></td><td> Communication</td>
+              <td>sendFrameworkMessage</td>
+            </tr>
+          </table>
+        </section>
+
+        <section>
+          <div style="font-size: 6em;">
+            <div style="display: inline-block; width: 25%; opacity:0.5;">
+              <p><i class="fa fa-life-ring"></i></p>
+              <p style="font-size: 30px;">Mesos Frameworks</p>
+            </div>
+
+            <div style="display: inline-block; width: 25%; opacity:0.5;">
+              <p><i class="fa fa-terminal"></i></p>
+              <p style="font-size: 30px;">RENDLER Example</p>
+            </div>
+
+            <div style="display: inline-block; width: 25%;">
+              <p><i class="fa fa-cogs"></i></p>
+              <p style="font-size: 30px;">Advanced Framework Topics</p>
+            </div>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Additional Concerns</h2>
+          <br />
+          <ul>
+            <li>High availability, fault tolerance</li>
+            <li>Recover failed or lost tasks</li>
+            <li>Framework authentication</li>
+            <li>Framework authorization via Master ACL</li>
+            <li>Alternative task containerization</li>
+          </ul>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Resources</h2>
+          <br />
+          <ul>
+            <li><a href="http://github.com/mesosphere/RENDLER">RENDLER on GitHub</a></li>
+            <li><a href="https://raw.githubusercontent.com/apache/mesos/master/include/mesos/mesos.proto">mesos.proto</a></li>
+          </ul>
+        </section>
+
+      </div>
+
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.min.js"></script>
+
+    <script>
+
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: false,
+        progress: false,
+        history: true,
+        center: true,
+
+        theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Parallax scrolling
+        // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+        // parallaxBackgroundSize: '2100px 900px',
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+          { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
