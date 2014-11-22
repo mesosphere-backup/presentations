@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Mesosphere on AWS</title>
+
+		<meta name="description" content="Marathon and Apache Mesos for Amazon Web Services">
+		<meta name="author" content="Adam Bordelon">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/mesosphere.css" id="theme">
+
+    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+        <section data-background="assets/front-page.jpg">
+					<h1>Mesos on AWS</h1>
+					<h3>Multi-tenancy. Fault-tolerance. Scalability.</h3>
+					<p> <a href="mailto:adam@mesosphere.io">Adam Bordelon</a> </p>
+          <p> mesosphere.io </p>
+				</section>
+
+        <section data-background="assets/front-page.jpg">
+          <img src="assets/elastic.png"/>
+          <h2><a href="http://elastic.mesosphere.io">elastic.mesosphere.io</a></h2>
+					<aside class="notes"></aside>
+				</section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Mesos is...</h2>
+          <table>
+          <tr>
+            <td><h3><i class="fa fa-users"></i></h3></td><td><h3>Open Source Apache project</h3></td>
+          </tr><tr class="fragment">
+            <td><h3><i class="fa fa-sitemap"></i></h3></td><td><h3>Cluster Resource Manager</h3></td>
+          </tr><tr class="fragment">
+            <td><h3><i class="fa fa-signal"></i></h3></td><td><h3>Scalable to 10,000s of nodes</h3></td>
+          </tr><tr class="fragment">
+            <td><h3><i class="fa fa-code"></i></h3></td><td><h3>Distributed systems SDK</h3></td>
+          </tr>
+          </table>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <img width="80%" src="assets/mesos-silos.png"/>
+        </section>
+
+        <section>
+          <img width="80%" src="assets/mesos-static.png"/>
+        </section>
+
+        <section>
+          <img width="100%" src="assets/mesos-dynamic.png"/>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Mesos is another layer of abstraction</h2>
+          <h2 class="fragment">Below a PaaS</h2>
+          <h2 class="fragment">Above an IaaS</h2>
+					<aside class="notes"></aside>
+				</section>
+
+        <section data-background="assets/front-page.jpg">
+          <!--RaaS?-->
+          <h2>An abstraction that let us deal with a pool of resources</h2>
+          <h2 class="fragment">Instead of computers or VMs</h2>
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <img src="assets/stack.png"/>
+          <aside class="notes">
+          The OS for your Datacenter, with Mesos as the Kernel
+          Disk: S3, HDFS, etc.</aside>
+				</section>
+
+        <section>
+          <img src="assets/architecture-01.png"/>
+					<aside class="notes">
+          <p>Mesos consists of master and slave nodes which
+          assist an application in running tasks in a cluster.</p>
+
+          <p>In Mesos, we refer to applications as "frameworks"</p>
+
+          <p>Here, we have the Hadoop and Marathon frameworks interacting with
+          the Mesos master.</p>
+
+          <p>Tasks are the unit of execution and
+          the master schedules those tasks to run on slaves’ available
+          resources.<br/>
+
+          Mesos slaves use executors to coordinate the execution of tasks.
+          Each framework can define its own executors to specify how slaves
+          handle their tasks.</p>
+
+          </aside>
+				</section>
+
+        <section>
+          <img src="assets/isolation-01.png"/>
+					<aside class="notes">
+          <p>The mesos slave isolates executors and their running tasks in
+          light-weight containers using linux cgroups.
+          Here it is marked with the dotted line.</p>
+
+          <p>In this figure, a Hadoop TaskTracker executor and the Mesos default
+          executor are running Map/Reduce tasks and a ruby script
+          respectively.</p>
+
+          <p>Containers can grow and shrink as tasks run and complete.</p>
+          </aside>
+				</section>
+
+        <section>
+          <img src="assets/architecture-fail-master.png"/>
+					<aside class="notes"> </aside>
+				</section>
+
+        <section>
+          <img src="assets/architecture-fail-sched.png"/>
+					<aside class="notes"> </aside>
+				</section>
+
+        <section>
+          <img src="assets/architecture-fail-slave.png"/>
+					<aside class="notes"> </aside>
+				</section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>But like an OS kernel</h2>
+          <h2 class="fragment">You rarely interact directly with Mesos</h2>
+          <h2 class="fragment">You interact with Mesos Frameworks on top</h2>
+					<aside class="notes">
+          </aside>
+				</section>
+
+        <section>
+        <!--section data-background="assets/marathon-02.png"-->
+        <h2>Marathon: <br>for long-running services</h2>
+          <img src="assets/marathon-02.png"/>
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <h2>Chronos: Distributed cron<br/>with dependencies</h2>
+          <img src="assets/chronos.png" height="100%"/>
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <h2>The Mesos ecosystem is growing</h2>
+          <img src="assets/frameworks.png"/>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <img src="assets/languages.png">
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <img src="assets/companies.png"/>
+					<aside class="notes"></aside>
+				</section>
+
+        <!--section>
+          <table style="font-size: 4em;">
+          <tr>
+          <td style="text-align: center;">
+            <div>
+              <p><i class="fa fa-clock-o"></i></p>
+              <p style="font-size: 25px;">Immediate access to cluster resources</p>
+            </div>
+          </td><td style="text-align: center;">
+            <div class="fragment">
+              <p><i class="fa fa-exclamation-triangle"></i></p>
+              <p style="font-size: 25px;">Failures are more transparent</p>
+            </div>
+          </td><td style="text-align: center;">
+            <div class="fragment">
+              <p><i class="fa fa-random"></i></p>
+              <p style="font-size: 25px;">Tasks are not tied to a single server</p>
+            </div>
+          </td><td style="text-align: center;">
+            <div class="fragment">
+              <p><i class="fa fa-tasks"></i></p>
+              <p style="font-size: 25px;">Improved utilization</p>
+            </div>
+          </td>
+          </tr>
+          </table>
+					<aside class="notes">
+          <p>Developers no longer need to understand the process for requisitioning
+          hardware or servers.</p>
+
+          <p>Increased reliability: Hardware failures are more transparent to
+          developers, as services are automatically replaced when tasks are
+          lost. In other words, developers are no longer paged because of a
+          simple hardware failure.</p>
+
+          <p>Resource utilization is improved which directly corresponds with
+          reducing costs. Services which were previously running on
+          over-provisioned hardware now use the exact amount of resources
+          requested.</p>
+          </aside>
+				</section-->
+
+        <section>
+          <blockquote>
+            &ldquo;Ideally, [the idea is to] make it so a smaller number of engineers can have higher impact through automation on Mesos&rdquo;
+            <br>&mdash; Mike Curtis, Airbnb VP Engineering
+          </blockquote>
+          <img src="assets/airbnb.png" width="50%"/>
+        </section>
+
+        <section>
+          <img src="assets/airbnb-stack.png"/>
+					<aside class="notes">
+          <p>Airbnb now runs a multi-tenant cluster with Hadoop coexisting with
+          Chronos, Spark, and Storm.
+          No longer needing independent Hadoop clusters.  </p>
+
+          <p> It enables small teams to build distributed systems faster.  </p>
+
+          <p> And all of this runs on hundreds of Amazon EC2 instances.  </p>
+
+          <p>
+          Notably, multiple Hadoops, Spark/Shark, Presto, Redis, Rails, and much
+          more, all on top of Marathon and Chronos.
+          </p>
+
+          <p>
+          Airbnb’s Mesos cluster is used for building search indices, reorder
+          search rankings; Rental pricing suggestion system; Trust and safety,
+          fraud detection; Business analytics
+          </p>
+          </aside>
+				</section>
+
+        <section>
+          <blockquote>
+            &ldquo;Mesos is the cornerstone of our elastic compute
+infrastructure &mdash; it's how we build all our new services and is critical for
+Twitter's continued success at scale. It's one of the primary keys to our data
+center efficiency.&rdquo;<br> &mdash; Chris Fry, Former SVP of Engineering at Twitter
+          </blockquote>
+          <img src="assets/twitter.png" width="20%"/>
+					<aside class="notes">
+          <p>Mesos allows services to scale to thousands of bare-metal machines and
+          leverage a shared pool of servers across data centers
+          Twitter is in fact running the largest-known production Mesos
+          cluster.</p>
+
+          <p>As Chris said, “Mesos has transformed the way developers think about
+          launching new services at Twitter. Instead of thinking about static
+          machines, engineers think about resources like CPU, memory and disk.
+          The result has been a reduction in the time between prototyping and
+          launching new services.”</p>
+          </aside>
+				</section>
+
+        <section>
+          <h2>Life is better with Mesos</h2>
+          <table>
+          <tr>
+            <td><h3><i class="fa fa-sitemap"></i></h3></td><td><h3>Multi-tenancy</h3></td>
+          </tr><tr class="fragment">
+            <td><h3><i class="fa fa-tasks"></i></h3></td><td><h3>Improved resource utilization</h3></td>
+          </tr><tr class="fragment">
+            <td><h3><i class="fa fa-columns"></i></h3></td><td><h3>Resource Isolation</h3></td>
+          </tr><tr class="fragment">
+            <td><h3><i class="fa fa-bomb"></i></h3></td><td><h3>Fault-tolerance</h3></td>
+          </tr><tr class="fragment">
+            <td><h3><i class="fa fa-signal"></i></h3></td><td><h3>Easy scaling</h3></td>
+          </tr>
+          </table>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <h4><a href="http://mesosphere.io/learn">http://mesosphere.io/learn</a></h4>
+          <iframe style="width: 100%; height: 20em;" src="http://mesosphere.io/learn"></iframe>
+					<aside class="notes">
+          <p>Last but not least, we have a couple of suggestions for those of you
+          who started a cluster in the beginning of this talk.</p>
+
+          <p>The email you got when you provisioned your Elastic Mesos cluster will
+          have links to tons of personalized tutorials for running spark, storm,
+          hadoop, aurora and much more.</p>
+          </aside>
+				</section>
+
+        <section data-background="assets/front-page.jpg">
+          <a href="http://events.linuxfoundation.org/events/mesoscon/">
+          <img width="90%" src="assets/mesoscon-banner-small.png"/>
+          </a>
+					<aside class="notes"></aside>
+				</section>
+
+        <section data-background="assets/sf.jpg">
+          <h2>Thanks!</h2>
+          <h3>Join the Mesos community</h3>
+
+          <table>
+          <tr>
+          <td style="vertical-align: top;">
+          <img src="assets/mesos.png"/></td>
+          <td style="vertical-align: top;">
+            <p><a href="http://mesos.apache.org">http://mesos.apache.org</a></p>
+            <p><a href="mailto:user@mesos.apache.org">user@,</a> <a href="mailto:dev@mesos.apache.org">dev@mesos.apache.org</a></p>
+            <p><a href="https://github.com/apache/mesos/">https://github.com/apache/mesos/</a></p>
+            <p><a href="http://mesosphere.io">http://mesosphere.io</a></p>
+          </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <p>&nbsp;</p>
+              <p>Get Mesos packages: <a href="http://mesosphere.io/downloads">http://mesosphere.io/downloads</a></p>
+              <p>Get hired: <a href="http://mesosphere.io/jobs">http://mesosphere.io/jobs</a></p>
+            </td>
+          </tr>
+          </table>
+
+          <aside class="notes">I have business cards and lots of stickers!</aside>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: false,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+    <script>
+      window.analytics||(window.analytics=[]),window.analytics.methods=["identify","track","trackLink","trackForm","trackClick","trackSubmit","page","pageview","ab","alias","ready","group","on","once","off"],window.analytics.factory=function(t){return function(){var a=Array.prototype.slice.call(arguments);return a.unshift(t),window.analytics.push(a),window.analytics}};for(var i=0;i<window.analytics.methods.length;i++){var method=window.analytics.methods[i];window.analytics[method]=window.analytics.factory(method)}window.analytics.load=function(t){var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"===document.location.protocol?"https://":"http://")+"d2dq2ahtl5zl1z.cloudfront.net/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n)},window.analytics.SNIPPET_VERSION="2.0.8",
+      window.analytics.load("7sgtwqvuai");
+      window.analytics.page();
+    </script>
+
+	</body>
+</html>
