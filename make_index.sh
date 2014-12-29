@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -o nounset
+set -o errexit
+
 # find index.html files, reduce to relative directory location
 links=$(find . -name index.html|sed -e 's+\./++g'|sed -e 's+/index.html++g')
 
