@@ -80,7 +80,7 @@
             Mesos arch
           Hadoop/YARN arch
 
-          Problem/Scenario: 
+          Problem/Scenario:
             !Static partitioning (show marathon, etc.)
             Dynamic sharing
             !3x old static/dynamic slides?
@@ -107,12 +107,16 @@ Mesos vs. YARN?
 * tight integration w/ resource isolation using containers, cgroups, namespaces, docker
 * designed with a two-level scheduling model (dive into resource allocations/offers)
   - flexible, can be optimistic (Omega), pessimistic (like YARN)
-- faster task launch time 
+- faster task launch time
   - fine-grained task running, vs. running containers (no llamas)
 - designed this way from the start, instead of adapting a batch-only model to handle other workloads
-~ Mesos is fault-tolerant everywhere, (YARN still working on it) 
+~ Mesos is fault-tolerant everywhere, (YARN still working on it)
   - Slave FT is more important for long-running service loads
 - Mesos master has no/soft state, less data to persist, fast failover
+...
+Slider: Like a baby Marathon (with persistence preference)
+Isolation: Now with CPU+Mem (vs. +Disk+Net, DRF)
+YARN-NodeLabels: Attributes+Reservations
         -->
 
         <section data-background="assets/front-page.jpg">
@@ -136,16 +140,17 @@ Mesos vs. YARN?
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <h2>Mesos is more than Yet Another Resource Negotiator</h2>
+        <h2>Mesos is more than</h2>
+        <h3><u>Y</u>et <u>A</u>nother <u>R</u>esource <u>N</u>egotiator</h3>
           <table>
           <tr>
             <td><h3><i class="fa fa-tasks"></i></h3></td><td><h3>Long-running services; real-time jobs</h3></td>
           </tr><tr>
-            <td><h3><i class="fa fa-columns"></i></h3></td><td><h3>Native Docker; 4+ years of containers; isolate cpu/mem/disk/net</h3></td>
+            <td><h3><i class="fa fa-columns"></i></h3></td><td><h3>Native Docker; cgroups for years; Isolate cpu/mem/disk/net/other</h3></td>
           </tr><tr>
-            <td><h3><i class="fa fa-code"></i></h3></td><td><h3>Distributed systems SDK <br>~200 loc for a new app</h3></td>
+            <td><h3><i class="fa fa-file-code-o"></i></h3></td><td><h3>Distributed systems SDK; <br>~200 loc for a new app</h3></td>
           </tr><tr>
-            <td><h3><i class="fa fa-code"></i></h3></td><td><h3>Written in C++, apps in any language</h3></td>
+            <td><h3><i class="fa fa-code"></i></h3></td><td><h3>Core written in C++ for performance, Apps in any language</h3></td>
           </tr>
           </table>
           <aside class="notes"></aside>
@@ -157,32 +162,34 @@ Mesos vs. YARN?
 					<aside class="notes"></aside>
 				</section>
 
+        <!--
         <section data-background="assets/front-page.jpg">
           <h2>[DCOS stack image]</h2>
           <aside class="notes">
           The OS for your Datacenter, with Mesos as the Kernel
           Disk: S3, HDFS, etc.</aside>
 				</section>
+        -->
 
-        <section data-background="assets/front-page.jpg">
+        <section>
           <img src="assets/architecture-01.png"/>
 					<aside class="notes">
           </aside>
 				</section>
 
         <section>
-          <img width="500%" src="http://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/yarn_architecture.gif"/>
+          <img width="500%" src="assets/yarn_architecture.gif"/>
           <aside class="notes">
           </aside>
 				</section>
 
         <section>
-          <img src="https://raw.githubusercontent.com/mesos/myriad/phase1/docs/images/static-partition.png">
+          <img src="assets/static-partition.png">
           <aside class="notes"></aside>
         </section>
 
-        <section data-background="assets/front-page.jpg">
-          <img src="https://raw.githubusercontent.com/mesos/myriad/phase1/docs/images/generic-nodes.png">
+        <section>
+          <img src="assets/generic-nodes.png">
           <aside class="notes"></aside>
         </section>
 
@@ -199,7 +206,14 @@ Mesos vs. YARN?
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <img src="https://github.com/mesos/myriad/raw/phase1/docs/images/high-level-architecture.png">
+          <img src="assets/high-level-architecture.png">
+          <aside class="notes">
+          SOA web-services, Jenkins/build-farm, memcache, cron-jobs, shell scripts, Kubernetes, Cassandra, (HDFS), ElasticSearch, MPI/HPC jobs, etc.
+          </aside>
+        </section>
+
+        <section>
+          <img width="70%" src="assets/how-it-works.png">
           <aside class="notes"></aside>
         </section>
 
@@ -207,52 +221,47 @@ Mesos vs. YARN?
           <h2>History of Myriad</h2>
           <table>
           <tr>
-            <td><h3><i class="fa fa-calendar"></i></h3></td><td><h3>Mohit Soni from eBay builds prototype, presents at MesosCon</h3></td>
+            <td><h3><i class="fa fa-lightbulb-o"></i></h3></td><td><h3>Mohit Soni from eBay builds prototype, presents at MesosCon</h3></td>
           </tr><tr>
-          <td><h3><i class="fa fa-signal"></i></h3></td><td><h3>Santosh Marella from MapR <br>attends Mesosphere HackWeek, <br>builds independent prototype</h3></td>
+            <td><h3><i class="fa fa-flask"></i></h3></td><td><h3>Santosh Marella from MapR <br>attends Mesosphere HackWeek, <br>builds independent prototype</h3></td>
           </tr><tr>
-            <td><h3><i class="fa fa-tasks"></i></h3></td><td><h3>Adam introduces Mohit and Santosh, both prototypes merged together</h3></td>
+            <td><h3><i class="fa fa-comments-o"></i></h3></td><td><h3>Adam introduces Mohit and Santosh, both prototypes merged together</h3></td>
           </tr><tr>
-            <td><h3><i class="fa fa-code"></i></h3></td><td><h3>Myriad presented to Apache Incubator, accepting new contributors</h3></td>
+            <td><h3><i class="fa fa-group"></i></h3></td><td><h3>Myriad presented to <a href="https://wiki.apache.org/incubator/MyriadProposal">Apache Incubator</a>, accepting new contributors</h3></td>
           </tr>
           </table>
           <aside class="notes"></aside>
         </section>
 
         <section>
-          <img width="60%" src="https://github.com/mesos/myriad/raw/phase1/docs/images/how-it-works.png">
-          <aside class="notes"></aside>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-          <h2>Myriad makes Mesos better</h2>
+          <h2>Myriad improves Mesos</h2>
           <table>
           <tr>
-            <td><h3><i class="fa fa-signal"></i></h3></td><td><h3>Tighter integration with Hadoop frameworks, like HBase, Hive, Pig</h3></td>
+            <td><h3><i class="fa fa-cogs"></i></h3></td><td><h3>Tighter integration with Hadoop frameworks like HBase, Hive, Pig</h3></td>
           </tr><tr>
-            <td><h3><i class="fa fa-signal"></i></h3></td><td><h3>Borrow resources from Hadoop when tier-1 services require more</h3></td>
+            <td><h3><i class="fa fa-sliders fa-rotate-90"></i></h3></td><td><h3>Borrow resources from Hadoop when traffic spikes for tier-1 services</h3></td>
           </tr><tr>
-            <td><h3><i class="fa fa-tasks"></i></h3></td><td><h3>Backfill unused resource capacity with best-effort Hadoop jobs</h3></td>
+            <td><h3><i class="fa fa-sliders fa-rotate-270"></i></h3></td><td><h3>Backfill unused resource capacity with best-effort Hadoop jobs</h3></td>
           </tr><tr>
-            <td><h3><i class="fa fa-code"></i></h3></td><td><h3>No Mesos code changes necessary</h3></td>
+            <td><h3><i class="fa fa-code-fork"></i></h3></td><td><h3>No Mesos code changes necessary</h3></td>
           </tr>
           </table>
           <aside class="notes"></aside>
         </section>
 
         <section>
-          <h2>Myriad makes Hadoop better</h2>
+          <h2>Myriad improves Hadoop</h2>
           <table>
           <tr>
             <td><h3><i class="fa fa-signal"></i></h3></td><td><h3>Elastic scaling</h3></td>
           </tr><tr>
-            <td><h3><i class="fa fa-columns"></i></h3></td><td><h3>Multiple isolated Hadoop clusters sharing resources, DFS</h3></td>
+            <td><h3><i class="fa fa-bomb"></i></h3></td><td><h3>Fault-tolerant: Maintain NM capacity</h3></td>
           </tr><tr>
-            <td><h3><i class="fa fa-tasks"></i></h3></td><td><h3>Improved resource utilization, sharing resources with non-Hadoop workloads</h3></td>
+            <td><h3><i class="fa fa-tasks"></i></h3></td><td><h3>Share resources with other workloads, improve resource utilization</h3></td>
           </tr><tr>
-            <td><h3><i class="fa fa-bomb"></i></h3></td><td><h3>Fault-tolerance: Auto-recover a failed RM/NM</h3></td>
+            <td><h3><i class="fa fa-columns"></i></h3></td><td><h3>Multiple isolated Hadoop clusters sharing node resources and DFS</h3></td>
           </tr><tr>
-            <td><h3><i class="fa fa-code"></i></h3></td><td><h3>No YARN/Hadoop code changes necessary</h3></td>
+            <td><h3><i class="fa fa-code-fork"></i></h3></td><td><h3>No YARN/Hadoop code changes</h3></td>
           </tr>
           </table>
           <aside class="notes"></aside>
@@ -264,16 +273,13 @@ Mesos vs. YARN?
           <table>
           <tr>
           <td style="vertical-align: top;">
-          <img width=150 src="http://s5.favim.com/orig/71/flying-art-birds-cute-Favim.com-669833.jpg"/></td>
+          <img width=150 src="assets/flying-art-birds-cute-Favim.com-669833.jpg"/></td>
           <td style="vertical-align: middle;">
             <p><a href="https://github.com/mesos/myriad">https://github.com/mesos/myriad</a></p>
             <p><a href="https://wiki.apache.org/incubator/MyriadProposal">https://wiki.apache.org/incubator/MyriadProposal</a></p>
             <p><a href="http://lmgtfy.com/?q=myriad+mesos+yarn">http://lmgtfy.com/?q=myriad+mesos+yarn</a></p>
           </td>
           </tr>
-          </table>
-
-          <table>
           <tr>
           <td style="vertical-align: top;">
           <img src="assets/mesos.png"/></td>
