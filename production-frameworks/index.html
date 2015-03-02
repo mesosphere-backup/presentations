@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Building Production Frameworks</title>
+
+		<meta name="description" content="Building Production Frameworks">
+		<meta name="author" content="Adam, Alex, Connor ">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/mesosphere.css" id="theme">
+
+    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+        <section data-background="assets/front-page.jpg">
+          <h1>Building Production Frameworks</h1>
+          <p>
+            <a href="mailto:adam@mesosphere.io">Adam@</a>
+            <a href="mailto:alex@mesosphere.io">Alex@</a>
+            <a href="mailto:connor@mesosphere.io">Connor@</a>
+          </p>
+				</section>
+
+        <!--
+            AlexR's Topics
+              Resource Reservations
+              Failover handling
+              Framework messages
+        -->
+
+        <section data-background="assets/front-page.jpg">
+          <h2>I got my tasks running.</h2>
+          <h2>What else is there to learn?</h2>
+          <!--!!!TODO- High-level teasers
+          Authentication, ACLs,
+          Scheduler HA, Reconciliation, State Abstraction
+          Reservations, Persistence,
+          Status Updates, Framework Messages,
+          DCOS Integration-->
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Agenda</h2>
+          <h3><ul>
+            <li>FrameworkInfo
+            <li>Scheduler API
+            <li>Executors API
+            <li>Tips and Warnings
+          </ul></h3>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+        <h2>FrameworkInfo tells Mesos how to treat the Framework</h2>
+          <table style="width: 100%;">
+            <tr>
+              <td><pre><code class="protobuf" data-trim>
+message FrameworkInfo {
+  required string user = 1;
+  required string name = 2;
+  optional FrameworkID id = 3;
+  optional double failover_timeout = 4 [default = 0.0];
+  optional bool checkpoint = 5 [default = false];
+  optional string role = 6 [default = "*"];
+  optional string hostname = 7;
+  optional string principal = 8;
+  optional string webui_url = 9;
+}
+        </code></pre></td>
+        </tr></table>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>FrameworkInfo Details</h2>
+          <!--!!!TODO- (each row is probably a new slide)
+          user, role (+master-roles/weights), reservations?
+          name, webUI, Hostname
+          HA: checkpointing, failover-timeout, fwkID
+          Principal (ACLs)-->
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>SchedulerDriver</h2>
+          <!--!!!TODO-
+          definition/comment,
+          Credential-->
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <!-- !!!TODO Update -->
+          <h2>Scheduler calls</h2>
+          <table style="width: 100%;">
+            <tr>
+              <td><i class="fa fa-recycle"></i></td><td>Lifecycle management</td>
+              <td>Register, Reregister, Unregister</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-hdd-o"></i></td><td> Resource allocation
+              <td>Request, Decline, Revive</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-tasks"></i></td><td> Task management</td>
+              <td>Launch, Kill, Reconcile</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-exchange"></i></td><td> Communication</td>
+              <td>sendFrameworkMessage</td>
+            </tr>
+          </table>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <!-- !!!TODO Update -->
+          <h2>Scheduler events</h2>
+          <table style="width: 100%;">
+            <tr>
+              <td><i class="fa fa-recycle"></i></td><td>Lifecycle management</td>
+              <td>Registered, Reregistered</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-hdd-o"></i></td><td> Resource allocation
+              <td>Offers, Rescind</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-tasks"></i></td><td> Task management</td>
+              <td>TaskStatus</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-exchange"></i></td><td> Communication</td>
+              <td>frameworkMessage</td>
+            </tr>
+          </table>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Framework Registration</h2>
+          <!--!!!TODO- func prototypes, parameters
+          Calls: (re)register, unregister, 
+          Events: registered/reregistered/disconnected/error-->
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Resource Offers</h2>
+          <!--!!!TODO-
+          ResourceInfo,
+          Partial Offers,
+          Decline,
+          Persistent Volumes: what, how, why-->
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <!-- !!!TODO Update? -->
+          <h3>Offers are consumed by launching on or declining offers</h3>
+          <p></p>
+          <pre><code class="python" data-trim>
+class MyScheduler:
+  ...
+    def resourceOffers(self, driver, offers):
+      ...
+      driver.launchTasks(offer.id, tasks)
+      ...
+      driver.declineOffer(offer.id)
+          </code></pre>
+          <aside class="notes">Multiple tasks can launch on a single offer.<br>
+          Not all resources in an offer need to be used and remainder will be
+          reoffered, potentially to other frameworks.</aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Launch + Kill Tasks</h2>
+          <!--!!!TODO-
+          Launch params, Kill params
+          ExecutorInfo, TaskInfo
+          Kill as separate slide?-->
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+        <!-- !!!TODO Update Command/Container/etcInfo-->
+        <h2>TaskInfo describes <u>how</u> to run a task</h2>
+          <table style="width: 100%;">
+            <tr>
+              <td><pre><code class="protobuf" data-trim>
+message TaskInfo {
+  required string name = 1; 
+  required TaskID task_id = 2; 
+  required SlaveID slave_id = 3; 
+  repeated Resource resources = 4; 
+  optional ExecutorInfo executor = 5; 
+  optional CommandInfo command = 7; 
+  optional ContainerInfo container = 9; 
+  optional bytes data = 6; 
+  optional HealthCheck health_check = 8; 
+  optional Labels labels = 10;
+  optional DiscoveryInfo discovery = 11;
+}
+        </code></pre></td>
+        <td><pre><code class="protobuf" data-trim>
+message CommandInfo {
+  required string value;
+  repeated URI uris;
+  optional Environment environment;
+  optional string user;
+  optional bool shell;
+  repeated string arguments;
+  //deprecated ContainerInfo container;
+}
+message ContainerInfo {
+  required Type type;
+  repeated Volume volumes;
+  optional DockerInfo docker; //image string
+}
+message Volume {
+  required string container_path;
+  optional string host_path;
+  required Mode mode; //RW,RO
+}
+        </code></pre></td>
+        </tr></table>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+        <h3>Status updates describe the task life cycle</h3>
+        <p></p>
+        <pre><code class="python" data-trim>
+class MyScheduler:
+  ...
+  def statusUpdate(self, driver, update):
+    ...
+    # Where update.state can be
+    # TASK_STAGING = 6; // Initial state. Framework status updates should not use. 
+    # TASK_STARTING = 0; 
+    # TASK_RUNNING = 1; 
+    # TASK_FINISHED = 2; // TERMINAL. The task finished successfully.
+    # TASK_FAILED = 3; // TERMINAL. The task failed to finish successfully.
+    # TASK_KILLED = 4; // TERMINAL. The task was killed by the executor.
+    # TASK_LOST = 5; // TERMINAL. The task failed but can be rescheduled.
+    # TASK_ERROR = 7; // TERMINAL. The task description contains an error.
+        </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>More about Status Updates</h2>
+          <!--!!!TODO-
+          Handling Task Failures,
+          SlaveLost (w/ subsequent Task_Lost's), ExecutorLost(ignore)
+          Storing State: Hashmap, StateMachine, State Abstraction-->
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Task Reconciliation</h2>
+          <!--!!!TODO-
+          Why?
+          BenM's Algorithm, better in 0.21+-->
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Framework Messages</h2>
+          <!--!!!TODO-
+          sched-side, exec-side
+          Make them reliable with queue, ack, retry-->
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Executors</h2>
+          <!--!!!TODO-
+          ExecutorDriver, Calls, Events-->
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <!-- !!!TODO Update -->
+          <h2>Executor events</h2>
+          <table style="width: 100%;">
+            <tr>
+              <td><i class="fa fa-recycle"></i></td><td>Lifecycle management</td>
+              <td>Registered, Reregistered, Disconnected, Shutdown</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-tasks"></i></td><td> Task management</td>
+              <td>launchTask, killTask</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-exchange"></i></td><td> Communication</td>
+              <td>frameworkMessage</td>
+            </tr>
+          </table>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <!-- !!!TODO Update -->
+          <h2>Executor calls</h2>
+          <table style="width: 100%;">
+            <tr>
+              <td><i class="fa fa-tasks"></i></td><td> Task management</td>
+              <td>sendStatusUpdate</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-exchange"></i></td><td> Communication</td>
+              <td>sendFrameworkMessage</td>
+            </tr>
+          </table>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>DCOS Integration</h2>
+          <!--!!!TODO-
+          Able to launch Scheduler via Marathon (maybe Dockerized)
+          json and binary/uri published to universe
+          DCOS CLI integration: scale up/down, config, etc.-->
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Tips and Warnings</h2>
+          <!--!!!TODO-
+          No blocking in sched/exec callbacks
+          SchedulerDriver* will not change between SD.start->join(return), included as convenience
+          No state in sandbox
+          No implicit deps outside sandbox, node constraints
+            Exec/task binaries/data via HDFS/etc, no public internet
+          Allow co-tenancy of multiple execs on same machine
+            No static ports
+          Know and publish (& verify?) Mesos version compatibility
+          Don't hardcode params that should be configurable
+          Pure bindings? Check out mesos-go, pesos, jesos-->
+          <aside class="notes"></aside>
+        </section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: false,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+    <!--script>
+      window.analytics||(window.analytics=[]),window.analytics.methods=["identify","track","trackLink","trackForm","trackClick","trackSubmit","page","pageview","ab","alias","ready","group","on","once","off"],window.analytics.factory=function(t){return function(){var a=Array.prototype.slice.call(arguments);return a.unshift(t),window.analytics.push(a),window.analytics}};for(var i=0;i<window.analytics.methods.length;i++){var method=window.analytics.methods[i];window.analytics[method]=window.analytics.factory(method)}window.analytics.load=function(t){var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"===document.location.protocol?"https://":"http://")+"d2dq2ahtl5zl1z.cloudfront.net/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n)},window.analytics.SNIPPET_VERSION="2.0.8",
+      window.analytics.load("7sgtwqvuai");
+      window.analytics.page();
+    </script-->
+
+	</body>
+</html>
