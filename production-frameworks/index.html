@@ -275,13 +275,13 @@ message FrameworkInfo {
           <h2>Resource Offers</h2>
           <pre><code class="protobuf" data-trim>
 message Offer {
-  required OfferID id = 1; 
-  required FrameworkID framework_id = 2; 
-  required SlaveID slave_id = 3; 
-  required string hostname = 4; 
-  repeated Resource resources = 5; 
-  repeated Attribute attributes = 7; 
-  repeated ExecutorID executor_ids = 6; 
+  required OfferID id = 1;
+  required FrameworkID framework_id = 2;
+  required SlaveID slave_id = 3;
+  required string hostname = 4;
+  repeated Resource resources = 5;
+  repeated Attribute attributes = 7;
+  repeated ExecutorID executor_ids = 6;
 }
           </code></pre>
           <pre><code class="protobuf" data-trim>
@@ -338,15 +338,15 @@ class MyScheduler:
             <tr>
               <td><pre><code class="protobuf" data-trim>
 message TaskInfo {
-  required string name = 1; 
-  required TaskID task_id = 2; 
-  required SlaveID slave_id = 3; 
-  repeated Resource resources = 4; 
-  optional ExecutorInfo executor = 5; 
-  optional CommandInfo command = 7; 
-  optional ContainerInfo container = 9; 
-  optional bytes data = 6; 
-  optional HealthCheck health_check = 8; 
+  required string name = 1;
+  required TaskID task_id = 2;
+  required SlaveID slave_id = 3;
+  repeated Resource resources = 4;
+  optional ExecutorInfo executor = 5;
+  optional CommandInfo command = 7;
+  optional ContainerInfo container = 9;
+  optional bytes data = 6;
+  optional HealthCheck health_check = 8;
   optional Labels labels = 10;
   optional DiscoveryInfo discovery = 11;
 }
@@ -378,7 +378,7 @@ message Volume {
 <!-- Start: Alex's Section -->
 
         <section data-background="assets/front-page.jpg">
-          <h2>Handling Failure: Keeping the Scheduler up</h2>
+          <h2>Handling Failures: Keeping the Scheduler up</h2>
 
           <ul>
             <li>Run your scheduler with a meta-framework</li>
@@ -391,28 +391,30 @@ message Volume {
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <h2>Persistent Volumes</h2>
-          <!--!!!TODO- 
-            Persistent Volumes: what, how, why, 
-            AcceptOffer/Operation
-          -->
-        </section>
-
-        <section data-background="assets/front-page.jpg">
           <h2>Framework Registration</h2>
-          <p>Calls</p>
-          <ul>
-            <li>Register</li>
-            <li>Re-register</li>
-            <li>Unregister</li>
-          </ul>
-          <p>Events</p>
-          <ul>
-            <li>Registered</li>
-            <li>Reregistered</li>
-            <li>Disconnected</li>
-            <li>Error</li>
-          </ul>
+
+          <table style="width: 100%;">
+            <tr>
+              <td>
+                <p>Calls</p>
+                <ul>
+                    <li>Register</li>
+                    <li>Re-register</li>
+                    <li>Unregister</li>
+                </ul>
+              </td>
+              <td>
+                <p>Events</p>
+                <ul>
+                    <li>Registered</li>
+                    <li>Reregistered</li>
+                    <li>Disconnected</li>
+                    <li>Error</li>
+                </ul>
+              </td>
+            </tr>
+          </table>
+
           <aside class="notes"></aside>
         </section>
 
@@ -424,7 +426,7 @@ class MyScheduler:
   def statusUpdate(self, driver, update):
     ...
     # Where update.state can be
-    # TASK_STAGING = 6; // Initial state. Framework status updates should not use. 
+    # TASK_STAGING = 6; // Initial state. Framework status updates should not use.
     # TASK_STARTING = 0;
     # TASK_RUNNING = 1;
     # TASK_FINISHED = 2; // TERMINAL. The task finished successfully.
@@ -436,13 +438,43 @@ class MyScheduler:
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <h2>Handling Failure: Status Updates</h2>
-          <ul>
-            <li>Interplay with the <b>slaveLost</b> callback</li>
-            <li>Source</li>
-            <li>Reason</li>
-          </ul>
-          <aside class="notes"></aside>
+        <h3>TASK_KILLED</h3>
+        <ul>
+            <li>Explicit (by slave or executor in respond to a scheduler's request</li>
+            <li>Implicit (together with the framework, e.g. on failover timeout or master exiting)</li>
+        </ul>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+        <h3>TASK_ERROR</h3>
+        <ul>
+            <li>New state</li>
+            <li>Malformed task (bad user, ID is not uniques, bad slave ID, etc.)</li>
+        </ul>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+        <h3>TASK_FAILED</h3>
+        <ul>
+            <li>Validation OK</li>
+            <li>Failure prior to start or during execution (OOM event in executor, non-zero exit status, etc.)</li>
+        </ul>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+        <h3>TASK_LOST</h3>
+        <ul>
+            <li>Validation OK</li>
+            <li>Failure prior to start or during execution (slave is disconnected at launch time, task is unknown during reconciliation, slave removed, executor is terminating, etc)</li>
+        </ul>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+        <h3>TASK_FAILED vs. TASK_LOST</h3>
+        <ul>
+            <li>Failed -> re-launching it most probably will result in TASK_FAILED</li>
+            <li>List -> task may succeed after re-launch</li>
+        </ul>
         </section>
 
         <section data-background="assets/front-page.jpg">
