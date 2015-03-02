@@ -53,13 +53,6 @@
           </p>
 				</section>
 
-        <!--
-            AlexR's Topics
-              Resource Reservations
-              Failover handling
-              Framework messages
-        -->
-
         <section data-background="assets/front-page.jpg">
           <h2>I got my tasks running.</h2>
           <h2>What else is there to learn?</h2>
@@ -117,6 +110,7 @@
           <aside class="notes"></aside>
         </section>
 
+<!-- Patterns -->
         <section data-background="assets/front-page.jpg">
           <h2>Framework Pattern: Resource Math</h2>
           <ul>
@@ -167,24 +161,7 @@
           <aside class="notes"></aside>
         </section>
 
-        <section data-background="assets/front-page.jpg">
-          <h2>API Overview: Scheduler</h2>
-          <ul>
-            <li>TODO(CD)</li>
-          </ul>
-          <aside class="notes"></aside>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-          <h2>API Overview: Executor</h2>
-          <ul>
-            <li>TODO(CD)</li>
-          </ul>
-          <aside class="notes"></aside>
-        </section>
-
-        <!-- End: Connor's Section -->
-
+<!-- API Overview -->
         <section data-background="assets/front-page.jpg">
         <h2>FrameworkInfo tells Mesos how to treat the Framework</h2>
           <table style="width: 100%;">
@@ -203,15 +180,10 @@ message FrameworkInfo {
 }
         </code></pre></td>
         </tr></table>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-          <h2>FrameworkInfo Details</h2>
-          <!--!!!TODO- (each row is probably a new slide)
+        <aside class="notes">
           user, role (+master-roles/weights), reservations?
           name, webUI, Hostname
-          HA: checkpointing, failover-timeout, fwkID-->
-          <aside class="notes"></aside>
+        </aside>
         </section>
 
         <section data-background="assets/front-page.jpg">
@@ -261,13 +233,43 @@ message FrameworkInfo {
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <h2>Framework Registration</h2>
-          <!--!!!TODO- func prototypes, parameters
-          Calls: (re)register, unregister, 
-          Events: registered/reregistered/disconnected/error-->
-          <aside class="notes"></aside>
+          <!-- !!!TODO Update -->
+          <h2>Executor events</h2>
+          <table style="width: 100%;">
+            <tr>
+              <td><i class="fa fa-recycle"></i></td><td>Lifecycle management</td>
+              <td>Registered, Reregistered, Disconnected, Shutdown</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-tasks"></i></td><td> Task management</td>
+              <td>launchTask, killTask</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-exchange"></i></td><td> Communication</td>
+              <td>frameworkMessage</td>
+            </tr>
+          </table>
         </section>
 
+        <section data-background="assets/front-page.jpg">
+          <!-- !!!TODO Update -->
+          <h2>Executor calls</h2>
+          <table style="width: 100%;">
+            <tr>
+              <td><i class="fa fa-tasks"></i></td><td> Task management</td>
+              <td>sendStatusUpdate</td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-exchange"></i></td><td> Communication</td>
+              <td>sendFrameworkMessage</td>
+            </tr>
+          </table>
+        </section>
+
+        <!-- End: Connor's Section -->
+
+<!-- TODO: ADAM -->
+<!-- Resource Offers, Reservations, Launching Tasks -->
         <section data-background="assets/front-page.jpg">
           <h2>Resource Offers</h2>
           <!--!!!TODO-
@@ -350,6 +352,16 @@ message Volume {
         </tr></table>
         </section>
 
+<!--!!!AlexR-->
+<!-- Framework/Task Lifecycle/Failover -->
+        <section data-background="assets/front-page.jpg">
+          <h2>Framework Registration</h2>
+          <!--!!!TODO- func prototypes, parameters
+          Calls: (re)register, unregister, 
+          Events: registered/reregistered/disconnected/error-->
+          <aside class="notes"></aside>
+        </section>
+
         <section data-background="assets/front-page.jpg">
         <h3>Status updates describe the task life cycle</h3>
         <p></p>
@@ -387,6 +399,7 @@ class MyScheduler:
           <aside class="notes"></aside>
         </section>
 
+<!-- Advanced Features -->
         <section data-background="assets/front-page.jpg">
           <h2>Framework Messages</h2>
           <!--!!!TODO-
@@ -395,47 +408,7 @@ class MyScheduler:
           <aside class="notes"></aside>
         </section>
 
-        <section data-background="assets/front-page.jpg">
-          <h2>Executors</h2>
-          <!--!!!TODO-
-          ExecutorDriver, Calls, Events-->
-          <aside class="notes"></aside>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-          <!-- !!!TODO Update -->
-          <h2>Executor events</h2>
-          <table style="width: 100%;">
-            <tr>
-              <td><i class="fa fa-recycle"></i></td><td>Lifecycle management</td>
-              <td>Registered, Reregistered, Disconnected, Shutdown</td>
-            </tr>
-            <tr>
-              <td><i class="fa fa-tasks"></i></td><td> Task management</td>
-              <td>launchTask, killTask</td>
-            </tr>
-            <tr>
-              <td><i class="fa fa-exchange"></i></td><td> Communication</td>
-              <td>frameworkMessage</td>
-            </tr>
-          </table>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-          <!-- !!!TODO Update -->
-          <h2>Executor calls</h2>
-          <table style="width: 100%;">
-            <tr>
-              <td><i class="fa fa-tasks"></i></td><td> Task management</td>
-              <td>sendStatusUpdate</td>
-            </tr>
-            <tr>
-              <td><i class="fa fa-exchange"></i></td><td> Communication</td>
-              <td>sendFrameworkMessage</td>
-            </tr>
-          </table>
-        </section>
-
+<!-- ADAM -->
         <section data-background="assets/front-page.jpg">
           <h2>Framework Authentication</h2>
               <pre><code class="C++" data-trim>
