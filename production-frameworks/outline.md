@@ -67,6 +67,8 @@
 - Task reconciliation
   - Recommended [algorithm](https://gist.github.com/bmahler/18409fc4f052df43f403#algorithm)
 
+- Task health checks
+
 ## Framework Security
 
 - Authentication with the Mesos master
