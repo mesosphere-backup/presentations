@@ -56,25 +56,26 @@
         <section data-background="assets/front-page.jpg">
           <h2>I got my tasks running.</h2>
           <h2>What else is there to learn?</h2>
-          <!--!!!TODO- High-level teasers
-          Authentication, ACLs,
-          Scheduler HA, Reconciliation, State Abstraction
-          Reservations, Persistence,
-          Status Updates, Framework Messages,
-          DCOS Integration-->
+          <ul class="fragment">
+            <li> Roles, Reservations, Persistence
+            <li> Scheduler HA, Reconciliation, State Abstraction
+            <li> Status Updates, Framework Messages
+            <li> Authentication, ACLs
+            <li> DCOS Integration, 1.0 HTTP API
+          </ul>
           <aside class="notes"></aside>
         </section>
 
         <section data-background="assets/front-page.jpg">
           <h2>Agenda</h2>
           <ul>
-            <li class="fragment">Intro to Writing Frameworks</li>
-            <li class="fragment">Framework Patterns</li>
-            <li class="fragment">API Overview</li>
-            <li class="fragment">Resource Allocation</li>
-            <li class="fragment">Handling Failure</li>
-            <li class="fragment">Security</li>
-            <li class="fragment">Other Topics</li>
+            <li>Intro to Writing Frameworks</li>
+            <li>Framework Patterns</li>
+            <li>API Overview</li>
+            <li>Resource Allocation</li>
+            <li>Handling Failure</li>
+            <li>Security</li>
+            <li>Other Topics</li>
           </ul>
           <aside class="notes"></aside>
         </section>
@@ -163,7 +164,7 @@
 
 <!-- API Overview -->
         <section data-background="assets/front-page.jpg">
-        <h2>FrameworkInfo tells Mesos how to treat the Framework</h2>
+        <h2>FrameworkInfo</h2>
           <table style="width: 100%;">
             <tr>
               <td><pre><code class="protobuf" data-trim>
@@ -268,22 +269,40 @@ message FrameworkInfo {
 
         <!-- End: Connor's Section -->
 
-<!-- TODO: ADAM -->
+<!-- ADAM -->
 <!-- Resource Offers, Reservations, Launching Tasks -->
         <section data-background="assets/front-page.jpg">
           <h2>Resource Offers</h2>
-          <!--!!!TODO-
-          ResourceInfo,
-          Partial Offers,
-          Merging offers,
-          Decline,
-          Persistent Volumes: what, how, why-->
-          <aside class="notes"></aside>
+          <pre><code class="protobuf" data-trim>
+message Offer {
+  required OfferID id = 1; 
+  required FrameworkID framework_id = 2; 
+  required SlaveID slave_id = 3; 
+  required string hostname = 4; 
+  repeated Resource resources = 5; 
+  repeated Attribute attributes = 7; 
+  repeated ExecutorID executor_ids = 6; 
+}
+          </code></pre>
+          <pre><code class="protobuf" data-trim>
+message Resource {
+  required string name = 1;
+  required Value.Type type = 2;
+  optional Value.Scalar scalar = 3;
+  optional Value.Ranges ranges = 4;
+  optional Value.Set set = 5;
+  optional string role = 6 [default = "*"];
+  optional DiskInfo disk = 7;
+}
+          </code></pre>
+          <aside class="notes">
+          Reservations
+          </aside>
         </section>
 
         <section data-background="assets/front-page.jpg">
           <!-- !!!TODO Update? -->
-          <h3>Offers are consumed by launching on or declining offers</h3>
+          <h3>Offers are consumed by launching, declining, or accepting offers</h3>
           <p></p>
           <pre><code class="python" data-trim>
 class MyScheduler:
@@ -294,16 +313,20 @@ class MyScheduler:
       ...
       driver.declineOffer(offer.id)
           </code></pre>
-          <aside class="notes">Multiple tasks can launch on a single offer.<br>
-          Not all resources in an offer need to be used and remainder will be
-          reoffered, potentially to other frameworks.</aside>
+          <aside class="notes">
+          Multiple tasks can launch on a single offer.<br>
+          Not all resources in an offer need to be used and remainder will be reoffered, potentially to other frameworks.
+          Please decline offers you don't need, or others will not get a chance to use them.
+          If you do hoard offers, you can merge multiple offers from the same slave.
+          If the operator has enabled the rescind_timeout, you cannot hoard offers indefinitely.
+          </aside>
         </section>
 
         <section data-background="assets/front-page.jpg">
           <h2>Launch + Kill Tasks</h2>
           <!--!!!TODO-
           Launch params, Kill params
-          ExecutorInfo, TaskInfo
+          ExecutorInfo
           Kill as separate slide?-->
           <aside class="notes"></aside>
         </section>
@@ -365,6 +388,14 @@ message Volume {
             <li>Continue as before</li>
           </ul>
           <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Persistent Volumes</h2>
+          <!--!!!TODO- 
+            Persistent Volumes: what, how, why, 
+            AcceptOffer/Operation
+          -->
         </section>
 
         <section data-background="assets/front-page.jpg">
