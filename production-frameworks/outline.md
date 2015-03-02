@@ -65,7 +65,7 @@
 - Task checkpointing
 
 - Task reconciliation
-  - Recommended [algorithm](https://gist.github.com/bmahler/18409fc4f052df43f403#algorithm)
+  - Recommended [algorithm](http://mesos.apache.org/documentation/latest/reconciliation/)
 
 ## Framework Security
 
