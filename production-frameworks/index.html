@@ -74,14 +74,116 @@
 
         <section data-background="assets/front-page.jpg">
           <h2>Agenda</h2>
-          <h3><ul>
-            <li>FrameworkInfo
-            <li>Scheduler API
-            <li>Executors API
-            <li>Tips and Warnings
-          </ul></h3>
+          <ul>
+            <li class="fragment">Intro to Writing Frameworks</li>
+            <li class="fragment">Framework Patterns</li>
+            <li class="fragment">API Overview</li>
+            <li class="fragment">Resource Allocation</li>
+            <li class="fragment">Handling Failure</li>
+            <li class="fragment">Security</li>
+            <li class="fragment">Other Topics</li>
+          </ul>
           <aside class="notes"></aside>
         </section>
+
+        <!--
+          Start: Connor's Section
+            - Intro to Writing Frameworks
+            - Framework Patterns
+            - API Overview
+        -->
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Intro: The Core Dynamic</h2>
+
+          <ul>
+            <li>Receive resource offers</li>
+            <li>Make decisions (launch tasks, or decline)</li>
+            <li>Receive status updates</li>
+            <li>Update local view of the global state</li>
+          </ul>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Intro: Tools at Your Disposal</h2>
+
+          <ul>
+            <li>The State abstraction</li>
+            <li>Status updates</li>
+            <li>Custom executors</li>
+            <li>Framework messages</li>
+          </ul>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Framework Pattern: Resource Math</h2>
+          <ul>
+            <li>Tasks are typically launched on partial offers</li>
+            <li>Does this offer satisfy a task I want to run?</li>
+            <li>What's left of the offer after I launch this task?</li>
+          </ul>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Framework Pattern: Tracking Task Metadata</h2>
+          <ul>
+            <li>Scheduler state is usually associated with TaskIDs</li>
+            <li>Update state upon receiving status updates</li>
+            <li>Metadata can be persisted via State</li>
+          </ul>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Framework Pattern: Intermediate Results</h2>
+          <ul>
+            <li>Best accomplished with a custom executor</li>
+            <li>Status update</li>
+            <li>Framework message</li>
+          </ul>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Framework Pattern: Gang Scheduling</h2>
+          <ul>
+            <li>N, M tasks that must be scheduled in parallel</li>
+            <li>Bounded offer hoarding</li>
+          </ul>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Framework Pattern: Fleet of Services</h2>
+          <ul>
+            <li>N distinct coordinated services</li>
+            <li>Use a state machine</li>
+            <li>Bootstrap phase</li>
+            <li>Running phase</li>
+          </ul>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>API Overview: Scheduler</h2>
+          <ul>
+            <li>TODO(CD)</li>
+          </ul>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>API Overview: Executor</h2>
+          <ul>
+            <li>TODO(CD)</li>
+          </ul>
+          <aside class="notes"></aside>
+        </section>
+
+        <!-- End: Connor's Section -->
 
         <section data-background="assets/front-page.jpg">
         <h2>FrameworkInfo tells Mesos how to treat the Framework</h2>
