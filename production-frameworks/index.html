@@ -108,16 +108,7 @@ message FrameworkInfo {
           <!--!!!TODO- (each row is probably a new slide)
           user, role (+master-roles/weights), reservations?
           name, webUI, Hostname
-          HA: checkpointing, failover-timeout, fwkID
-          Principal (ACLs)-->
-          <aside class="notes"></aside>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-          <h2>SchedulerDriver</h2>
-          <!--!!!TODO-
-          definition/comment,
-          Credential-->
+          HA: checkpointing, failover-timeout, fwkID-->
           <aside class="notes"></aside>
         </section>
 
@@ -180,6 +171,7 @@ message FrameworkInfo {
           <!--!!!TODO-
           ResourceInfo,
           Partial Offers,
+          Merging offers,
           Decline,
           Persistent Volumes: what, how, why-->
           <aside class="notes"></aside>
@@ -343,27 +335,92 @@ class MyScheduler:
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <h2>DCOS Integration</h2>
-          <!--!!!TODO-
-          Able to launch Scheduler via Marathon (maybe Dockerized)
-          json and binary/uri published to universe
-          DCOS CLI integration: scale up/down, config, etc.-->
+          <h2>Framework Authentication</h2>
+              <pre><code class="C++" data-trim>
+MesosSchedulerDriver(Scheduler*, FrameworkInfo, string master, Credential)
+              </code></pre>
+              <pre><code class="protobuf" data-trim>
+message Credential {
+  required string principal = 1;
+  optional bytes secret = 2;
+}
+              </code></pre>
           <aside class="notes"></aside>
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <h2>Tips and Warnings</h2>
-          <!--!!!TODO-
-          No blocking in sched/exec callbacks
-          SchedulerDriver* will not change between SD.start->join(return), included as convenience
-          No state in sandbox
-          No implicit deps outside sandbox, node constraints
-            Exec/task binaries/data via HDFS/etc, no public internet
-          Allow co-tenancy of multiple execs on same machine
-            No static ports
-          Know and publish (& verify?) Mesos version compatibility
-          Don't hardcode params that should be configurable
-          Pure bindings? Check out mesos-go, pesos, jesos-->
+          <h2>Authorization and ACLs</h2>
+              <pre><code class="protobuf" data-trim>
+message FrameworkInfo {
+  ...
+  optional string principal = 8;
+  ...
+}
+              </code></pre>
+              <pre><code class="shell" data-trim>
+mesos-master ... --acls="{
+  "permissive" : false,
+  "register_frameworks": [
+    {
+      "principals": { "values": ["HDFS"] },
+      "roles": { "values": ["storage"] }
+    }, {
+      "principals": { "type": "ANY" },
+      "roles": { "values": ["*"] }
+    }
+  ],
+  "run_tasks": [
+    {
+      "principals": { "values": ["Marathon", "Chronos"] },
+      "users": { "values": ["root"] }
+    }
+  ]}"
+              </code></pre>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>DCOS Integration</h2>
+          <ul>
+            <li> Able to launch Scheduler via Marathon (Dockerized?)
+            <li> Publish package/config/marathon json to <a href="https://github.com/mesosphere/universe">Mesosphere Universe</a>
+            <li> Mesos-DNS compatibility: No spaces in framework/task names
+            <li> DCOS CLI integration: scale up/down, config, etc.
+          </ul>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Mesos 1.0 HTTP API</h2>
+          <ul>
+            <li>/events endpoint
+            <ul>
+              <li> Schedulers POST registration data here
+              <li> Expected to keep a persistent connection open
+              <li> Replaces scheduler callback methods
+              <li> Chunked-Transfer encoding, one chunk per update
+            </ul>
+            <li>/call endpoint
+            <ul>
+              <li> Replaces scheduler driver methods
+            </ul>
+          </ul>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Additional Advice</h2>
+          <ul>
+            <li> No blocking in sched/exec callbacks
+            <li> SchedulerDriver* will not change, included as convenience
+            <li> TaskIDs must be unique within the same frameworkId
+            <li> No state in sandbox
+            <li> No implicit deps outside sandbox, node constraints
+            <li> Exec/task binaries/data via HDFS/etc, no public internet
+            <li> Allow co-tenancy of multiple execs on same machine; No static ports
+            <li> Know and publish (& verify?) Mesos version compatibility
+            <li> Don't hardcode params that should be configurable
+            <li> Pure bindings? Check out mesos-go, pesos, jesos
           <aside class="notes"></aside>
         </section>
 
