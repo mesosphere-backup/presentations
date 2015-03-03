@@ -543,6 +543,7 @@ class MyScheduler:
           <aside class="notes"></aside>
         </section>
 
+<!--
         <section data-background="assets/front-page.jpg">
           <h2>Task Reconciliation</h2>
           <pre><code>
@@ -556,12 +557,47 @@ class MyScheduler:
           </code></pre>
           <aside class="notes"></aside>
         </section>
+-->
 
         <section data-background="assets/front-page.jpg">
           <h2>Framework Messages</h2>
           <!--!!!TODO-
           sched-side, exec-side
           Make them reliable with queue, ack, retry-->
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h3>Delivery guarantee</h3>
+          <ul>
+            <li>At-least-one (status updates)</li>
+            <li>At-max-one (framework messages)</li>
+          </ul>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h3>Framework to executor</h3>
+          <ul>
+            <li class="fragment">Scheduler creates FrameworkToExecutorMessage</li>
+            <li class="fragment">Scheduler determines how to send it: directly to the slave or via master</li>
+            <li class="fragment">[opt] Master performs various checks (e.g. slave is connected and registered)</li>
+            <li class="fragment">[opt] Master forwards the message to the slave</li>
+            <li class="fragment">Slave performs various checks (e.g. framework is not terminating and executor is running)</li>
+            <li class="fragment">Slave forwards the message to executor</li>
+          </ul>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h3>Executor to framework</h3>
+          <ul>
+            <li class="fragment">Executor creates ExecutorToFrameworkMessage</li>
+            <li class="fragment">Executor sends it to the slave</li>
+            <li class="fragment">Slave performs various checks (framework is terminating, slave is not in RUNNING state, etc)</li>
+            <li class="fragment">Slave forwards the message to framework (scheduler)</li>
+            <li class="fragment">Scheduler processes the message</li>
+          </ul>
           <aside class="notes"></aside>
         </section>
 
