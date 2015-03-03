@@ -275,24 +275,24 @@ message FrameworkInfo {
           <h2>Resource Offers</h2>
           <pre><code class="protobuf" data-trim>
 message Offer {
-  required OfferID id 
-  required FrameworkID framework_id 
-  required SlaveID slave_id 
-  required string hostname 
-  repeated Resource resources 
-  repeated Attribute attributes 
-  repeated ExecutorID executor_ids 
+  required OfferID id
+  required FrameworkID framework_id
+  required SlaveID slave_id
+  required string hostname
+  repeated Resource resources
+  repeated Attribute attributes
+  repeated ExecutorID executor_ids
 }
           </code></pre>
           <pre><code class="protobuf" data-trim>
 message Resource {
   required string name
-  required Value.Type type 
-  optional Value.Scalar scalar 
-  optional Value.Ranges ranges 
-  optional Value.Set set 
+  required Value.Type type
+  optional Value.Scalar scalar
+  optional Value.Ranges ranges
+  optional Value.Set set
   optional string role [default = "*"];
-  optional DiskInfo disk 
+  optional DiskInfo disk
 }
           </code></pre>
           <aside class="notes">
@@ -336,29 +336,29 @@ class MyScheduler:
               <td><pre><code class="protobuf" data-trim>
 message TaskInfo {
   required string name
-  required TaskID task_id 
-  required SlaveID slave_id 
-  repeated Resource resources 
-  optional ExecutorInfo executor 
-  optional CommandInfo command 
-  optional ContainerInfo container 
-  optional bytes data 
-  optional HealthCheck health_check 
-  optional Labels labels 
-  optional DiscoveryInfo discovery 
+  required TaskID task_id
+  required SlaveID slave_id
+  repeated Resource resources
+  optional ExecutorInfo executor
+  optional CommandInfo command
+  optional ContainerInfo container
+  optional bytes data
+  optional HealthCheck health_check
+  optional Labels labels
+  optional DiscoveryInfo discovery
 }
         </code></pre></td>
         <td><pre><code class="protobuf" data-trim>
 message ExecutorInfo {
-  required ExecutorID executor_id 
-  optional FrameworkID framework_id 
-  required CommandInfo command 
-  optional ContainerInfo container 
-  repeated Resource resources 
-  optional string name 
-  optional string source 
-  optional bytes data 
-  optional DiscoveryInfo discovery 
+  required ExecutorID executor_id
+  optional FrameworkID framework_id
+  required CommandInfo command
+  optional ContainerInfo container
+  repeated Resource resources
+  optional string name
+  optional string source
+  optional bytes data
+  optional DiscoveryInfo discovery
 }
         </code></pre></td>
         </tr></table>
@@ -499,8 +499,8 @@ class MyScheduler:
         <section data-background="assets/front-page.jpg">
         <h3>TASK_FAILED vs. TASK_LOST</h3>
         <ul>
-            <li>Failed -> re-launching it most probably will result in TASK_FAILED</li>
-            <li>List -> task may succeed after re-launch</li>
+            <li>Failed &rarr; re-launching it most probably will result in TASK_FAILED</li>
+            <li>List &rarr; task may succeed after re-launch</li>
         </ul>
         </section>
 
