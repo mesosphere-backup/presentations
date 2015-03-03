@@ -275,24 +275,24 @@ message FrameworkInfo {
           <h2>Resource Offers</h2>
           <pre><code class="protobuf" data-trim>
 message Offer {
-  required OfferID id = 1;
-  required FrameworkID framework_id = 2;
-  required SlaveID slave_id = 3;
-  required string hostname = 4;
-  repeated Resource resources = 5;
-  repeated Attribute attributes = 7;
-  repeated ExecutorID executor_ids = 6;
+  required OfferID id 
+  required FrameworkID framework_id 
+  required SlaveID slave_id 
+  required string hostname 
+  repeated Resource resources 
+  repeated Attribute attributes 
+  repeated ExecutorID executor_ids 
 }
           </code></pre>
           <pre><code class="protobuf" data-trim>
 message Resource {
-  required string name = 1;
-  required Value.Type type = 2;
-  optional Value.Scalar scalar = 3;
-  optional Value.Ranges ranges = 4;
-  optional Value.Set set = 5;
-  optional string role = 6 [default = "*"];
-  optional DiskInfo disk = 7;
+  required string name
+  required Value.Type type 
+  optional Value.Scalar scalar 
+  optional Value.Ranges ranges 
+  optional Value.Set set 
+  optional string role [default = "*"];
+  optional DiskInfo disk 
 }
           </code></pre>
           <aside class="notes">
@@ -301,17 +301,24 @@ message Resource {
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <!-- !!!TODO Update? -->
-          <h3>Offers are consumed by launching, declining, or accepting offers</h3>
+          <h3>Offers are consumed by <br>launching, declining, or accepting offers</h3>
           <p></p>
           <pre><code class="python" data-trim>
 class MyScheduler:
   ...
     def resourceOffers(self, driver, offers):
       ...
-      driver.launchTasks(offer.id, tasks)
+      driver.launchTasks(offers.ids, tasks, filters)
       ...
-      driver.declineOffer(offer.id)
+      driver.declineOffer(offer.id, filters)
+      ...
+      driver.acceptOffers(offers.ids, operations, filters)
+    ...
+    def myCustomLogic():
+      ...
+      driver.reviveOffers()
+      ...
+      driver.killTask(taskId)
           </code></pre>
           <aside class="notes">
           Multiple tasks can launch on a single offer.<br>
@@ -323,53 +330,73 @@ class MyScheduler:
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <h2>Launch + Kill Tasks</h2>
-          <!--!!!TODO-
-          Launch params, Kill params
-          ExecutorInfo
-          Kill as separate slide?-->
-          <aside class="notes"></aside>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-        <!-- !!!TODO Update Command/Container/etcInfo-->
-        <h2>TaskInfo describes <u>how</u> to run a task</h2>
+        <h2>Executor/TaskInfo describes<br> <u>how</u> to run a task</h2>
           <table style="width: 100%;">
             <tr>
               <td><pre><code class="protobuf" data-trim>
 message TaskInfo {
-  required string name = 1;
-  required TaskID task_id = 2;
-  required SlaveID slave_id = 3;
-  repeated Resource resources = 4;
-  optional ExecutorInfo executor = 5;
-  optional CommandInfo command = 7;
-  optional ContainerInfo container = 9;
-  optional bytes data = 6;
-  optional HealthCheck health_check = 8;
-  optional Labels labels = 10;
-  optional DiscoveryInfo discovery = 11;
+  required string name
+  required TaskID task_id 
+  required SlaveID slave_id 
+  repeated Resource resources 
+  optional ExecutorInfo executor 
+  optional CommandInfo command 
+  optional ContainerInfo container 
+  optional bytes data 
+  optional HealthCheck health_check 
+  optional Labels labels 
+  optional DiscoveryInfo discovery 
 }
         </code></pre></td>
         <td><pre><code class="protobuf" data-trim>
+message ExecutorInfo {
+  required ExecutorID executor_id 
+  optional FrameworkID framework_id 
+  required CommandInfo command 
+  optional ContainerInfo container 
+  repeated Resource resources 
+  optional string name 
+  optional string source 
+  optional bytes data 
+  optional DiscoveryInfo discovery 
+}
+        </code></pre></td>
+        </tr></table>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+        <h2>CommandInfo & friends describe<br> <u>what</u> to run</h2>
+          <table style="width: 100%;">
+            <tr>
+              <td><pre><code class="protobuf" data-trim>
 message CommandInfo {
-  required string value;
   repeated URI uris;
   optional Environment environment;
   optional string user;
   optional bool shell;
+  optional string value;
   repeated string arguments;
   //deprecated ContainerInfo container;
 }
 message ContainerInfo {
   required Type type;
   repeated Volume volumes;
-  optional DockerInfo docker; //image string
+  optional DockerInfo docker;
 }
+        </code></pre></td>
+        <td><pre><code class="protobuf" data-trim>
 message Volume {
   required string container_path;
   optional string host_path;
   required Mode mode; //RW,RO
+}
+message DockerInfo {
+  required string image;
+  optional Network network [default = HOST];
+  repeated PortMapping port_mappings;
+  optional bool privileged [default = false];
+  optional bool force_pull_image;
+  repeated Parameter parameters;
 }
         </code></pre></td>
         </tr></table>
