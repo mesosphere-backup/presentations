@@ -446,8 +446,13 @@ message DockerInfo {
         </section>
 
         <section data-background="assets/front-page.jpg">
-        <h3>Handling Failure: Status Updates</h3>
-        <pre><code class="python" data-trim>
+            <h2>Handling Failures: Status Updates</h2>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+
+            <section data-background="assets/front-page.jpg">
+                <pre><code class="python" data-trim>
 class MyScheduler:
   ...
   def statusUpdate(self, driver, update):
@@ -461,103 +466,88 @@ class MyScheduler:
     # TASK_KILLED = 4; // TERMINAL. The task was killed by the executor.
     # TASK_LOST = 5; // TERMINAL. The task failed but can be rescheduled.
     # TASK_ERROR = 7; // TERMINAL. The task description contains an error.
-        </code></pre>
+                </code></pre>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h3 style="font-family:monospace;">TASK_KILLED</h3>
+                <ul>
+                    <li>Explicit (by slave or executor in respond to a scheduler's request</li>
+                    <li>Implicit (together with the framework, e.g. on failover timeout or master exiting)</li>
+                </ul>
+            </section>
+
+          <section data-background="assets/front-page.jpg">
+          <h3 style="font-family:monospace;">TASK_ERROR</h3>
+          <ul>
+              <li>New state</li>
+              <li>Malformed task (bad user, ID is not uniques, bad slave ID, etc.)</li>
+          </ul>
+          </section>
+
+          <section data-background="assets/front-page.jpg">
+          <h3 style="font-family:monospace;">TASK_FAILED</h3>
+          <ul>
+              <li>Validation OK</li>
+              <li>Failure prior to start or during execution (OOM event in executor, non-zero exit status, etc.)</li>
+          </ul>
+          </section>
+
+          <section data-background="assets/front-page.jpg">
+          <h3 style="font-family:monospace;">TASK_LOST</h3>
+          <ul>
+              <li>Validation OK</li>
+              <li>Failure prior to start or during execution (slave is disconnected at launch time, task is unknown during reconciliation, slave removed, executor is terminating, etc.)</li>
+          </ul>
+          </section>
+
+          <section data-background="assets/front-page.jpg">
+              <h3><span style="font-family:monospace;">TASK_FAILED</span> vs. <span style="font-family:monospace;">TASK_LOST</span></h3>
+              <p>Re-launching a <span style="font-family:monospace;">FAILED</span> task will most probably fail, while <span style="font-family:monospace;">LOST</span> task may succeed.<p>
+          </section>
+
         </section>
 
         <section data-background="assets/front-page.jpg">
-        <h3>TASK_KILLED</h3>
-        <ul>
-            <li>Explicit (by slave or executor in respond to a scheduler's request</li>
-            <li>Implicit (together with the framework, e.g. on failover timeout or master exiting)</li>
-        </ul>
-        </section>
 
-        <section data-background="assets/front-page.jpg">
-        <h3>TASK_ERROR</h3>
-        <ul>
-            <li>New state</li>
-            <li>Malformed task (bad user, ID is not uniques, bad slave ID, etc.)</li>
-        </ul>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-        <h3>TASK_FAILED</h3>
-        <ul>
-            <li>Validation OK</li>
-            <li>Failure prior to start or during execution (OOM event in executor, non-zero exit status, etc.)</li>
-        </ul>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-        <h3>TASK_LOST</h3>
-        <ul>
-            <li>Validation OK</li>
-            <li>Failure prior to start or during execution (slave is disconnected at launch time, task is unknown during reconciliation, slave removed, executor is terminating, etc)</li>
-        </ul>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-        <h3>TASK_FAILED vs. TASK_LOST</h3>
-        <ul>
-            <li>Failed &rarr; re-launching it most probably will result in TASK_FAILED</li>
-            <li>List &rarr; task may succeed after re-launch</li>
-        </ul>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-          <h2>Handling Failure: Status Updates</h2>
-          <pre><code>
+            <section>
+              <pre><code>
             /** Describes the source of the task status update. */
             enum Source {
               SOURCE_MASTER = 0;
               SOURCE_SLAVE = 1;
               SOURCE_EXECUTOR = 2;
             }
-          </code></pre>
-          <aside class="notes"></aside>
-        </section>
+             </code></pre>
+            <aside class="notes"></aside>
+            </section>
 
-        <section data-background="assets/front-page.jpg">
-          <h2>Handling Failure: Status Updates</h2>
-          <pre><code>
-            enum Reason {
-              REASON_COMMAND_EXECUTOR_FAILED = 0;
-              REASON_EXECUTOR_TERMINATED = 1;
-              REASON_EXECUTOR_UNREGISTERED = 2;
-              REASON_FRAMEWORK_REMOVED = 3;
-              REASON_GC_ERROR = 4;
-              REASON_INVALID_FRAMEWORKID = 5;
-              REASON_INVALID_OFFERS = 6;
-              REASON_MASTER_DISCONNECTED = 7;
-              REASON_MEMORY_LIMIT = 8;
-              REASON_RECONCILIATION = 9;
-              REASON_SLAVE_DISCONNECTED = 10;
-              REASON_SLAVE_REMOVED = 11;
-              REASON_SLAVE_RESTARTED = 12;
-              REASON_SLAVE_UNKNOWN = 13;
-              REASON_TASK_INVALID = 14;
-              REASON_TASK_UNAUTHORIZED = 15;
-              REASON_TASK_UNKNOWN = 16;
-            }
-          </code></pre>
-          <aside class="notes"></aside>
-        </section>
+            <section data-background="assets/front-page.jpg">
+              <pre><code>
+                enum Reason {
+                  REASON_COMMAND_EXECUTOR_FAILED = 0;
+                  REASON_EXECUTOR_TERMINATED = 1;
+                  REASON_EXECUTOR_UNREGISTERED = 2;
+                  REASON_FRAMEWORK_REMOVED = 3;
+                  REASON_GC_ERROR = 4;
+                  REASON_INVALID_FRAMEWORKID = 5;
+                  REASON_INVALID_OFFERS = 6;
+                  REASON_MASTER_DISCONNECTED = 7;
+                  REASON_MEMORY_LIMIT = 8;
+                  REASON_RECONCILIATION = 9;
+                  REASON_SLAVE_DISCONNECTED = 10;
+                  REASON_SLAVE_REMOVED = 11;
+                  REASON_SLAVE_RESTARTED = 12;
+                  REASON_SLAVE_UNKNOWN = 13;
+                  REASON_TASK_INVALID = 14;
+                  REASON_TASK_UNAUTHORIZED = 15;
+                  REASON_TASK_UNKNOWN = 16;
+                }
+              </code></pre>
+              <aside class="notes"></aside>
+            </section>
 
-<!--
-        <section data-background="assets/front-page.jpg">
-          <h2>Task Reconciliation</h2>
-          <pre><code>
-            let start = now()
-            let remaining = { T ϵ tasks | T is non-terminal }
-            Perform reconciliation: reconcile(remaining)
-            Wait for status updates to arrive (truncated exp backoff).
-              For each update, note the time of arrival.
-            let remaining = { T ϵ remaining | T.last_update_arrival() &lt; start }
-            If remaining is non-empty, go to 3.
-          </code></pre>
-          <aside class="notes"></aside>
         </section>
--->
 
         <section data-background="assets/front-page.jpg">
           <h2>Framework Messages</h2>
@@ -570,8 +560,8 @@ class MyScheduler:
         <section data-background="assets/front-page.jpg">
           <h3>Delivery guarantee</h3>
           <ul>
-            <li>At-least-one (status updates)</li>
-            <li>At-max-one (framework messages)</li>
+            <li>At-least-once (status updates)</li>
+            <li>At-most-once (framework messages)</li>
           </ul>
           <aside class="notes"></aside>
         </section>
@@ -579,7 +569,7 @@ class MyScheduler:
         <section data-background="assets/front-page.jpg">
           <h3>Framework to executor</h3>
           <ul>
-            <li class="fragment">Scheduler creates FrameworkToExecutorMessage</li>
+            <li class="fragment">Scheduler creates <span style="font-family:monospace;">FrameworkToExecutorMessage</span></li>
             <li class="fragment">Scheduler determines how to send it: directly to the slave or via master</li>
             <li class="fragment">[opt] Master performs various checks (e.g. slave is connected and registered)</li>
             <li class="fragment">[opt] Master forwards the message to the slave</li>
@@ -592,7 +582,7 @@ class MyScheduler:
         <section data-background="assets/front-page.jpg">
           <h3>Executor to framework</h3>
           <ul>
-            <li class="fragment">Executor creates ExecutorToFrameworkMessage</li>
+            <li class="fragment">Executor creates <span style="font-family:monospace;">ExecutorToFrameworkMessage</span></li>
             <li class="fragment">Executor sends it to the slave</li>
             <li class="fragment">Slave performs various checks (framework is terminating, slave is not in RUNNING state, etc)</li>
             <li class="fragment">Slave forwards the message to framework (scheduler)</li>
@@ -601,7 +591,23 @@ class MyScheduler:
           <aside class="notes"></aside>
         </section>
 
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Task Reconciliation</h2>
+          <pre><code>
+               let start = now()
+               let remaining = { T ϵ tasks | T is non-terminal }
+            3: Perform reconciliation: reconcile(remaining)
+               Wait for status updates to arrive (truncated exp backoff).
+                 For each update, note the time of arrival.
+               let remaining = { T ϵ remaining | T.last_update_arrival() &lt; start }
+               If remaining is non-empty, go to 3.
+          </code></pre>
+          <aside class="notes"></aside>
+        </section>
+
 <!-- End: Alex's Section -->
+
 
 <!-- ADAM -->
         <section data-background="assets/front-page.jpg">
