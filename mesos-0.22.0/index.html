@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Mesos 0.22.0 release tease</title>
+
+		<meta name="author" content="Niklas Quarfot Nielsen">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/mesosphere.css" id="theme">
+
+    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+        <section data-background="assets/front-page.jpg">
+					<h2>Apache Mesos 0.22.0</h2>
+					<h3>Release tease</h3>
+					<p>
+						<small><a href="mailto:niklas@mesosphere.io">Niklas Quarfot Nielsen</a></small>
+					</p>
+
+<aside class="notes">
+Welcome
+Mesosphere
+Audience: show of hands / scope.
+</aside>
+      </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h1>486</h1>
+          <h2>patches later</h2>
+<aside class="notes">
+What has happened during the last months?
+</aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h1>37</h1>
+          <h2>hardworking contributors</h2>
+<aside class="notes">
+Work from
+</aside>
+        </section>
+
+        <section data-background="assets/confetti.jpg">
+          <h2 style="color: black">Apache Mesos 0.22.0</h2>
+          <h2 style="color: black">is out for RC</h2>
+<aside class="notes">
+Optimistically, this would have been
+</aside>
+        </section>
+
+        <section>
+          <h3>Thanks</h3>
+<div>
+Adam B, Alexander Rojas, Alexander Rukletsov, Ankur Chauhan, Benjamin Hindman,
+Benjamin Mahler, Bernd Mathiske, Chi Zhang, Christos Kozyrakis, Cody Maloney,
+Connor Doyle, Dave Lester, David Robinson, Dominic Hamon, Evelina Dumitrescu,
+Ian Downes, Jiang Yan Xu, Jie Yu, Joerg Schad, Joris Van Remoortere, Kapil Arya,
+Michael Park, Till Toenshoff, Timothy Chen, Vinod Kone and more.
+</div>
+        <aside class="notes">
+        </aside>
+        </section>
+
+        <section>
+        <h1>4 new features</h1>
+        <h3>Highlights</h3>
+<aside class="notes">
+Highlight
+</aside>
+        </section>
+
+        <section data-background="assets/hdd.jpg">
+        <h1>Disk quotas</h1>
+        <!-- TODO: Insert hdd picture here -->
+
+<aside class="notes">
+Great cluster scheduler
+Mesos provides orchestation _and_ isolation
+So far
+And now
+</aside>
+        </section>
+
+        <section>
+        <h2>Isolation and monitoring</h2>
+        <h3 class="fragment">cgroups CPU shares</h3>
+        <h3 class="fragment">cgroups Memory limits</h3>
+        <h3 class="fragment">PID namespacing</h3>
+        <h3 class="fragment">Network isolation (ports, egress)</h3>
+        <h3 class="fragment">Performance counters</h3>
+        <br/>
+        <h2 class="fragment">Disk isolation</h2>
+        </section>
+
+        <section>
+        <h3>Enabled by two flags</h3>
+        <pre><code class="shell" data-trim>
+$ mesos-slave ... --isolation="posix/disk" --enforce_container_disk_quota
+        </code></pre>
+<aside class="notes">
+An extension to the existing isolators and a flag
+</aside>
+        </section>
+
+        <section>
+        <!-- Insert titles -->
+        <h3>First flag enables monitoring</h3>
+        <pre><code class="shell" data-trim>
+$ curl http://slave/metrics/snapshot
+...
+  "slave/disk_percent": 0.000135926701526202,
+  "slave/disk_total": 470842,
+  "slave/disk_used": 64,
+...
+        </code></pre>
+<aside class="notes">
+Without the enforcement
+</aside>
+</section>
+
+        <section>
+        <h3>Second flag enables enforment</h3>
+        <pre><code class="shell" data-trim>
+$ mesos-execute ... --resources="...;disk:64" --command="dd ... bs=1024 count=327680 ..."
+...
+Received status update TASK_RUNNING for task foobar
+Received status update TASK_FAILED for task foobar
+...
+        </code></pre>
+
+        <pre><code class="shell" data-trim>
+$ mesos-execute ... --resources="...;disk:64" --command="dd ... bs=1024 count=32768 ..."
+...
+Received status update TASK_RUNNING for task foobar
+Received status update TASK_FINISHED for task foobar
+...
+        </code></pre>
+<aside class="notes">
+With the enforcement
+The slave will periodically check task disk usage
+
+This is not using any filesystem quotas yet.
+
+Let's zoom out from isolation with our next feature.
+</aside>
+        </section>
+
+        <section>
+        <h2>Compute node removal rate limiting</h2>
+
+<aside class="notes">
+What does this mean?
+I want to go through one example of why you should care.
+</aside>
+        </section>
+
+        <!-- Insert picture of intended fault. -->
+        <section>
+        <img src="assets/ratelimit/pic01.png"/>
+<aside class="notes">
+Here is a oversimplified fragment of a cluster
+</aside>
+        </section>
+        <section>
+        <img src="assets/ratelimit/pic02.png"/>
+<aside class="notes">
+In order to do failure detection, the master use heart beats / health checks /
+ping pongs to determine whether compute nodes are actually up.
+
+First thing
+</aside>
+        </section>
+        <section>
+        <img src="assets/ratelimit/pic03.png"/>
+<aside class="notes">
+Second and common case
+</aside>
+        </section>
+        <section>
+        <img src="assets/ratelimit/pic04.png"/>
+<aside class="notes">
+Let's imagine
+Irresponsive
+</aside>
+        </section>
+        <section>
+        <img src="assets/ratelimit/pic05.png"/>
+<aside class="notes">
+The master will try to shut it down now or when it tries to reconnect.
+Safety.
+</aside>
+        </section>
+        <section>
+        <img src="assets/ratelimit/pic06.png"/>
+<aside class="notes">
+Now imaging there was a network partition or an interleaving that the mesos
+developers haven't thought about.
+
+A non-leading master or one that has been disconnected may think the whole
+cluster is down and shut the entire cluster off.
+
+Limit catastrophy
+</aside>
+        </section>
+
+        <section>
+        <!-- Split and add pictures -->
+        <h2>Mechanisms to prevent disaster</h2>
+        <h3 class="fragment">Compute nodes guard shutdown requests</h3>
+        <h3 class="fragment">Master suicide when loosing connection to Zookeeper</h3>
+        <h3 class="fragment">Recovery remove limit (% of cluster)</h3>
+        <br/>
+        <h2 class="fragment">Recovery remove <u>rate</u> limit</h2>
+<aside class="notes">
+Mesos has mechanisms
+
+Remove limit is for replicated log
+
+New feature to give operators fewer scares
+</aside>
+        </section>
+
+        <section>
+        <pre><code class="shell" data-trim>
+$ mesos-master ... --slave_removal_rate_limit=1/1mins
+...
+I0312 11:35:20.132421 310341632 master.cpp:237] Shutting down slave
+20150312-113419-3758096394-5050-35603-S1 due to health check timeout
+W0312 11:35:20.132570 308195328 master.cpp:3412] Shutting down slave
+20150312-113419-3758096394-5050-35603-S1 at slave(48)@10.0.0.224:5050
+(10.0.0.224) with message 'health check timed out'
+I0312 11:35:20.132678 308195328 master.cpp:4428] Removing slave
+20150312-113419-3758096394-5050-35603-S1 at slave(48)@10.0.0.224:5050
+(10.0.0.224)
+I0312 11:35:20.132709 308731904 slave.cpp:548] Slave asked to shut down by
+master@10.0.0.224:5050 because 'health check timed out'
+I0312 11:35:20.132745 308731904 slave.cpp:506] Slave terminating
+I0312 11:35:20.132869 309268480 hierarchical.hpp:486] Removed slave
+20150312-113419-3758096394-5050-35603-S1
+
+...
+312 11:36:20.133620 310341632 master.cpp:237] Shutting down slave
+20150312-113419-3758096394-5050-35603-S2 due to health check timeout
+W0312 11:36:20.133745 310878208 master.cpp:3412] Shutting down slave
+20150312-113419-3758096394-5050-35603-S2 at slave(28)@10.0.0.224:5050
+(10.0.0.224) with message 'health check timed out'
+I0312 11:36:20.133846 310878208 master.cpp:4428] Removing slave
+20150312-113419-3758096394-5050-35603-S2 at slave(28)@10.0.0.224:5050
+(10.0.0.224)
+I0312 11:36:20.133882 309268480 slave.cpp:548] Slave asked to shut down by
+master@10.0.0.224:5050 because 'health check timed out'
+I0312 11:36:20.133939 309268480 slave.cpp:506] Slave terminating
+
+...
+        </code></pre>
+<aside class="notes">
+Show video
+
+Let's switch gears again
+</aside>
+        </section>
+
+        <section data-background="assets/labels.jpg">
+        <h1>Task labels</h1>
+<aside class="notes">
+What are task labels?
+Here is the problem
+</aside>
+        </section>
+
+        <section>
+        <h2>Problem</h2>
+        <h3 class="fragment">We need to tag tasks <u>somehow</u></h3>
+        <h3 class="fragment">Traditionally, framework writers have been
+encoding</h3>
+        <h3 class="fragment">cassandra.prod.foo.bar.apples.bananas.1</h3>
+<aside class="notes">
+Let's take a look at how the world looked before 0.22.0 - which is pretty much
+how things are now if you are not a brave soul.
+</aside>
+        </section>
+
+        <section>
+        <h3>Before</h3>
+        <pre><code class="shell" data-trim>
+message TaskInfo {
+  required string name = 1;
+  required TaskID task_id = 2;
+  required SlaveID slave_id = 3;
+  repeated Resource resources = 4;
+  optional ExecutorInfo executor = 5;
+  optional CommandInfo command = 7;
+  optional ContainerInfo container = 9;
+  optional bytes data = 6;
+  optional HealthCheck health_check = 8;
+}
+        </code></pre>
+<aside class="notes">
+If you are not familiar with task infos, which you probably only are if you have
+written mesos framework.
+
+It is the way to tell mesos what to run. So the most important path through mesos
+
+It is a request that goes from the frameworks to the master
+From the master to the slaves
+</aside>
+        </section>
+
+        <section>
+        <h3>Now</h3>
+        <pre><code class="shell" data-trim>
+message TaskInfo {
+  required string name = 1;
+  required TaskID task_id = 2;
+  required SlaveID slave_id = 3;
+  repeated Resource resources = 4;
+  optional ExecutorInfo executor = 5;
+  optional CommandInfo command = 7;
+  optional ContainerInfo container = 9;
+  optional bytes data = 6;
+  optional HealthCheck health_check = 8;
+
+  optional Labels labels = 10;
+  optional DiscoveryInfo discovery = 11;
+}
+
+message Label {
+  required string key = 1;
+  optional string value = 2;
+}
+        </code></pre>
+<aside class="notes">
+We previously had a data field to encode arbitrary data to the executors
+Now we have key value pairs which hang off the tasks
+
+How are they different?
+</aside>
+        </section>
+
+        <section>
+        <h3>Available through the state endpoints</h3>
+        <pre><code class="shell" data-trim>
+$ curl http://master/state.json
+...
+{
+  "executor_id": "default",
+  "framework_id": "20150312-120017-16777343-5050-39028-0000",
+  "id": "3",
+  "labels": [
+    {
+      "key": "environment",
+      "value": "prod"
+    },
+    {
+      "key": "bananas",
+      "value": "apples"
+    }
+  ],
+  "name": "Task 3",
+  "slave_id": "20150312-115625-16777343-5050-38751-S0",
+  "state": "TASK_FINISHED",
+  ...
+},
+...
+        </code></pre>
+<aside class="notes">
+What you can use them for is completely up to you.
+Service discovery, tracking, ...
+
+Next up, not switching gears entirely.
+Going to talk about.
+</aside>
+        </section>
+
+        <section data-background="assets/decorator.jpg">
+        <h1 style="">Hooks and decorators</h1>
+<aside class="notes">
+Found a nice picture of a decorator.
+Better than the bloody meat hooks that I found.
+</aside>
+        </section>
+
+        <section>
+        <h2>Wait, what is a hook?</h2>
+        <h3 class="fragment">Opposed to Mesos Modules, doesn't replace full
+subsystems</h3>
+        <h3 class="fragment">Like an event callback across library borders</h3>
+        </section>
+
+        <section>
+        <h3>3 hooks</h3>
+        <pre class="fragment"><code class="shell" data-trim>
+Labels masterLaunchTaskLabelDecorator(TaskInfo, FrameworkInfo, SlaveInfo)
+
+Environment slaveExecutorEnvironmentDecorator(ExecutorInfo)
+
+slaveRemoveExecutorHook(FrameworkInfo, ExecutorInfo)
+        </code></pre>
+<aside class="notes">
+</aside>
+        </section>
+
+        <section>
+        <img src="assets/hook.png"/>
+        </section>
+
+        <section>
+        <h2>A decorator is a special kind of hook</h2>
+        <h3 class="fragment">It has a return type</h3>
+        <h3 class="fragment">This will 'decorate' the object in transit</h3>
+        <!-- Figure -->
+        </section>
+
+        <section>
+        <img src="assets/decorator.png"/>
+        </section>
+
+        <section>
+        <h2>No 'how' without 'why'?</h2>
+        <h3 class="fragment">Service discovery</h3>
+        <h3 class="fragment">Security subsystems</h3>
+        <h3 class="fragment">Accounting</h3>
+        <h3 class="fragment">Tracing</h3>
+        <h3 class="fragment">Tools, tools, tools</h3>
+<aside class="notes">
+External tooling: common theme.
+</aside>
+        </section>
+
+        <section>
+        <h2>What didn't I mention</h2>
+        <h3 class="fragment">Explicit status update acknowledgement, anonymous modules, service
+discovery, external log files, configurable gc disk headroom and <u>tons</u> of
+fixes.
+        </section>
+
+        <section>
+        <h1>What changed?</h1>
+        </section>
+
+        <section>
+        <h3>/stats.json is no more</h3>
+        <h2 class="fragment">/metrics/snapshot</h2>
+        </section>
+
+        <!-- Slide with snapshot data -->
+        <section>
+<pre><code class="shell" data-trim>
+$ curl http://master/metrics/snapshot
+{
+  "master/cpus_percent": 0,
+  "master/cpus_total": 0,
+  "master/cpus_used": 0,
+  "master/disk_percent": 0,
+  "master/disk_total": 0,
+  "master/disk_used": 0,
+  "master/dropped_messages": 0,
+  "master/elected": 1,
+  "master/event_queue_dispatches": 1,
+  "master/event_queue_http_requests": 0,
+  "master/event_queue_messages": 0,
+  "master/frameworks_active": 0,
+  "master/frameworks_connected": 0,
+  "master/frameworks_disconnected": 0,
+  "master/frameworks_inactive": 0,
+  "master/invalid_framework_to_executor_messages": 0,
+  "master/invalid_status_update_acknowledgements": 0,
+  "master/invalid_status_updates": 0,
+  "master/mem_percent": 0,
+  "master/mem_total": 0,
+  "master/mem_used": 0,
+  "master/messages_authenticate": 0,
+  "master/messages_deactivate_framework": 0,
+  "master/messages_decline_offers": 0,
+  "master/messages_exited_executor": 0,
+  "master/messages_framework_to_executor": 0,
+  "master/messages_kill_task": 0,
+  "master/messages_launch_tasks": 0,
+  "master/messages_reconcile_tasks": 0,
+  "master/messages_register_framework": 0,
+  "master/messages_register_slave": 0,
+  "master/messages_reregister_framework": 0,
+  "master/messages_reregister_slave": 0,
+  "master/messages_resource_request": 0,
+  "master/messages_revive_offers": 0,
+  "master/messages_status_update": 0,
+  "master/messages_status_update_acknowledgement": 0,
+  "master/messages_unregister_framework": 0,
+  "master/messages_unregister_slave": 0,
+  "master/outstanding_offers": 0,
+  "master/recovery_slave_removals": 0,
+  "master/slave_registrations": 0,
+  "master/slave_removals": 0,
+  "master/slave_reregistrations": 0,
+  "master/slave_shutdowns_canceled": 0,
+  "master/slave_shutdowns_scheduled": 0,
+  "master/slaves_active": 0,
+  "master/slaves_connected": 0,
+  "master/slaves_disconnected": 0,
+  "master/slaves_inactive": 0,
+  "master/tasks_error": 0,
+  "master/tasks_failed": 0,
+  "master/tasks_finished": 0,
+  "master/tasks_killed": 0,
+  "master/tasks_lost": 0,
+  "master/tasks_running": 0,
+  "master/tasks_staging": 0,
+  "master/tasks_starting": 0,
+  "master/uptime_secs": 9.960023808,
+  "master/valid_framework_to_executor_messages": 0,
+  "master/valid_status_update_acknowledgements": 0,
+  "master/valid_status_updates": 0,
+  "registrar/queued_operations": 0,
+  "registrar/registry_size_bytes": 247,
+  "registrar/state_fetch_ms": 3.268096,
+  "registrar/state_store_ms": 7.14496,
+  "system/cpus_total": 8,
+  "system/load_15min": 1.50244140625,
+  "system/load_1min": 1.54541015625,
+  "system/load_5min": 1.6181640625,
+  "system/mem_free_bytes": 3576868864,
+  "system/mem_total_bytes": 17179869184
+}
+        </code></pre>
+        </section>
+
+        <section>
+        <h3>Slave checkpointing is now <u>always</u> on</h3>
+        </section>
+
+        <section>
+        <h2>What is coming in the next releases?</h2>
+        <h3 class="fragment">Persistence primitives</h3>
+        <h3 class="fragment">Dynamic reservations</h3>
+        <h3 class="fragment">SSL support</h3>
+        <h3 class="fragment">Optimistic offers</h3>
+        <h3 class="fragment">Allocator modules</h3>
+        </section>
+
+        <section>
+        <h2>{dev, user}@mesos.apache.org is where the cool kids hang out</h2>
+        <img src="http://myreactiongifs.com/gifs/thumbsupcomputerkid.gif"/>
+<aside class="notes">
+Help us test this
+</aside>
+        </section>
+
+        <!-- 0. The folks that made this possible -->
+        <!-- 1. Some stats -->
+        <!-- 1.1. Git velocity -->
+        <!-- 1.2. Release velocity -->
+        <!-- 1.3. Mesos bugs -->
+        <!-- 2. Features -->
+        <!-- 2.1. Disk quotas -->
+        <!-- 2.2. Rate limiting -->
+        <!-- 2.3. Labels -->
+        <!-- 2.4. Hooks and decorators -->
+        <!-- 3. Changes -->
+        <!-- 3.1. stats.json has been replaced by metrics/snapshot -->
+        <!-- 4. Testing -->
+        <!-- 5. The next release -->
+        <!-- 6. Future thoughts on release processes -->
+
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: false,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+    <script>
+      window.analytics||(window.analytics=[]),window.analytics.methods=["identify","track","trackLink","trackForm","trackClick","trackSubmit","page","pageview","ab","alias","ready","group","on","once","off"],window.analytics.factory=function(t){return function(){var a=Array.prototype.slice.call(arguments);return a.unshift(t),window.analytics.push(a),window.analytics}};for(var i=0;i<window.analytics.methods.length;i++){var method=window.analytics.methods[i];window.analytics[method]=window.analytics.factory(method)}window.analytics.load=function(t){var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"===document.location.protocol?"https://":"http://")+"d2dq2ahtl5zl1z.cloudfront.net/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n)},window.analytics.SNIPPET_VERSION="2.0.8",
+      window.analytics.load("7sgtwqvuai");
+      window.analytics.page();
+    </script>
+
+	</body>
+</html>
