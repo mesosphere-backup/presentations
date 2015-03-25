@@ -7,6 +7,8 @@ Chief Architect and Co-Founder, Mesosphere
 Connor Doyle  
 Distributed Systems Engineer, Mesosphere
 
+## Support for Stateful Applications
+
 ### Review: Static Reservations
 
 ### Dynamic Reservations
