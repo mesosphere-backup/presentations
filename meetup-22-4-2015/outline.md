@@ -21,8 +21,6 @@ Distributed Systems Engineer, Mesosphere
 
 ### Maintenance (planned failures)
 
-## Support for Stateful Applications
-
 ## Extending Mesos with Modules
 
 ### Interface Modules
