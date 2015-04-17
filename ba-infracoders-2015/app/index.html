@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Continuous Deployment with Mesosphere</title>
+
+		<meta name="description" content="">
+		<meta name="author" content="Ben Whitehead">
+    <meta name="author" content="Sunil Shah">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/mesosphere.css" id="theme">
+
+    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+<!--
+
+  Using Mesosphere for Continuous Deployment & Datacenter Automation
+
+1) What is Mesosphere?
+
+Let's go over our components, all open source.
+
+2) What is Mesos?
+
++ Open source cluster resource scheduler
++ What does this mean? -> resource efficiency or Mesos for all the things
++ Mesos logo dump
++ Mesos frameworks
++ How Mesos works
++ Implicit containerizatio
+
+3) What is Marathon?
+
++ Private fault tolernat PaaS
++ Container orchestration platform
++ Features: run services, run containers, rolling deploys, easy scaling, REST API
++ Service discovery
+
+
+4) What is Chronos?
+
++ Example graph
++ Features: run batch jobs, run containers, REST API
+
+5) Demo
+
++ Presentations repo with our HTML presentation and Dockerfile and Marathon JSON
+< show repo, show JSON, show Dockerfile >
+
++ TeamCity build
+As an artifact, builds create Marathon JSON based on template we provide.
+
+< show build > 
+
++ Mesosphere cluster on GCE (+ link to Mesosphere cluster)
+< show configuration page > 
+
+Make change to presentation, check in. Show.
+
+--> 
+
+
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Continuous Deployment with Mesosphere</h2>
+          <h2>this worked</h2>
+          <p>
+            Ben Whitehead<br />
+            <small><a href="mailto:ben.whitehead@mesosphere.io">ben.whitehead@mesosphere.io</a></small>
+          </p>
+          <p>
+            Sunil Shah<br />
+            <small><a href="mailto:sunil@mesosphere.io">sunil@mesosphere.io</a></small>
+          </p>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/office.png">
+          <h2>We are Mesosphere</h2>
+        </section>
+
+        <section>
+          <h2>240 million monthly active users</h2>
+          <h2 class="fragment">500 million tweets per day</h2>
+          <h2 class="fragment">Up to 150k tweets per second</h2>
+          <h2 class="fragment">More than 100TB per day of compressed data</h2>
+        </section>
+
+        <section>
+          <blockquote>
+            &ldquo;Mesos is the cornerstone of our elastic compute
+infrastructure &mdash; it's how we build all our new services and is critical for
+Twitter's continued success at scale. It's one of the primary keys to our data
+center efficiency.&rdquo; &mdash; Chris Fry, SVP of Engineering at Twitter
+          </blockquote>
+        </section>
+
+        <section>
+          <img src="assets/companies.png"/>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <div style="font-size: 6em;">
+            <div style="display: inline-block; width: 25%;">
+              <p><i class="fa fa-life-ring"></i></p>
+              <p style="font-size: 30px;">Mesoswhat?</p>
+            </div>
+
+            <div style="display: inline-block; width: 25%;" class="fragment">
+              <p><i class="fa fa-cogs"></i></p>
+              <p style="font-size: 30px;">Marathon</p>
+            </div>
+
+          <div style="display: inline-block; width: 20%;" class="fragment">
+              <p><i class="fa fa-calendar"></i></p>
+              <p style="font-size: 30px; font-weight: bold;">Chronos</p>
+            </div>
+
+            <div style="display: inline-block; width: 25%;" class="fragment">
+              <p><i class="fa fa-terminal"></i></p>
+              <p style="font-size: 30px;">Demo`s!</p>
+            </div>
+          </div>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Status quo is static partitioning <br />
+            and use of virtual machines</h2>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <img src="assets/vms.png" />
+          <p> Add some virtual machines </p>
+        </section>
+
+        <section>
+          <img src="assets/vms1.png" />
+          <p> Provision Hadoop </p>
+        </section>
+
+        <section>
+          <img src="assets/vms2.png" />
+          <p> Provision a web service </p>
+        </section>
+
+        <section>
+          <img src="assets/vms3.png" />
+          <p> Moar data, moar Hadoop </p>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Mesos let us treat a cluster of nodes...</h2>
+          <img src="assets/cluster.png" />
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>As <u>one big computer</u></h2>
+          <img style="width: 70%;" src="assets/dc.png" />
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <table style="font-size: 6em; width: 100%;">
+          <tr>
+          <td style="text-align: center;">
+            <div>
+              <p><i class="fa fa-cube"></i></p>
+              <p style="font-size: 30px;">Not as individual machines</p>
+            </div>
+          </td>
+          <td style="text-align: center;">
+            <div class="fragment">
+              <p><i class="fa fa-cubes"></i></p>
+              <p style="font-size: 30px;">Not as VMs</p>
+            </div>
+          </td>
+          </tr>
+          </table>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/spices.jpg">
+          <div style="background-color:rgba(0, 0, 0, 0.5)">
+            <h2>But as computational resources like cores, memory, disks, etc.</h2>
+          </div>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <img src="assets/architecture-01.png"/>
+          <aside class="notes">
+          <p>Mesos consists of master and slave nodes which
+          assist an application in running tasks in a cluster.</p>
+
+          <p>In Mesos, we refer to applications as "frameworks"</p>
+
+          <p>Here, we have the Hadoop and Marathon frameworks interacting with
+          the Mesos master.</p>
+
+          <p>Tasks are the unit of execution and
+          the master schedules those tasks to run on slaves’ available
+          resources.<br/>
+
+          Mesos slaves use executors to coordinate the execution of tasks.
+          Each framework can define its own executors to specify how slaves
+          handle their tasks.</p>
+
+          </aside>
+        </section>
+
+        <section>
+          <img src="assets/fault-01.png"/>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <img src="assets/fault-02.png"/>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <img src="assets/fault-03.png"/>
+          <aside class="notes"></aside>
+        </section>
+
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Mesos for all the things</h2>
+          <img src="assets/mesosphere-apps.png" />
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Mesos is...</h2>
+          <table>
+          <tr> 
+            <td><h3><i class="fa fa-users"></i></h3></td><td><h3>Open Source Apache project</h3></td>
+          </tr><tr class="fragment">
+            <td><h3><i class="fa fa-sitemap"></i></h3></td><td><h3>Cluster Resource Manager</h3></td>
+          </tr><tr class="fragment">
+            <td><h3><i class="fa fa-signal"></i></h3></td><td><h3>Scalable to 10,000s of nodes</h3></td>
+          </tr><tr class="fragment">
+            <td><h3><i class="fa fa-bomb"></i></h3></td><td><h3>Fault-tolerant, battle-tested</h3></td>
+          </tr><tr class="fragment">
+            <td><h3><i class="fa fa-indent"></i></h3></td><td><h3>An SDK for distributed apps</h3></td>
+          </tr>
+          </table>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <h2>The Mesos ecosystem is<br/>growing</h2>
+          <img src="assets/frameworks.png"/>
+          <aside class="notes"></aside>
+        </section>
+
+<!-- MARATHON -->
+
+        <section>
+          <div style="font-size: 6em;">
+            <div style="display: inline-block; width: 25%; opacity: 0.5">
+              <p><i class="fa fa-life-ring"></i></p>
+              <p style="font-size: 30px;">Mesoswhat?</p>
+            </div>
+
+            <div style="display: inline-block; width: 25%;">
+              <p><i class="fa fa-cogs"></i></p>
+              <p style="font-size: 30px;">Marathon</p>
+            </div>
+
+          <div style="display: inline-block; width: 20%; opacity: 0.5">
+              <p><i class="fa fa-calendar"></i></p>
+              <p style="font-size: 30px; font-weight: bold;">Chronos</p>
+            </div>
+
+            <div style="display: inline-block; width: 25%; opacity: 0.5">
+              <p><i class="fa fa-terminal"></i></p>
+              <p style="font-size: 30px;">Demo!</p>
+            </div>
+          </div>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <h2>Say hi to Marathon</h2>
+          <img src="assets/marathon-logo.jpg"/>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h3>a self-serve interface to your cluster</h3>
+          <img src="assets/marathon-0.png" />
+        </section>
+
+
+        <section>
+          <h3>distributed &quot;init&quot; for long-running services</h3>
+          <img src="assets/marathon-arch.png"/>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h3>a private fault-tolerant PaaS</h3>
+          <img src="assets/marathon-3.png"/>
+        </section>
+
+        <section>
+          <h3>a container orchestration platform</h3>
+          <img src="assets/container-port.jpg"/>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Marathon does it!</h2>
+          <br />
+          <ul>
+            <li class="fragment">Start, stop, scale, update apps</li>
+            <li class="fragment">Nice web interface, API</li>
+            <li class="fragment">Highly available, no SPoF</li>
+            <li class="fragment">Native Docker support</li>
+            <li class="fragment">Pluggable event bus</li>
+            <li class="fragment">Rolling deploy / restart</li>
+            <li class="fragment">Application health checks</li>
+            <li class="fragment">Artifact staging</li>
+          </ul>
+        </section>
+
+          <section data-background="assets/front-page.jpg">
+          <h2>Service Discovery</h2>
+          <br />
+          <h3 class="fragment">Set environment variables</h3>
+          <h3 class="fragment">Read config from device (rsync'ed to fs)</h3>
+          <h3 class="fragment">Read from K-V store</h3>
+          <h3 class="fragment">Use DNS</h3>
+          <h3 class="fragment">HAProxy works pretty well</h3>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Marathon <i class="fa fa-heart"></i> REST</h2>
+          <br />
+          <h3>POST /v2/apps</h3>
+          <h3>GET /v2/apps</h3>
+          <h3>PUT /v2/apps/{appId}</h3>
+          <h3>GET /v2/apps/{appId}/tasks</h3>
+          <h3>DELETE /v2/apps/{appId}/tasks/{taskId}</h3>
+          <h3>...</h3>
+          <aside class="notes"></aside>
+        </section>
+
+<!-- CHRONOS --> 
+
+      <section>
+          <div style="font-size: 6em;">
+            <div style="display: inline-block; width: 25%; opacity: 0.5">
+              <p><i class="fa fa-life-ring"></i></p>
+              <p style="font-size: 30px;">Mesoswhat?</p>
+            </div>
+
+            <div style="display: inline-block; width: 25%; opacity: 0.5">
+              <p><i class="fa fa-cogs"></i></p>
+              <p style="font-size: 30px;">Marathon</p>
+            </div>
+
+          <div style="display: inline-block; width: 20%;">
+              <p><i class="fa fa-calendar"></i></p>
+              <p style="font-size: 30px; font-weight: bold;">Chronos</p>
+            </div>
+
+            <div style="display: inline-block; width: 25%; opacity: 0.5">
+              <p><i class="fa fa-terminal"></i></p>
+              <p style="font-size: 30px;">Demo!</p>
+            </div>
+          </div>
+          <aside class="notes"></aside>
+        </section>
+
+
+
+     <section data-background="assets/front-page.jpg">
+          <h2>Introducing Chronos</h2>
+          <img src="assets/chronos.png"/>
+          <h3>a scheduler for batch and one-off jobs</h3>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+            <h3>Distribute a graph of jobs</h3>
+            <img src="assets/chronos-dependency-graph.png"/>
+            <h3 class="fragment">Dependency graph for execution</h3>
+        </section>
+
+         <section data-background="assets/front-page.jpg">
+          <h2>Features</h2>
+          <br />
+          <ul>
+            <li class="fragment">Distributed job scheduler</li>
+            <li class="fragment">Web interface, API</li>
+            <li class="fragment">Highly available, no SPoF</li>
+            <li class="fragment">Native Docker support</li>
+            <li class="fragment">Easy scheduling with repeating intervals</li>
+          </ul>
+        </section>
+
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Chronos <i class="fa fa-heart"></i> REST</h2>
+          <br />
+          <div class="fragment"><pre><code>PUT chronos-node:8080/scheduler/job/job1</code></pre></div>
+          <div class="fragment"><pre><code>GET chronos-node:8080/scheduler/jobs</code></pre></div>
+          <div class="fragment"><pre><code>DELETE chronos-node:8080/scheduler/task/kill/job2</code></pre></div>
+        </section>
+
+<!-- DEMOS -->
+
+          <section>
+          <div style="font-size: 6em;">
+            <div style="display: inline-block; width: 25%; opacity: 0.5">
+              <p><i class="fa fa-life-ring"></i></p>
+              <p style="font-size: 30px;">Mesoswhat?</p>
+            </div>
+
+            <div style="display: inline-block; width: 25%; opacity: 0.5">
+              <p><i class="fa fa-cogs"></i></p>
+              <p style="font-size: 30px;">Marathon</p>
+            </div>
+
+          <div style="display: inline-block; width: 20%; opacity: 0.5">
+              <p><i class="fa fa-calendar"></i></p>
+              <p style="font-size: 30px; font-weight: bold;">Chronos</p>
+            </div>
+
+            <div style="display: inline-block; width: 25%;">
+              <p><i class="fa fa-terminal"></i></p>
+              <p style="font-size: 30px;">Demo!</p>
+            </div>
+          </div>
+          <aside class="notes"></aside>
+        </section>
+
+
+<!-- BENW TO FILL IN -->
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Continuous Delivery Pipeline</h2>
+          <img src="assets/cd-with-marathon.png" alt=""/>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Code Base</h2>
+          <img src="assets/github-repo-screenshot.png" alt=""/>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Docker Build</h2>
+          <h3>Steps</h3>
+          <ol style="margin-bottom: 30px">
+            <li>docker login</li>
+            <li>docker build</li>
+            <li>docker push</li>
+            <li>report tag</li>
+          </ol>
+          <h3>Artifacts</h3>
+          <ol>
+            <li>docker-tag</li>
+            <li>target/marathon.json</li>
+          </ol>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Dockerfile</h2>
+
+          <pre><code class="dockerfile" data-trim>
+FROM nginx
+MAINTAINER Mesosphere support@mesosphere.io
+
+EXPOSE 80
+
+ADD app/ /usr/share/nginx/html
+          </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>marathon.json</h2>
+          <pre><code class="json" data-trim>
+{
+  "id": "/mesosphere/cd-demo-app",
+  "instances": 1,
+  "cpus": 1,
+  "mem": 512,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "mesosphere/cd-demo-app:$tag",
+      "network": "BRIDGE",
+      "portMappings": [
+        { "servicePort": 28080, "containerPort": 80, "hostPort": 0, "protocol": "tcp" },
+        { "servicePort": 28443, "containerPort": 443, "hostPort": 0, "protocol": "tcp" }
+      ]
+    }
+  },
+  "healthChecks": [
+    {
+      "gracePeriodSeconds": 120,
+      "intervalSeconds": 30,
+      "maxConsecutiveFailures": 3,
+      "path": "/",
+      "portIndex": 0,
+      "protocol": "HTTP",
+      "timeoutSeconds": 5
+    }
+  ],
+  "constraints": [
+    ["hostname", "GROUP_BY"]
+  ]
+}
+          </code>
+          </pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Report Tag</h2>
+          <pre><code class="bash" data-trim>
+mkdir -p target
+
+echo %TAG% > target/docker-tag
+
+cat marathon.json | \
+  jq '.container.docker.image |= "%DOCKER_IMAGE%:%TAG%"' > target/marathon.json
+          </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Artifacts</h2>
+          <img src="assets/teamcity-build-artifacts.png" alt=""/>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Deploy</h2>
+          <ol>
+            <li>http PUT http://marathon/v2/apps < marathon.json</li>
+            <li>Send slack message</li>
+          </ol>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Slack Message</h2>
+          <pre><code class="bash" data-trim>
+echo '{
+  "username"   :"%SLACK_USERNAME%",
+  "channel"    :"%SLACK_CHANNEL%",
+  "text"       :"%SLACK_MESSAGE%",
+  "icon_emoji" :"%SLACK_EMOJI%",
+  "mrkdwn"     :%SLACK_MARKDOWN%
+}' | http --print=HhBb --json POST %SLACK_WEBHOOK_URL%
+          </code></pre>
+        </section>
+        
+        <section data-background="assets/front-page.jpg">
+          <h2>Build Parameters</h2>
+          <img src="assets/deploy-parameters.png" alt=""/>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Roll Out</h2>
+          <p>
+            Marathon will now begin rolling out<sup style="font-size: x-large">1</sup> the updated
+            version of the application and your team has just been notified of the deployment.
+          </p>
+          <div style="font-size: large">
+            [1] https://mesosphere.github.io/marathon/docs/deployments.html#rolling-restarts
+          </div>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Demo Slide</h2>
+        </section>
+
+        <section data-background="assets/sf.jpg">
+          <h2>Thanks!</h2>
+          <h3>Come and talk to us</h3>
+          <h4> P.S., we're hiring!</h4>
+
+          <table>
+          <tr>
+            <td colspan="2">
+              <p style="font-size: 25px;">Get Mesosphere packages: <a href="http://mesosphere.io/downloads">mesosphere.io/downloads</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <p style="font-size: 25px;">Read about Marathon: <a href="https://github.com/mesosphere/marathon">github.com/mesosphere/marathon</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <p style="font-size: 25px;">Read about Chronos: <a href="https://github.com/mesos/chronos">github.com/mesos/chronos</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <p style="font-size: 25px;">Try out Mesosphere on GCE: <a href="http://google.mesosphere.io">google.mesosphere.io</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <p style="font-size: 25px;">Come work with us: <a href="http://mesosphere.io/jobs">mesosphere.io/jobs</a></p>
+            </td>
+          </tr>
+          </table>
+       </section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: false,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

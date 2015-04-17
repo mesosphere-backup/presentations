@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Apache Mesos + Apache YARN = Myriad</title>
+
+		<meta name="description" content="Apache Mesos + Apache YARN = Myriad: Better Together">
+		<meta name="author" content="Adam Bordelon">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/mesosphere.css" id="theme">
+
+    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+        <section data-background="assets/front-page.jpg">
+					<h2>&nbsp; Apache Mesos</h2>
+					<h2>+ Apache YARN</h2>
+					<h1>= Myriad</h1>
+          <center>
+          <table>
+          <tr>
+            <td>
+            <p><a href="mailto:adam@mesosphere.io">Adam Bordelon</a></p>
+            </td>
+            <td>
+            <p align="right">Myriad Project Lead</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+            <p><a href="http://mesosphere.com">Mesosphere</a></p>
+            </td>
+            <td>
+            <p align="right">Apache Mesos Committer</p>
+            </td>
+          </tr>
+          </table>
+          </center>
+				</section>
+
+        <!--
+          Title
+          Mesos Intro
+            Overview: Fault-tolerant, isolation, Multi-tenancy, scaling
+            vs. YARN
+            Who runs Mesos (EM?)
+            !DCOS stack
+            Mesos arch
+          Hadoop/YARN arch
+
+          Problem/Scenario:
+            !Static partitioning (show marathon, etc.)
+            Dynamic sharing
+            !3x old static/dynamic slides?
+            New Stack
+
+          Myriad:
+            Myriad history: MesosCon, HackWeek, Group, incubator
+            Myriad arch
+
+          Why you should care:
+            benefits to mesos users/admins
+            benefits to hadoop users/admins
+
+          What's new?
+            Myriad update: github page, incubator proposal
+            Links: github, incubator
+              Mesos[phere] links?
+
+Mesos vs. YARN?
+* written in c++, supports many languages
+* Long-running services, like rails, go, python, memcache
+  * executors are long-running, per host/slave
+  * executor can run multiple tasks, container can resize; e.g. Spark uses
+* tight integration w/ resource isolation using containers, cgroups, namespaces, docker
+* designed with a two-level scheduling model (dive into resource allocations/offers)
+  - flexible, can be optimistic (Omega), pessimistic (like YARN)
+- faster task launch time
+  - fine-grained task running, vs. running containers (no llamas)
+- designed this way from the start, instead of adapting a batch-only model to handle other workloads
+~ Mesos is fault-tolerant everywhere, (YARN still working on it)
+  - Slave FT is more important for long-running service loads
+- Mesos master has no/soft state, less data to persist, fast failover
+...
+Slider: Like a baby Marathon (with persistence preference)
+Isolation: Now with CPU+Mem (vs. +Disk+Net, DRF)
+YARN-NodeLabels: Attributes+Reservations
+        -->
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Mesos from 10,000 feet</h2>
+          <table>
+          <tr>
+            <td><h3><i class="fa fa-users"></i></h3></td><td><h3>Open Source Apache project</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-sitemap"></i></h3></td><td><h3>Cluster Resource Manager</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-signal"></i></h3></td><td><h3>Scalable to 10,000s of nodes</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-bomb"></i></h3></td><td><h3>Fault-tolerant, no SPOF</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-columns"></i></h3></td><td><h3>Multi-tenancy, Resource Isolation</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-tasks"></i></h3></td><td><h3>Improved resource utilization</h3></td>
+          </tr>
+          </table>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+        <h2>Mesos is more than</h2>
+        <h3><u>Y</u>et <u>A</u>nother <u>R</u>esource <u>N</u>egotiator</h3>
+          <table>
+          <tr>
+            <td><h3><i class="fa fa-tasks"></i></h3></td><td><h3>Long-running services; real-time jobs</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-columns"></i></h3></td><td><h3>Native Docker; cgroups for years; Isolate cpu/mem/disk/net/other</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-file-code-o"></i></h3></td><td><h3>Distributed systems SDK; <br>~200 loc for a new app</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-code"></i></h3></td><td><h3>Core written in C++ for performance, Apps in any language</h3></td>
+          </tr>
+          </table>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <img src="assets/companies.png"/>
+          <!---update: netflix, hedge?-->
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <h2>Mesosphere DCOS</h2>
+          <img src="assets/dcos.png"/>
+          <aside class="notes">
+          The OS for your Datacenter, with Mesos as the Kernel
+          HDFS, mesos-dns, CLI, Viz</aside>
+				</section>
+
+        <section>
+          <img src="assets/architecture-01.png"/>
+					<aside class="notes">
+          </aside>
+				</section>
+
+        <section>
+          <img width="500%" src="assets/yarn_architecture.gif"/>
+          <aside class="notes">
+          </aside>
+				</section>
+
+        <section>
+          <img src="assets/static-partition.png">
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <img src="assets/generic-nodes.png">
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <img width="80%" src="assets/mesos-silos.png"/>
+        </section>
+
+        <section>
+          <img width="80%" src="assets/mesos-static.png"/>
+        </section>
+
+        <section>
+          <img width="100%" src="assets/mesos-dynamic.png"/>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <img src="assets/high-level-architecture.png">
+          <aside class="notes">
+          SOA web-services, Jenkins/build-farm, memcache, cron-jobs, shell scripts, Kubernetes, Cassandra, (HDFS), ElasticSearch, MPI/HPC jobs, etc.
+          </aside>
+        </section>
+
+        <section>
+          <img width="70%" src="assets/how-it-works.png">
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <h2>History of Myriad</h2>
+          <table>
+          <tr>
+            <td><h3><i class="fa fa-lightbulb-o"></i></h3></td><td><h3>Mohit Soni from eBay builds prototype, presents at MesosCon</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-flask"></i></h3></td><td><h3>Santosh Marella from MapR <br>attends Mesosphere HackWeek, <br>builds independent prototype</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-comments-o"></i></h3></td><td><h3>Adam introduces Mohit and Santosh, both prototypes merged together</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-group"></i></h3></td><td><h3>Myriad presented to <a href="https://wiki.apache.org/incubator/MyriadProposal">Apache Incubator</a>, accepting new contributors</h3></td>
+          </tr>
+          </table>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <h2>Myriad improves Mesos</h2>
+          <table>
+          <tr>
+            <td><h3><i class="fa fa-cogs"></i></h3></td><td><h3>Tighter integration with Hadoop frameworks like HBase, Hive, Pig</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-sliders fa-rotate-90"></i></h3></td><td><h3>Borrow resources from Hadoop when traffic spikes for tier-1 services</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-sliders fa-rotate-270"></i></h3></td><td><h3>Backfill unused resource capacity with best-effort Hadoop jobs</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-code-fork"></i></h3></td><td><h3>No Mesos code changes necessary</h3></td>
+          </tr>
+          </table>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <h2>Myriad improves Hadoop</h2>
+          <table>
+          <tr>
+            <td><h3><i class="fa fa-signal"></i></h3></td><td><h3>Elastic scaling</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-bomb"></i></h3></td><td><h3>Fault-tolerant: Maintain NM capacity</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-tasks"></i></h3></td><td><h3>Share resources with other workloads, improve resource utilization</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-columns"></i></h3></td><td><h3>Multiple isolated Hadoop clusters sharing node resources and DFS</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-code-fork"></i></h3></td><td><h3>No YARN/Hadoop code changes</h3></td>
+          </tr>
+          </table>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/sf.jpg">
+          <h2>Learn More!</h2>
+
+          <table>
+          <tr>
+          <td style="vertical-align: top;">
+          <img width=150 src="assets/flying-art-birds-cute-Favim.com-669833.jpg"/></td>
+          <td style="vertical-align: middle;">
+            <p><a href="https://github.com/mesos/myriad">https://github.com/mesos/myriad</a></p>
+            <p><a href="https://wiki.apache.org/incubator/MyriadProposal">https://wiki.apache.org/incubator/MyriadProposal</a></p>
+            <p><a href="http://lmgtfy.com/?q=myriad+mesos+yarn">http://lmgtfy.com/?q=myriad+mesos+yarn</a></p>
+          </td>
+          </tr>
+          <tr>
+          <td style="vertical-align: top;">
+          <img src="assets/mesos.png"/></td>
+          <td style="vertical-align: middle;">
+            <p><a href="http://mesos.apache.org">http://mesos.apache.org</a></p>
+            <p><a href="https://github.com/apache/mesos/">https://github.com/apache/mesos/</a></p>
+            <p><a href="http://mesosphere.com">http://mesosphere.com</a></p>
+          </td>
+          </tr>
+          </table>
+
+          <aside class="notes">I have business cards and lots of stickers!</aside>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: false,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+    <script>
+      window.analytics||(window.analytics=[]),window.analytics.methods=["identify","track","trackLink","trackForm","trackClick","trackSubmit","page","pageview","ab","alias","ready","group","on","once","off"],window.analytics.factory=function(t){return function(){var a=Array.prototype.slice.call(arguments);return a.unshift(t),window.analytics.push(a),window.analytics}};for(var i=0;i<window.analytics.methods.length;i++){var method=window.analytics.methods[i];window.analytics[method]=window.analytics.factory(method)}window.analytics.load=function(t){var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"===document.location.protocol?"https://":"http://")+"d2dq2ahtl5zl1z.cloudfront.net/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n)},window.analytics.SNIPPET_VERSION="2.0.8",
+      window.analytics.load("7sgtwqvuai");
+      window.analytics.page();
+    </script>
+
+	</body>
+</html>

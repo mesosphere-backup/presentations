@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Cracking the Container Scale Problem with Apache Mesos</title>
+
+		<meta name="description" content="">
+		<meta name="author" content="Connor Doyle">
+    <meta name="author" content="Sunil Shah">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/mesosphere.css" id="theme">
+
+    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+        <section data-background="assets/heliocrystal.jpg">
+          <h2>Cracking the Container Scale Problem with Apache Mesos</h2>
+          <p>
+            Connor Doyle<br />
+            <small><a href="mailto:connor@mesosphere.io">connor@mesosphere.io</a></small>
+          </p>
+          <p>
+            Sunil Shah<br />
+            <small><a href="mailto:sunil@mesosphere.io">sunil@mesosphere.io</a></small>
+          </p>
+          <aside class="notes"></aside>
+        </section>
+
+        <!-- TODO(CD): Restate the problem (what are we cracking again?) -->
+        <section data-background="assets/heliocrystal.jpg">
+          <h2>Is there a problem?</h2>
+          <br />
+          <ul>
+            <li class="fragment">Failure</li>
+            <li class="fragment">Efficiency</li>
+            <li class="fragment">Programmability</li>
+          </ul>
+          <aside class="notes">
+            <p>How well your systems handle failure is critical.</p>
+
+            <p>
+            Mesos provides an API specifically for running new tasks and
+            becoming aware of failures in each part of the system.  There is no
+            single point of failure.  We will cover this in depth later on in
+            the talk.
+            </p>
+
+            <p>
+            A major motivation for using containers instead of per-application
+            virtual machines is to drive up utiliztion through multi-tenancy.
+            </p>
+
+            <p>
+            In order to do this safely, we need to count the compute resources
+            required for each job.  As a next step, what good is accepting a
+            program's promise without enforcing it?  This is called resource
+            isolation, and Mesos has been doing it with cgroups for a "long"
+            time.
+            </p>
+
+            <p>
+            The datacenter should be programmable!  What does this mean?
+            It means that you should be able to reason about the behavior of a
+            large cluster under load and write programs to manage and inspect
+            it.  This is much easier if you have some useful abstractions and
+            invariants to depend on.  Mesos does a good job at doing this in
+            a flexible way.
+            </p>
+          </aside>
+        </section>
+
+        <section>
+          <div style="font-size: 6em;">
+            <div style="display: inline-block; width: 25%;">
+              <p><i class="fa fa-life-ring"></i></p>
+              <p style="font-size: 30px;">Mesoswhat?</p>
+            </div>
+
+            <div style="display: inline-block; width: 25%;" class="fragment">
+              <p><i class="fa fa-cogs"></i></p>
+              <p style="font-size: 30px;">Marathon</p> <!-- TODO(CD): rename this -->
+            </div>
+
+            <div style="display: inline-block; width: 25%;" class="fragment">
+              <p><i class="fa fa-terminal"></i></p>
+              <p style="font-size: 30px;">Demo!</p>
+            </div>
+          </div>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/heliocrystal.jpg">
+          <h2>Mesos let us treat a cluster of nodes...</h2>
+          <img alt="" src="assets/cluster.png" />
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <h2>As <u>one big computer</u></h2>
+          <img alt="" style="width: 70%;" src="assets/dc.png" />
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <table style="font-size: 6em; width: 100%;">
+          <tr>
+          <td style="text-align: center;">
+            <div>
+              <p><i class="fa fa-cube"></i></p>
+              <p style="font-size: 30px;">Not as individual machines</p>
+            </div>
+          </td>
+          <td style="text-align: center;">
+            <div class="fragment">
+              <p><i class="fa fa-cubes"></i></p>
+              <p style="font-size: 30px;">Not as VMs</p>
+            </div>
+          </td>
+          </tr>
+          </table>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/spices.jpg">
+          <div style="background-color:rgba(0, 0, 0, 0.5)">
+            <h2>But as computational resources like cores, memory, disks, etc.</h2>
+          </div>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <img src="assets/mesos-simple.png"/>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <img alt="" src="assets/architecture-01.png"/>
+
+          <aside class="notes">
+            <p>Mesos consists of master and slave nodes which
+            assist an application in running tasks in a cluster.</p>
+
+            <p>In Mesos, we refer to applications as "frameworks"</p>
+
+            <p>Here, we have the Hadoop and Marathon frameworks interacting with
+            the Mesos master.</p>
+
+            <p>Tasks are the unit of execution and
+            the master schedules those tasks to run on slaves’ available
+            resources.<br/>
+
+            Mesos slaves use executors to coordinate the execution of tasks.
+            Each framework can define its own executors to specify how slaves
+            handle their tasks.</p>
+          </aside>
+        </section>
+
+        <section>
+          <img alt="" src="assets/timeline.png" />
+          <br /> <br />
+          <p>Containerization in Mesos, a brief history</p>
+        </section>
+
+        <section data-background="assets/heliocrystal.jpg">
+          <h2>Mesos is...</h2>
+          <table>
+          <tr> 
+            <td><h3><i class="fa fa-users"></i></h3></td><td><h3>A top-level Apache project</h3></td>
+          </tr><tr class="fragment">
+            <td><h3><i class="fa fa-sitemap"></i></h3></td><td><h3>A cluster resource negotiator</h3></td>
+          </tr><tr class="fragment">
+            <td><h3><i class="fa fa-signal"></i></h3></td><td><h3>Scalable to 10,000s of nodes</h3></td>
+          </tr><tr class="fragment">
+            <td><h3><i class="fa fa-bomb"></i></h3></td><td><h3>Fault-tolerant, battle-tested</h3></td>
+          </tr><tr class="fragment">
+            <td><h3><i class="fa fa-indent"></i></h3></td><td><h3>An SDK for distributed apps</h3></td>
+          </tr>
+          </table>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <img alt="" src="assets/mesos-abstraction.png" />
+          <br /> <br />
+        </section>
+
+        <section>
+          <h2>Mesos for all the things</h2>
+          <img alt="" src="assets/mesosphere-apps.png" /> <!-- TODO(CD): Remake image without confusing distro terminology -->
+        </section>
+
+<!-- MARATHON -->
+
+        <section>
+          <div style="font-size: 6em;">
+            <div style="display: inline-block; width: 25%; opacity: 0.5">
+              <p><i class="fa fa-life-ring"></i></p>
+              <p style="font-size: 30px;">Mesoswhat?</p>
+            </div>
+
+            <div style="display: inline-block; width: 25%;">
+              <p><i class="fa fa-cogs"></i></p>
+              <p style="font-size: 30px;">Marathon</p> <!-- TODO(CD): rename this -->
+            </div>
+
+            <div style="display: inline-block; width: 25%; opacity: 0.5">
+              <p><i class="fa fa-terminal"></i></p>
+              <p style="font-size: 30px;">Demo!</p>
+            </div>
+          </div>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/heliocrystal.jpg">
+          <h3>a self-serve interface to your cluster</h3>
+          <img alt=""src="assets/marathon-0.8.1.png" />
+        </section>
+
+
+        <section>
+          <h3>distributed &quot;init&quot; for long-running services</h3>
+          <img alt=""src="assets/marathon-arch.png"/>
+        </section>
+
+        <section data-background="assets/heliocrystal.jpg">
+          <h3>a private fault-tolerant PaaS</h3>
+          <img alt=""src="assets/marathon-0.8.1-app.png"/>
+        </section>
+
+        <section data-background="assets/heliocrystal.jpg">
+          <h2>Marathon does it!</h2>
+          <br />
+          <ul>
+            <li class="fragment">Start, stop, scale, update apps</li>
+            <li class="fragment">Nice web interface, API</li>
+            <li class="fragment">Highly available, no SPoF</li>
+            <li class="fragment">Native Docker support</li>
+            <li class="fragment">Fully featured REST API</li>
+            <li class="fragment">Pluggable event bus</li>
+            <li class="fragment">Rolling deploy / restart</li>
+            <li class="fragment">Application health checks</li>
+            <li class="fragment">Artifact staging</li>
+          </ul>
+        </section>
+
+
+<!-- Explanatory Animation -->
+
+        <section data-background="assets/heliocrystal.jpg">
+          <h2>Mesos &amp; Marathon in action</h2>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_01.png" alt="" />
+          <aside class="notes">
+            The leading Mesos master writes its location into a Zookeeper ZNode.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_02.png" alt="" />
+          <aside class="notes">
+            When slave processes start, they read the location of the leading
+            Mesos master from Zookeeper.  They send a registration message
+            to the master, including an advertisement of their available
+            resources.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_03.png" alt="" />
+          <aside class="notes">
+            The leading master sends a registered message back to the slave,
+            along with an ID that they can use to re-register in case of
+            failure (more details on that later on).
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_04.png" alt="" />
+          <aside class="notes">
+            The framework scheduler (Marathon in this example) similarly
+            finds the leading master using Zookeeper and registers itself as a
+            framework.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_05.png" alt="" />
+          <aside class="notes">
+            Mesos sends a registered message back with a framework ID, usable
+            for re-registration (we'll get there in a bit).  Marathon persists
+            its framework ID non-locally in Zookeeper.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_06.png" alt="" />
+          <aside class="notes">
+            Marathon begins receiving resource offers from the Mesos master.
+            As a framework, it's main job is to either accept a subset of each
+            resource offer by launching tasks, or decline the offer.
+
+            Since Marathon doesn't know about any work to do, it will begin by
+            declining all offers.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_07.png" alt="" />
+          <aside class="notes">
+            Let's say you have a web service you'd like to have running in your
+            infrastructure.  You don't care where it runs, but you need one
+            instance to be up all of the time.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_08.png" alt="" />
+          <aside class="notes">
+            Marathon provides a JSON format for describing your app, and a REST
+            interface to add your app to Marathon.
+
+            This is an extremely simple (but real) example.  There are many
+            more options available.  It says that your app is called "foo",
+            the bits are here, here's how to start it, and it needs this much
+            cpu and memory.
+
+            You can also specify how many copies of your app you want to run,
+            but the default is one.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_09.png" alt="" />
+          <aside class="notes">
+            Now, when Marathon next receives an offer from Mesos that
+            accomodates our app, we will launch a task instead of declining
+            the offer.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_10.png" alt="" />
+          <aside class="notes">
+            The launch task message includes a description of the task along
+            with the associated offer(s) to use.  The master makes a note in
+            its resource accounting ledger and forwards the message to the
+            host associated with the resources in the offer.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_11.png" alt="" />
+          <aside class="notes">
+            The Mesos slave process first downloads all of the specified URIs
+            to a local sandbox location.  Next, it launches a process called
+            an executor.  For now, the only use case for executors we'll cover
+            is to launch a sub-process for the command in our app definition.
+            This default command executor ships with Mesos, and can be used by
+            any framework.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_12.png" alt="" />
+          <aside class="notes">
+            The executor registers itself with the slave, then the slave
+            grows the resource limits on the executor's container according
+            to the task resources, and forwards the task description to the
+            executor.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_13.png" alt="" />
+          <aside class="notes">
+            The executor launches the task (in this case, that means shelling
+            out to the supplied command) and sends a status update back to the
+            slave.  There are several states that could occur here, but let's
+            assume that the task started running successfully.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_14.png" alt="" />
+          <aside class="notes">
+            The slave forwards the status update to the master.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_15.png" alt="" />
+          <aside class="notes">
+            The master forwards the status update to the scheduler.
+
+            At this point, we can see that the task is running in the Marathon
+            web UI and REST API.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_22.png" alt="" />
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-background="assets/heliocrystal.jpg" data-transition="none">
+          <h2>Fault Tolerance <i class="fa fa-bomb"></i></h2>
+          <br />
+          <h3>Task Failure :(</h3>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_22.png" alt="" />
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_16.png" alt="" />
+          <aside class="notes">
+            If the command, or the executor fail for any reason, the slave
+            process will be notified and emit a status update indicating
+            that that the task failed.
+
+            This message is forwarded as normal to the scheduler.  Marathon
+            decrements its count of running instances.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_17.png" alt="" />
+          <aside class="notes">
+            Marathon launches a new task to replace the old one, since now
+            our app is running under quota.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_18.png" alt="" />
+          <aside class="notes">
+            When the new task is launched, Marathon is notified that the new
+            instance is now running and returns to a happy state.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_19.png" alt="" />
+        </section>
+
+        <section data-background="assets/heliocrystal.jpg" data-transition="none">
+          <h2>Fault Tolerance <i class="fa fa-bomb"></i></h2>
+          <br />
+          <h3>Local Agent Failure :(</h3>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_22.png" alt="" />
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_20.png" alt="" />
+          <aside class="notes">
+            When the Mesos slave process terminates for any reason, tasks
+            continue to run!
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_21.png" alt="" />
+          <aside class="notes">
+            When the process is restarted, it picks up checkpointed process
+            IDs.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_22.png" alt="" />
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_22b.png" alt="" />
+          <aside class="notes">
+            The slave re-registers with the Mesos master and resumes
+            regular heartbeat messages.
+          </aside>
+        </section>
+
+        <section data-background="assets/heliocrystal.jpg" data-transition="none">
+          <h2>Fault Tolerance <i class="fa fa-bomb"></i></h2>
+          <br />
+          <h3>Host or Network Failure :(</h3>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_22.png" alt="" />
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_23a.png" alt="" />
+          <aside class="notes">
+            The master detects failure by accrual of missing heartbeats.
+
+            The master notifies the scheduler that the slave is lost and so are
+            all of the tasks that were running there.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_23b.png" alt="" />
+          <aside class="notes">
+            Marathon adds work to its queue to bring our app back up to the
+            number of requested instances, then launches on the next suitable
+            offer.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_23c.png" alt="" />
+          <aside class="notes">
+            The scheduler is notified that the task is running successfully
+            elsewhere.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_23d.png" alt="" />
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-background="assets/heliocrystal.jpg" data-transition="none">
+          <h2>Fault Tolerance <i class="fa fa-bomb"></i></h2>
+          <br />
+          <h3>Mesos Master Failure :(</h3>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_22.png" alt="" />
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_24.png" alt="" />
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_22.png" alt="" />
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_25.png" alt="" />
+          <aside class="notes">
+            The new master process (possibly on a new host) writes its location
+            into Zookeeper.
+
+            The new value is picked up by frameworks and slaves, causing them
+            to re-register themselves.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_26.png" alt="" />
+          <aside class="notes">
+            Registration messages.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_27.png" alt="" />
+          <aside class="notes">
+            Re-registration acknowledgements.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_22.png" alt="" />
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-background="assets/heliocrystal.jpg" data-transition="none">
+          <h2>Fault Tolerance <i class="fa fa-bomb"></i></h2>
+          <br />
+          <h3>Scheduler Failure :(</h3>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_22.png" alt="" />
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_29.png" alt="" />
+          <aside class="notes">
+            In case the scheduler dies or is disconnected, tasks continue to
+            run.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_22.png" alt="" />
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_30.png" alt="" />
+          <aside class="notes">
+            Marathon picks up its previous framework ID and the location of the
+            leading Mesos master from Zookeeper.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_31.png" alt="" />
+          <aside class="notes">
+            Marathon re-registers with its old framework ID, re-associating
+            with the already-running tasks.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_32.png" alt="" />
+          <aside class="notes">
+            Reregistration acknowledgement.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_33.png" alt="" />
+          <aside class="notes">
+            Marathon uses a Mesos primitive operation called task
+            reconciliation to discover any state changes that may have
+            happened while it was disconnected from the Master.
+          </aside>
+        </section>
+
+        <section class="section-animation" data-background="assets/heliocrystal.jpg" data-transition="none">
+          <img src="assets/mesos-animation/mesos-marathon-animation_22.png" alt="" />
+          <aside class="notes">
+          </aside>
+        </section>
+
+<!-- DEMOS -->
+
+        <section>
+        <div style="font-size: 6em;">
+          <div style="display: inline-block; width: 25%; opacity: 0.5">
+            <p><i class="fa fa-life-ring"></i></p>
+            <p style="font-size: 30px;">Mesoswhat?</p>
+          </div>
+
+          <div style="display: inline-block; width: 25%; opacity: 0.5">
+            <p><i class="fa fa-cogs"></i></p>
+            <p style="font-size: 30px;">Marathon</p> <!-- TODO(CD): rename this -->
+          </div>
+
+          <div style="display: inline-block; width: 25%;">
+            <p><i class="fa fa-terminal"></i></p>
+            <p style="font-size: 30px;">Demo!</p>
+          </div>
+        </div>
+        <aside class="notes"></aside>
+      </section>
+
+      <section data-background="assets/heliocrystal.jpg">
+        <h3>Virtual machine configuration</h3>
+        <p>Get the <a href="http://github.com/mesosphere/playa-mesos">playa-mesos</a> virtual machine.</p>
+        <p>Add the following to <code>/etc/dhcp/dhclient.conf</code> to resolve DNS queries through mesos-dns.</p>
+        <pre> <code>
+interface "eth0" {
+  prepend domain-name-servers 10.141.141.10;
+}
+        </code> </pre>
+        <p>You may have to bring the interface down and back up for the change to take effect.</p>
+      </section>
+
+    <section data-background="assets/heliocrystal.jpg">
+          <h3>Launch mesos-dns in a container</h3>
+          <pre><code class="shell" data-trim>http -v POST http://10.141.141.10:8080/v2/apps @demo/marathon-examples/1-mesos-dns.json</code></pre>
+
+          <pre><code class="javascript" data-trim>
+{
+  "id": "mesos-dns",
+  "cmd" : "/mesos-dns -v=2 -config=$MESOS_SANDBOX/config.json",
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "mesosphere/mesos-dns",
+      "network": "HOST"
+    }
+  },
+  "cpus": 0.25,
+  "mem": 256.0,
+  "instances": 1,
+  "uris": [ "/home/vagrant/demo/mesos-dns/config.json" ]
+}
+
+          </code></pre>
+
+
+                    <pre><code class="javascript" data-trim>
+{
+  "masters": ["10.141.141.10:5050"],
+  "refreshSeconds": 10,
+  "ttl": 20,
+  "domain": "mesos",
+  "port": 53,
+  "resolvers": ["8.8.8.8"],
+  "timeout": 5
+}
+          </code></pre>
+        </section>
+
+        <section data-background="assets/heliocrystal.jpg">
+          <h3>Launch Redis in a container</h3>
+          <pre><code class="shell" data-trim>http -v POST http://10.141.141.10:8080/v2/apps @demo/marathon-examples/2-redis.json</code></pre>
+
+          <pre><code class="javascript" data-trim>
+{
+  "id": "redis",
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "redis:3",
+      "network": "HOST"
+    }
+  },
+  "instances": 1,
+  "cpus": 0.25,
+  "mem": 64
+}
+          </code></pre>
+        </section>
+
+
+        <section data-background="assets/heliocrystal.jpg">
+          <h3>Launch a Redis frontend in a container</h3>
+          <pre><code class="shell" data-trim>http -v POST http://10.141.141.10:8080/v2/apps @demo/marathon-examples/3-redis-frontend.json</code></pre>
+
+          <pre><code class="javascript" data-trim>
+{
+  "id": "frontend",
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "superguenter/node-redis-demo",
+      "network": "HOST"
+    }
+  },
+  "env": {
+    "REDIS_HOST": "redis.marathon.mesos"
+  },
+  "instances": 1,
+  "cpus": 0.25,
+  "healthChecks": [
+    {
+      "protocol": "HTTP",
+      "path": "/",
+      "portIndex": 0,
+      "gracePeriodSeconds": 10,
+      "intervalSeconds": 10,
+      "maxConsecutiveFailures": 3
+    }
+  ]
+}
+
+          </code></pre>
+        </section>
+
+
+        <section data-background="assets/heliocrystal.jpg">
+          <p>Store some data</p>
+          <pre><code class="shell" data-trim>http -v GET http://10.141.141.10:PORT/set?value=apachecon2015</code></pre>
+          <p>Get some data</p>
+          <pre><code class="shell" data-trim>http -v GET http://10.141.141.10:PORT/</code></pre>
+        </section>
+
+
+       <section data-background="assets/front-page.jpg">
+          <h3>Scale!</h3>
+          <pre><code class="shell" data-trim>http -v PUT http://10.141.141.10:8080/v2/apps/frontend @scale-app.json</code></pre>
+
+          <pre><code class="javascript" data-trim>
+{
+  "instances": 2
+}
+
+          </code></pre>
+        </section>
+
+        <section data-background="assets/sf.jpg">
+          <h2>Thanks!</h2>
+          <h3>Come and talk to us</h3>
+          <h4> P.S., we're hiring!</h4>
+
+      <p> Check out the other Mesos talks! 
+        <ul style="font-size: 20px;">
+          <li><b> Monday 4pm:</b> Elastic Compute for Batch Platform Using Apache Mesos, Docker </li>
+          <li><b> Monday 5pm:</b> Replatforming the Cloud and Datacenter with Apache Mesos </li>
+          <li><b> Tuesday 4:20pm:</b> The Emergence of the Datacenter Developer </li>
+          <li><b> Wednesday 2:15pm:</b> Mesos + YARN = Myriad. Why This is a Game Changer for Big Data Developers </li>
+        </ul>
+      </p>
+       </section>
+
+
+       <section data-background="assets/sf.jpg">
+          <h3>Useful links</h3>
+          <table>
+          <tr>
+            <td colspan="2">
+              <p style="font-size: 20px;">This presentation: <a href="https://mesosphere.github.com/presentations/apachecon-2015/containers">mesosphere.github.com/presentations/apachecon-2015/containers</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <p style="font-size: 20px;">Read about Marathon: <a href="https://github.com/mesosphere/marathon">github.com/mesosphere/marathon</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <p style="font-size: 20px;">Try out Mesosphere on GCE: <a href="http://google.mesosphere.io">google.mesosphere.io</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <p style="font-size: 20px;">Come work with us: <a href="http://mesosphere.io/jobs">mesosphere.io/jobs</a></p>
+            </td>
+          </tr>
+          </table>
+       </section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: false,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
