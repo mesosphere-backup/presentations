@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <title>Apache Mesos In a Nutshell</title>
+
+        <meta charset="utf-8" />
+		<meta name="description" content="Apache Mesos In a Nutshell" />
+		<meta name="author" content="Alex" />
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<link rel="stylesheet" href="css/reveal.css" />
+		<link rel="stylesheet" href="css/theme/mesosphere.css" id="theme" />
+
+        <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet" />
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+    </head>
+
+	<body>
+
+        <div class="reveal">
+
+        <!-- Any section element inside of this container is displayed as a slide -->
+
+
+        <!-- Title -->
+        <div class="slides">
+        <section data-background="assets/front-page.jpg">
+            <h1>Apache Mesos</h1>
+            <h2>In a Nutshell</h2>
+            <br>
+            <p>
+                <a href="mailto:alex@mesosphere.io">Alexander Rukletsov</a>
+            </p>
+            <p>
+                <a href="http://mesos.apache.org">mesos.apache.org</a>
+                &nbsp;|&nbsp;
+                <a href="http://mesosphere.com">mesosphere.com</a>
+            </p>
+        </section>
+
+
+
+        <!-- Intro -->
+        <section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>A little history</h2>
+                <ul>
+                    <li> Research project at Berkeley in early 2009 by Benjamin Hindman, Andy Konwinski, Matei Zaharia, Ali Ghodsi, Anthony D. Joseph, Randy Katz, Scott Shenker, Ion Stoica
+                    <li> Hardened in Twitter
+                    <li> Top-level Apache Project
+                </ul>
+            </section>
+
+            <section data-background="assets/matterhorn_Fabioberni.jpg">
+                <div style="background-color: rgba(20, 20, 20, 0.8); color: #fff; padding: 20px;">
+                    <h2>Motivation</h2>
+                    <p>Increase performance and utilization of clusters</p>
+                </div>
+                <div style="position: absolute; top: -150px; left: 0px; text-align: right">
+                    <small>&copy; Fabioberni</small>
+                </div>
+            </section>
+
+            <section data-background="assets/sniffing-dog_hightimes.com.jpg">
+                <div style="background-color: rgba(20, 20, 20, 0.8); color: #fff; padding: 20px;">
+                    <h2>Intuition</h2>
+                    <h3>Static partitioning is considered harmful</h3>
+                </div>
+                <div style="position: absolute; top: -150px; left: 0px; text-align: right">
+                    <small>&copy; hightimes.com</small>
+                </div>
+            </section>
+
+<section data-background="assets/front-page.jpg">
+                <h2>Static partitioning is harmful</h2>
+                <table style="width:75%;">
+                    <tr>
+                        <td><img src="assets/icon-service-spark-medium@2x.png" width=64px height=64px> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
+                        <td><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
+                        <td><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
+                        <td><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
+                    </tr>
+                    <tr>
+                        <td><img src="assets/marathon-favicon-64x64.png" width=64px height=64px> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
+                        <td class="fragment fade-out" data-fragment-index="1"><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
+                        <td class="fragment fade-out" data-fragment-index="1"><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
+                        <td class="fragment fade-out" data-fragment-index="1"><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
+                    </tr>
+                    <tr>
+                        <td><img src="assets/hadoop-elephant.png" width=64px height=64px> &nbsp;&nbsp;&nbsp;&nbsp; </td>
+                        <td><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
+                        <td><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
+                        <td><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
+                    </tr>
+                </table>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Static partitioning is harmful</h2>
+                <img src="assets/utilization.png">
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Some random Mesos facts</h2>
+                <ul>
+                    <li> Mesosphere, Twitter are major users and contributors
+                    <li> Scales to 10 000s of nodes, production grade
+                    <li> Packages and support through Mesosphere
+                    <li> APIs in C++, Python, JVM-languages, Go and counting
+                    <li> Built-in containerization, including Docker
+                    <li> Multi-tenant workloads, failure detection, easy failover and HA
+                </ul>
+            </section>
+
+        </section>
+
+
+
+        <!-- Mesos architecture -->
+        <section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Apps in the Cloud Era</h2>
+                <br>
+                <table style="width:100%; border-spacing: 5px">
+                    <tr>
+                        <td style="background-color: rgba(87, 156, 58, 0.8); color: #fff; text-align: center; padding: 5px;">App</td>
+                        <td style="background-color: rgba(87, 156, 58, 0.8); color: #fff; text-align: center; padding: 5px;">App</td>
+                        <td style="background-color: rgba(87, 156, 58, 0.8); color: #fff; text-align: center; padding: 5px;">App</td>
+                        <td style="background-color: rgba(87, 156, 58, 0.8); color: #fff; text-align: center; padding: 5px;">App</td>
+                        <td style="background-color: rgba(87, 156, 58, 0.0); color: #fff; text-align: center; padding: 5px;">&nbsp;</td>
+                        <td style="background-color: rgba(87, 156, 58, 0.8); color: #fff; text-align: center; padding: 5px; vertical-align: middle;" colspan="4" rowspan="2">App</td>
+                    </tr>
+
+                    <tr>
+                        <td style="background-color: rgba(149, 54, 102, 0.8); color: #fff; text-align: center; padding: 5px; vertical-align: middle;" colspan="4" rowspan="2">Virtualization</td>
+                        <td style="background-color: rgba(20, 20, 20, 0.0); color: #fff; text-align: center; padding: 5px;">&nbsp;</td>
+                    </tr>
+
+                    <tr>
+                        <td style="background-color: rgba(20, 20, 20, 0.0); color: #fff; text-align: center; padding: 5px;">&nbsp;</td>
+                        <td style="background-color: rgba(149, 54, 102, 0.8); color: #fff; text-align: center; padding: 5px;" colspan="4">Aggregation</td>
+                    </tr>
+
+                    <tr>
+                        <td style="background-color: rgba(48, 112, 186, 0.8); color: #fff; text-align: center; padding: 5px;" colspan="4">Server</td>
+                        <td style="background-color: rgba(20, 20, 20, 0.0); color: #fff; text-align: center; padding: 5px;">&nbsp;</td>
+                        <td style="background-color: rgba(48, 112, 186, 0.8); color: #fff; text-align: center; padding: 5px;">Serv</td>
+                        <td style="background-color: rgba(48, 112, 186, 0.8); color: #fff; text-align: center; padding: 5px;">Serv</td>
+                        <td style="background-color: rgba(48, 112, 186, 0.8); color: #fff; text-align: center; padding: 5px;">Serv</td>
+                        <td style="background-color: rgba(48, 112, 186, 0.8); color: #fff; text-align: center; padding: 5px;">Serv</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Mesos: Level of abstraction</h2>
+                <br>
+                <table style="width:100%; border-spacing: 5px">
+                    <tr class="fragment" data-fragment-index="2">
+                        <td style="background-color: rgba(243, 131, 55, 0.8); color: #fff; text-align: center; padding: 5px;" width=40%>PaaS</td>
+                        <td style="text-align: center; padding: 5px; font-size: smaller;">Deploy and manage applications/services</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: rgba(63, 108, 175, 0.8); color: #fff; text-align: center; padding: 5px;" width=40%>Mesos</td>
+                        <td style="text-align: center; padding: 5px; font-size: smaller;">Build and run frameworks using resources</td>
+                    </tr>
+                    <tr class="fragment" data-fragment-index="1">
+                        <td style="background-color: rgba(176, 59, 61, 0.8); color: #fff; text-align: center; padding: 5px;" width=40%>IaaS</td>
+                        <td style="text-align: center; padding: 5px; font-size: smaller;">Provision and manage machines</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Mesos: Level of abstraction</h2>
+                <br>
+                <table style="width:100%; border-spacing: 5px">
+                    <tr class="fragment" data-fragment-index="2">
+                        <td style="background-color: rgba(243, 131, 55, 0.8); color: #fff; text-align: center; padding: 5px;" width=40%>PaaS</td>
+                        <td style="text-align: center; padding: 5px; font-size: smaller;">PaaS on Mesos: Apache Aurora, Marathon, etc</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: rgba(63, 108, 175, 0.8); color: #fff; text-align: center; padding: 5px;" width=40%>Mesos</td>
+                    </tr>
+                    <tr class="fragment" data-fragment-index="1">
+                        <td style="background-color: rgba(176, 59, 61, 0.8); color: #fff; text-align: center; padding: 5px;" width=40%>IaaS</td>
+                        <td style="text-align: center; padding: 5px; font-size: smaller;">Use OpenStack, AWS, GCE, DO to run Mesos</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Mesos on IaaS++</h2>
+                <br>
+                <table style="width:100%; border-spacing: 5px">
+                    <tr class="fragment" data-fragment-index="2">
+                        <td style="background-color: rgba(243, 131, 55, 0.8); color: #fff; text-align: center; padding: 5px;" width=20% colspan="2">Framework</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: rgba(63, 108, 175, 0.8); color: #fff; text-align: center; padding: 5px;" width=20% colspan="2">Mesos</td>
+                        <td style="text-align: center; padding: 5px; font-size: smaller;">Common functionality via API</td>
+                    </tr>
+                    <tr class="fragment" data-fragment-index="1">
+                        <td style="background-color: rgba(176, 59, 61, 0.8); color: #fff; text-align: center; vertical-align: middle; padding: 5px;" width=20%>Hardware</td>
+                        <td style="background-color: rgba(176, 59, 61, 0.8); color: #fff; text-align: center; vertical-align: middle; padding: 5px;" width=20%>IaaS</td>
+                        <td style="text-align: center; padding: 5px; font-size: smaller;">Use cloud instances or physical machines to run Mesos</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Mesos: A level of indirection</h2>
+                <br>
+                <table style="width:100%; border-spacing: 5px">
+                    <tr>
+                        <td style="background-color: rgba(243, 131, 55, 0.8); color: #fff; text-align: center; padding: 5px;" width=10% colspan="4">
+                            <p class="fragment fade-out" data-fragment-index="1">Coordinator</p>
+                            <p class="fragment roll-in" data-fragment-index="1">Scheduler</p>
+                        </td>
+                    </tr>
+
+                    <tr class="fragment" data-fragment-index="2">
+                        <td style="background-color: rgba(63, 108, 175, 0.8); color: #fff; text-align: center; padding: 5px;" width=20% colspan="4">Mesos master</td>
+                    </tr>
+
+                    <tr>
+                        <td style="background-color: rgba(176, 59, 61, 0.8); color: #fff; text-align: center; padding: 5px;" width=15%><img src="assets/node_Ocean-Bussard.png" width=64px height=64px></td>
+                        <td style="background-color: rgba(176, 59, 61, 0.8); color: #fff; text-align: center; padding: 5px;" width=15%><img src="assets/node_Ocean-Bussard.png" width=64px height=64px></td>
+                        <td style="background-color: rgba(176, 59, 61, 0.8); color: #fff; text-align: center; padding: 5px;" width=15%><img src="assets/node_Ocean-Bussard.png" width=64px height=64px></td>
+                        <td style="background-color: rgba(176, 59, 61, 0.8); color: #fff; text-align: center; padding: 5px;" width=15%><img src="assets/node_Ocean-Bussard.png" width=64px height=64px></td>
+                        <td style="text-align: center; vertical-align: middle;  padding: 5px; font-size: smaller;">
+                            <p class="fragment fade-out" data-fragment-index="1">Workers</p>
+                            <p class="fragment roll-in" data-fragment-index="1">Mesos nodes running tasks</p>
+                        </td>
+                    </tr>
+                </table>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Mesos: A level of indirection</h2>
+                <p>Provides common functionality every new distributed system re-implements:</p>
+                <ul>
+                    <li> Failure detection
+                    <li> Task distribution
+                    <li> Task starting
+                    <li> Task monitoring
+                    <li> Task killing
+                    <li> Task cleanup
+                </ul>
+                <p class="fragment">Apache Mesos is a distributed system for building and running other distributed systems</p>
+            </section>
+
+            <section data-background="assets/re-inventing_stebok.net.jpg">
+                <div style="background-color: rgba(20, 20, 20, 0.8); color: #fff; padding: 20px;">
+                    <h3>Why reinventing the wheel?</h3>
+                </div>
+                <div style="position: absolute; top: -150px; left: 0px; text-align: right; color">
+                    <small>&copy; stebok.net</small>
+                </div>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Mesos: Architecture</h2>
+                <img src="assets/architecture-01.png">
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Mesos: Two level scheduling</h2>
+                <ul>
+                    <li> Framework gets allocated resources from the master
+                        <ul>
+                            <li> Resources are allocated via resource offers
+                            <li> A resource offer represents a snapshot of available resources (one per node)
+                        </ul>
+                    <li> Framework uses these resources to decide what tasks to run
+                        <ul>
+                            <li> A task can use a subset of an offer
+                            <li> Framework can reject an offer
+                            <li> Framework can hoard offers
+                            <li> Framework can check additional attributes
+                        </ul>
+                </ul>
+            </section>
+
+        </section>
+
+
+
+        <!-- Anatomy of a framework -->
+        <section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Anatomy of a framework</h2>
+                <ul class="fragment">
+                    <li> Roles, Reservations, Persistence
+                    <li> Scheduler HA, Reconciliation, State Abstraction
+                    <li> Status Updates, Framework Messages
+                    <li> Authentication, ACLs
+                    <li> DCOS Integration, 1.0 HTTP API
+                </ul>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>The core dynamic</h2>
+                <ul>
+                    <li>Receive resource offers</li>
+                    <li>Make decisions (launch tasks, or decline)</li>
+                    <li>Receive status updates</li>
+                    <li>Update local view of the global state</li>
+                </ul>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Tools at your disposal</h2>
+                <ul>
+                    <li>The State abstraction</li>
+                    <li>Status updates</li>
+                    <li>Custom executors</li>
+                    <li>Framework messages</li>
+                </ul>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Resource offers</h2>
+                <pre><code class="protobuf" data-trim>
+    message Offer {
+      required OfferID id
+      required FrameworkID framework_id
+      required SlaveID slave_id
+      required string hostname
+      repeated Resource resources
+      repeated Attribute attributes
+      repeated ExecutorID executor_ids
+    }
+                </code></pre>
+                <pre><code class="protobuf" data-trim>
+    message Resource {
+      required string name
+      required Value.Type type
+      optional Value.Scalar scalar
+      optional Value.Ranges ranges
+      optional Value.Set set
+      optional string role [default = "*"];
+      optional DiskInfo disk
+    }
+                </code></pre>
+                <p class="fragment">Resources are consumed by launching, declining, or accepting offers</p>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Scheduler calls</h2>
+                <table style="width: 100%;">
+                    <tr>
+                        <td><i class="fa fa-recycle"></i></td><td>Lifecycle management</td>
+                        <td>Register, Reregister, Unregister</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa fa-hdd-o"></i></td><td> Resource allocation
+                        <td>Request, Decline, Revive</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa fa-tasks"></i></td><td> Task management</td>
+                        <td>Launch, Kill, Reconcile</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa fa-exchange"></i></td><td> Communication</td>
+                        <td>sendFrameworkMessage</td>
+                    </tr>
+                </table>
+                <br>
+                <br>
+
+                <h2>Scheduler events</h2>
+                <table style="width: 100%;">
+                    <tr>
+                        <td><i class="fa fa-recycle"></i></td><td>Lifecycle management</td>
+                        <td>Registered, Reregistered</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa fa-hdd-o"></i></td><td> Resource allocation
+                        <td>Offers, Rescind</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa fa-tasks"></i></td><td> Task management</td>
+                        <td>TaskStatus</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa fa-exchange"></i></td><td> Communication</td>
+                        <td>frameworkMessage</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Executor events</h2>
+                <table style="width: 100%;">
+                    <tr>
+                        <td><i class="fa fa-recycle"></i></td><td>Lifecycle management</td>
+                        <td>Registered, Reregistered, Disconnected, Shutdown</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa fa-tasks"></i></td><td> Task management</td>
+                        <td>launchTask, killTask</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa fa-exchange"></i></td><td> Communication</td>
+                        <td>frameworkMessage</td>
+                    </tr>
+                </table>
+                <br>
+                <br>
+
+                <h2>Executor calls</h2>
+                <table style="width: 100%;">
+                    <tr>
+                        <td><i class="fa fa-tasks"></i></td><td> Task management</td>
+                        <td>sendStatusUpdate</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa fa-exchange"></i></td><td> Communication</td>
+                        <td>sendFrameworkMessage</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Framework pattern: Resource math</h2>
+                <ul>
+                    <li>Tasks are typically launched on partial offers</li>
+                    <li>Does this offer satisfy a task I want to run?</li>
+                    <li>What's left of the offer after I launch this task?</li>
+                </ul>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Framework Pattern: Tracking task metadata</h2>
+                <ul>
+                    <li>Scheduler state is usually associated with TaskIDs</li>
+                    <li>Update state upon receiving status updates</li>
+                    <li>Metadata can be persisted via State</li>
+                </ul>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Handling failures: Keeping the scheduler up</h2>
+                <ul>
+                    <li>Run your scheduler with a meta-framework</li>
+                    <li>Re-register with the previous Framework ID</li>
+                    <li>Pick up any persisted metadata</li>
+                    <li>Perform task reconciliation</li>
+                    <li>Continue as before</li>
+                </ul>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Handling failures: Status updates</h2>
+                <pre><code class="python" data-trim>
+    class MyScheduler:
+      ...
+      def statusUpdate(self, driver, update):
+        ...
+        # Where update.state can be
+        # TASK_STAGING = 6; // Initial state. Framework status updates should not use.
+        # TASK_STARTING = 0;
+        # TASK_RUNNING = 1;
+        # TASK_FINISHED = 2; // TERMINAL. The task finished successfully.
+        # TASK_FAILED = 3; // TERMINAL. The task failed to finish successfully.
+        # TASK_KILLED = 4; // TERMINAL. The task was killed by the executor.
+        # TASK_LOST = 5; // TERMINAL. The task failed but can be rescheduled.
+        # TASK_ERROR = 7; // TERMINAL. The task description contains an error.
+                </code></pre>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Delivery guarantee</h2>
+                <ul>
+                    <li>At-least-once (status updates)</li>
+                    <li>At-most-once (framework messages)</li>
+                </ul>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Task reconciliation</h2>
+                <pre><code>
+                   let start = now()
+                   let remaining = { T ϵ tasks | T is non-terminal }
+                3: Perform reconciliation: reconcile(remaining)
+                   Wait for status updates to arrive (truncated exp backoff).
+                     For each update, note the time of arrival.
+                   let remaining = { T ϵ remaining | T.last_update_arrival() &lt; start }
+                   If remaining is non-empty, go to 3.
+                </code></pre>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Authorization and ACLs</h2>
+                <pre><code class="protobuf" data-trim>
+message FrameworkInfo {
+  ...
+  optional string principal = 8;
+  ...
+}
+                </code></pre>
+                <pre><code class="shell" data-trim>
+mesos-master ... --acls="{
+  "permissive" : false,
+  "register_frameworks": [
+    {
+      "principals": { "values": ["HDFS"] },
+      "roles": { "values": ["storage"] }
+    }, {
+      "principals": { "type": "ANY" },
+      "roles": { "values": ["*"] }
+    }
+  ],
+  "run_tasks": [
+    {
+      "principals": { "values": ["Marathon", "Chronos"] },
+      "users": { "values": ["root"] }
+    }
+  ]}"
+                </code></pre>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Mesos 1.0 HTTP API</h2>
+                <ul>
+                    <li>/events endpoint
+                        <ul>
+                            <li> Schedulers POST registration data here
+                            <li> Expected to keep a persistent connection open
+                            <li> Replaces scheduler callback methods
+                            <li> Chunked-Transfer encoding, one chunk per update
+                        </ul>
+                    <li>/call endpoint
+                        <ul>
+                            <li> Replaces scheduler driver methods
+                        </ul>
+                </ul>
+            </section>
+
+        </section>
+
+
+
+        <!-- Docker support -->
+        <section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Containerization and isolation</h2>
+                <ul>
+                    <li> Static application composition
+                    <li> Reliable deployment
+                    <li> Unit of resource isolation
+                    <li> Execution isolation
+                    <li> Multi-tenancy without heavyweight VMs
+                </ul>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Docker</h2>
+                <ul>
+                    <li> Open source
+                    <li> Configurable layers
+                    <li> Reproducible
+                    <li> Version-controlled
+                    <li> Plenty of other people's containers
+                    <li class="fragment"> First-class citizen in Mesos and the Mesosphere stack
+                    <li class="fragment"> Kubernetes employs and promotes Docker
+                    <li class="fragment roll-in highlight-red"> Security (isolator that does not isolate)
+                    <li class="fragment roll-in highlight-red"> Big images, long fetch time
+                    <li class="fragment roll-in highlight-red"> Vendor lock
+                    <li class="fragment roll-in highlight-red"> Persistent volumes
+                </ul>
+            </section>
+
+            <section data-background="assets/container_Gerard-Julien-AFP.jpg">
+                <div style="background-color: rgba(20, 20, 20, 0.8); color: #fff; padding: 20px;">
+                    <h3>Run everything in containers</h3>
+                </div>
+                <div style="position: absolute; top: -150px; left: 0px; text-align: right">
+                    <small>&copy; Gerard Julien/AFP</small>
+                </div>
+            </section>
+
+            <section data-background="assets/awesome-container-system_[unknown].jpg">
+                <div style="position: absolute; top: -150px; left: 0px; text-align: right">
+                    <small>&copy; Unknown</small>
+                </div>
+            </section>
+
+            <section data-background="assets/awesome-container-scaled_[unknown].jpg">
+                <div style="position: absolute; top: -150px; left: 0px; text-align: right">
+                    <small>&copy; Unknown</small>
+                </div>
+            </section>
+
+            <section data-background="assets/harbour-Aeroview_[ect.nl].jpg">
+                <div style="background-color: rgba(20, 20, 20, 0.8); color: #fff; padding: 20px;">
+                    <h3>Manage containers with Mesos</h3>
+                </div>
+                <div style="position: absolute; top: -150px; left: 0px; text-align: right">
+                    <small>&copy; ect.nl</small>
+                </div>
+            </section>
+
+        </section>
+
+
+
+        <!-- DCOS -->
+        <section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>The Mesosphere stack</h2>
+                <img src="assets/mesosphere-stack.png">
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>The DCOS stack</h2>
+                <img src="assets/dcos-stack.png">
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>DCOS: Contributions to Mesos</h2>
+                <ul>
+                    <li> Module subsystem (lifecycle, python)
+                    <li> Modules (authenticator, allocator, isolator)
+                    <li> Offer reservation
+                    <li> Security and ACL improvements
+                    <li> etcd alternative
+                </ul>
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>DCOS: Mesosphere open source efforts</h2>
+                <ul>
+                    <li> Mesosphere package repo [github://mesosphere/universe]
+                    <li> HDFS on Mesos [github://mesosphere/hdfs]
+                    <li> Cassandra on Mesos [github://mesosphere/cassandra-mesos]
+                    <li> K8s on Mesos [github://mesosphere/kubernetes-mesos]
+                    <li> DNS service discovery [github://mesosphere/mesos-dns]
+                    <li> ... and counting
+                </ul>
+            </section>
+
+        </section>
+
+
+
+        <!-- MoM -->
+        <section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Mesos on Mesosphere</h2>
+<!--                 <img src="assets/mesosphere-stack.png"> -->
+            </section>
+
+            <section data-background="assets/front-page.jpg">
+                <h2>Mesos on Mesosphere</h2>
+<!--                 <img src="assets/dcos-stack.png"> -->
+            </section>
+
+        </section
+
+
+
+	    </div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: false,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+    <!--script>
+      window.analytics||(window.analytics=[]),window.analytics.methods=["identify","track","trackLink","trackForm","trackClick","trackSubmit","page","pageview","ab","alias","ready","group","on","once","off"],window.analytics.factory=function(t){return function(){var a=Array.prototype.slice.call(arguments);return a.unshift(t),window.analytics.push(a),window.analytics}};for(var i=0;i<window.analytics.methods.length;i++){var method=window.analytics.methods[i];window.analytics[method]=window.analytics.factory(method)}window.analytics.load=function(t){var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"===document.location.protocol?"https://":"http://")+"d2dq2ahtl5zl1z.cloudfront.net/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n)},window.analytics.SNIPPET_VERSION="2.0.8",
+      window.analytics.load("7sgtwqvuai");
+      window.analytics.page();
+    </script-->
+
+	</body>
+</html>
