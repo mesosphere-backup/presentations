@@ -1,0 +1,25 @@
+{
+  "id": "frontend",
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "superguenter/node-redis-demo",
+      "network": "HOST"
+    }
+  },
+  "env": {
+    "REDIS_HOST": "redis.marathon.mesos"
+  },
+  "instances": 1,
+  "cpus": 0.25,
+  "healthChecks": [
+    {
+      "protocol": "HTTP",
+      "path": "/",
+      "portIndex": 0,
+      "gracePeriodSeconds": 10,
+      "intervalSeconds": 10,
+      "maxConsecutiveFailures": 3
+    }
+  ]
+}

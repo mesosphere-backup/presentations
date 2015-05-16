@@ -1,0 +1,16 @@
+{
+  "id": "mesos-dns",
+  "cmd" : "/mesos-dns -v=2 -config=$MESOS_SANDBOX/config.json",
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "mesosphere/mesos-dns",
+      "network": "HOST"
+    }
+  },
+  "cpus": 0.25,
+  "mem": 256.0,
+  "instances": 1,
+  "uris": [ "/home/vagrant/workspace/presentations-apachecon/demo/mesos-dns/config.json" ]
+}
+
