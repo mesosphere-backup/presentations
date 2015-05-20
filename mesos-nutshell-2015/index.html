@@ -46,13 +46,17 @@
 
         <!-- Title -->
         <div class="slides">
-        <section data-background="assets/front-page.jpg">
+        <section data-background="assets/heliocrystal.jpg">
             <h1>Apache Mesos</h1>
-            <h2>In a Nutshell</h2>
+            <h2>(In a Nutshell)</h2>
             <br>
             <p>
-                <a href="mailto:alex@mesosphere.io">Alexander Rukletsov</a>
+                Alexander Rukletsov
+                <br>
+                <small><a href="mailto:alex@mesosphere.io">alex@mesosphere.com</a></small>
             </p>
+            <br>
+            <br>
             <p>
                 <a href="http://mesos.apache.org">mesos.apache.org</a>
                 &nbsp;|&nbsp;
@@ -85,7 +89,7 @@
                 </div>
             </section>
 
-<section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Static partitioning is harmful</h2>
                 <table style="width:75%;">
                     <tr>
@@ -109,12 +113,12 @@
                 </table>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Static partitioning is harmful</h2>
                 <img src="assets/utilization.png">
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>A little history</h2>
                 <ul>
                     <li> Research project at Berkeley in early 2009 by Benjamin Hindman, Andy Konwinski, Matei Zaharia, Ali Ghodsi, Anthony D. Joseph, Randy Katz, Scott Shenker, Ion Stoica
@@ -123,7 +127,7 @@
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Some random Mesos facts</h2>
                 <ul>
                     <li> Mesosphere, Twitter are major users and contributors
@@ -142,7 +146,7 @@
         <!-- Mesos architecture -->
         <section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Apps in the Cloud Era</h2>
                 <br>
                 <table style="width:100%; border-spacing: 5px">
@@ -176,7 +180,7 @@
                 </table>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos: Level of abstraction</h2>
                 <br>
                 <table style="width:100%; border-spacing: 5px">
@@ -195,7 +199,7 @@
                 </table>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos: Level of abstraction</h2>
                 <br>
                 <table style="width:100%; border-spacing: 5px">
@@ -213,7 +217,7 @@
                 </table>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos on IaaS++</h2>
                 <br>
                 <table style="width:100%; border-spacing: 5px">
@@ -232,7 +236,7 @@
                 </table>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos: A level of indirection</h2>
                 <br>
                 <table style="width:100%; border-spacing: 5px">
@@ -260,7 +264,7 @@
                 </table>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos: A level of indirection</h2>
                 <p>Provides common functionality every new distributed system re-implements:</p>
                 <ul>
@@ -284,12 +288,12 @@
                 </div>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos: Architecture</h2>
                 <img src="assets/architecture-01.png">
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos: Two level scheduling</h2>
                 <ul>
                     <li> Framework gets allocated resources from the master
@@ -314,7 +318,7 @@
         <!-- Anatomy of a framework -->
         <section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Anatomy of a framework</h2>
                 <ul class="fragment">
                     <li> Roles, Reservations, Persistence
@@ -325,7 +329,7 @@
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>The core dynamic</h2>
                 <ul>
                     <li>Receive resource offers</li>
@@ -335,7 +339,7 @@
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Tools at your disposal</h2>
                 <ul>
                     <li>The State abstraction</li>
@@ -345,7 +349,7 @@
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Resource offers</h2>
                 <pre><code class="protobuf" data-trim>
     message Offer {
@@ -372,7 +376,7 @@
                 <p class="fragment">Resources are consumed by launching, declining, or accepting offers</p>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Scheduler calls</h2>
                 <table style="width: 100%;">
                     <tr>
@@ -416,7 +420,7 @@
                 </table>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Executor events</h2>
                 <table style="width: 100%;">
                     <tr>
@@ -448,7 +452,7 @@
                 </table>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Framework pattern: Resource math</h2>
                 <ul>
                     <li>Tasks are typically launched on partial offers</li>
@@ -457,7 +461,7 @@
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Framework Pattern: Tracking task metadata</h2>
                 <ul>
                     <li>Scheduler state is usually associated with TaskIDs</li>
@@ -466,7 +470,7 @@
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Handling failures: Keeping the scheduler up</h2>
                 <ul>
                     <li>Run your scheduler with a meta-framework</li>
@@ -477,7 +481,7 @@
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Handling failures: Status updates</h2>
                 <pre><code class="python" data-trim>
     class MyScheduler:
@@ -496,7 +500,7 @@
                 </code></pre>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Delivery guarantee</h2>
                 <ul>
                     <li>At-least-once (status updates)</li>
@@ -504,7 +508,7 @@
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Task reconciliation</h2>
                 <pre><code>
                    let start = now()
@@ -517,7 +521,7 @@
                 </code></pre>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Authorization and ACLs</h2>
                 <pre><code class="protobuf" data-trim>
 message FrameworkInfo {
@@ -547,7 +551,7 @@ mesos-master ... --acls="{
                 </code></pre>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos 1.0 HTTP API</h2>
                 <ul>
                     <li>/events endpoint
@@ -571,7 +575,7 @@ mesos-master ... --acls="{
         <!-- Docker support -->
         <section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Containerization and isolation</h2>
                 <ul>
                     <li> Static application composition
@@ -582,7 +586,7 @@ mesos-master ... --acls="{
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Docker</h2>
                 <ul>
                     <li> Open source
@@ -636,12 +640,12 @@ mesos-master ... --acls="{
         <!-- MoM -->
         <section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos on Mesosphere</h2>
                 <img src="assets/mom1.png">
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos on Mesosphere</h2>
                 <img src="assets/mom2.png">
             </section>
@@ -653,17 +657,17 @@ mesos-master ... --acls="{
         <!-- DCOS -->
         <section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>The Mesosphere stack</h2>
                 <img src="assets/mesosphere-stack.png">
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>The DCOS stack</h2>
                 <img src="assets/dcos-stack.png">
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>DCOS: Contributions to Mesos</h2>
                 <ul>
                     <li> Module subsystem (lifecycle, python)
@@ -674,7 +678,7 @@ mesos-master ... --acls="{
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>DCOS: Mesosphere open source efforts</h2>
                 <ul>
                     <li> Mesosphere package repo [github://mesosphere/universe]
