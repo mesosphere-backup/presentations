@@ -98,20 +98,20 @@
                 <h2>Static partitioning is harmful</h2>
                 <table style="width:75%;">
                     <tr>
-                        <td><img src="assets/icon-service-spark-medium@2x.png" width=64px height=64px> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><img src="assets/icon-service-spark-medium@2x.png" width=64px height=64px></td>
                         <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
                         <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
                         <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
                     </tr>
                     <tr>
-                        <td><img src="assets/marathon-favicon-64x64.png" width=64px height=64px> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><img src="assets/marathon-favicon-64x64.png" width=64px height=64px></td>
                         <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fragment fade-out fa fa-server fa-3x" data-fragment-index="1"></i></td>
                         <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fragment fade-out fa fa-server fa-3x" data-fragment-index="1"></i></td>
                         <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fragment fade-out fa fa-server fa-3x" data-fragment-index="1"></i></td>
                     </tr>
                     <tr>
-                        <td><img src="assets/hadoop-elephant.png" width=64px height=64px> &nbsp;&nbsp;&nbsp;&nbsp; </td>
-                       <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><img src="assets/hadoop-elephant.png" width=64px height=64px></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
                         <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
                         <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
                     </tr>
@@ -337,11 +337,6 @@
             </section>
 
             <section data-background="assets/heliocrystal.jpg">
-                <h2>Mesos: Workflow</h2>
-                <img style="width: 80%;" src="assets/mesos-simple.png"/>
-            </section>
-
-            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos: Two level scheduling</h2>
                 <ul>
                     <li> Framework gets allocated resources from the master
@@ -386,6 +381,13 @@
                     <li>Update local view of the global state</li>
                 </ul>
             </section>
+
+            <section data-background="assets/heliocrystal.jpg">
+                <h2>The core dynamic</h2>
+                <img style="width: 80%;" src="assets/mesos-simple.png"/>
+            </section>
+
+<!-- For framework writers
 
             <section data-background="assets/heliocrystal.jpg">
                 <h2>Tools at your disposal</h2>
@@ -500,6 +502,8 @@
                 </table>
             </section>
 
+-->
+
             <section data-background="assets/heliocrystal.jpg">
                 <h2>Framework pattern: Resource math</h2>
                 <ul>
@@ -517,6 +521,8 @@
                     <li>Metadata can be persisted via State</li>
                 </ul>
             </section>
+
+<!-- Handling failures, status updates and framework messages, delivery guarantee
 
             <section data-background="assets/heliocrystal.jpg">
                 <h2>Handling failures: Keeping the scheduler up</h2>
@@ -555,6 +561,10 @@
                     <li>At-most-once (framework messages)</li>
                 </ul>
             </section>
+
+-->
+
+<!-- Reconciliation, Authorization, etc
 
             <section data-background="assets/heliocrystal.jpg">
                 <h2>Task reconciliation</h2>
@@ -616,6 +626,8 @@ mesos-master ... --acls="{
                 </ul>
             </section>
 
+-->
+
         </section>
 
 
@@ -644,10 +656,10 @@ mesos-master ... --acls="{
                     <li> Plenty of other people's containers
                     <li class="fragment"> First-class citizen in Mesos and the Mesosphere stack
                     <li class="fragment"> Kubernetes employs and promotes Docker
-                    <li class="fragment roll-in highlight-red"> Security (isolator that does not isolate)
-                    <li class="fragment roll-in highlight-red"> Big images, long fetch time
-                    <li class="fragment roll-in highlight-red"> Vendor lock
-                    <li class="fragment roll-in highlight-red"> Persistent volumes
+                    <li class="fragment roll-in"><i class="fa fa-warning"></i> Security (isolator that does not isolate)
+                    <li class="fragment roll-in"><i class="fa fa-warning"></i> Big images, long fetch time
+                    <li class="fragment roll-in"><i class="fa fa-warning"></i> Vendor lock
+                    <li class="fragment roll-in"><i class="fa fa-warning"></i> Persistent volumes
                 </ul>
             </section>
 
@@ -738,6 +750,13 @@ mesos-master ... --acls="{
                 </ul>
             </section>
 
+        </section>
+
+
+
+        <!-- Finalization -->
+        <section data-background="assets/heliocrystal.jpg">
+            <h2>Thanks!</h2>
         </section>
 
 
