@@ -99,49 +99,62 @@
                 <table style="width:75%;">
                     <tr>
                         <td><img src="assets/icon-service-spark-medium@2x.png" width=64px height=64px> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
-                        <td><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
-                        <td><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
-                        <td><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
                     </tr>
                     <tr>
                         <td><img src="assets/marathon-favicon-64x64.png" width=64px height=64px> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
-                        <td class="fragment fade-out" data-fragment-index="1"><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
-                        <td class="fragment fade-out" data-fragment-index="1"><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
-                        <td class="fragment fade-out" data-fragment-index="1"><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fragment fade-out fa fa-server fa-3x" data-fragment-index="1"></i></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fragment fade-out fa fa-server fa-3x" data-fragment-index="1"></i></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fragment fade-out fa fa-server fa-3x" data-fragment-index="1"></i></td>
                     </tr>
                     <tr>
                         <td><img src="assets/hadoop-elephant.png" width=64px height=64px> &nbsp;&nbsp;&nbsp;&nbsp; </td>
-                        <td><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
-                        <td><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
-                        <td><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
+                       <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
                     </tr>
                 </table>
             </section>
 
-            <section data-background="assets/heliocrystal.jpg">
+            <section>
                 <h2>Static partitioning is harmful</h2>
-                <img src="assets/utilization.png">
+                <img src="assets/dynamic-partition.png">
             </section>
 
             <section data-background="assets/heliocrystal.jpg">
-                <h2>A little history</h2>
-                <ul>
-                    <li> Research project at Berkeley in early 2009 by Benjamin Hindman, Andy Konwinski, Matei Zaharia, Ali Ghodsi, Anthony D. Joseph, Randy Katz, Scott Shenker, Ion Stoica
-                    <li> Hardened at Twitter
-                    <li> Top-level Apache Project
-                </ul>
+                <h2>Mesos is...</h2>
+                <table>
+                    <tr>
+                        <td><i class="fa fa-users"></i></td>
+                        <td>A top-level Apache project</td>
+                    </tr>
+                    <tr class="fragment">
+                        <td><i class="fa fa-sitemap"></i></td>
+                        <td>A cluster resource negotiator</td>
+                    </tr>
+                    <tr class="fragment">
+                        <td><i class="fa fa-signal"></i></td>
+                        <td>Scalable to 10,000s of nodes</td>
+                    </tr>
+                    <tr class="fragment">
+                        <td><i class="fa fa-code-fork"></i></td>
+                        <td>Supported and developed by Mesosphere, Twitter and other companies</td>
+                    </tr>
+                    <tr class="fragment">
+                        <td><i class="fa fa-bomb"></i></td>
+                        <td>Fault-tolerant, battle-tested</td>
+                    </tr>
+                    <tr class="fragment">
+                        <td><i class="fa fa-indent"></i></td>
+                        <td>An SDK for distributed apps</td>
+                    </tr>
+                </table>
             </section>
 
-            <section data-background="assets/heliocrystal.jpg">
-                <h2>Some random Mesos facts</h2>
-                <ul>
-                    <li> Mesosphere, Twitter are major users and contributors
-                    <li> Scales to 10 000s of nodes, production grade
-                    <li> Packages and support through Mesosphere
-                    <li> APIs in C++, Python, JVM-languages, Go and counting
-                    <li> Built-in containerization, including Docker
-                    <li> Multi-tenant workloads, failure detection, easy failover and HA
-                </ul>
+            <section>
+                <img src="assets/companies.png">
             </section>
 
         </section>
@@ -183,6 +196,41 @@
                         <td style="background-color: rgba(48, 112, 186, 0.8); color: #fff; text-align: center; padding: 5px;">Serv</td>
                     </tr>
                 </table>
+            </section>
+
+            <section data-background="assets/heliocrystal.jpg">
+                <h2>Mesos let us treat a cluster of nodes...</h2>
+                <img src="assets/cluster.png" />
+            </section>
+
+            <section>
+                <h2>... as <u>one big computer</u></h2>
+                <img style="width: 70%;" src="assets/dc.png" />
+            </section>
+
+            <section>
+                <table style="font-size: 6em; width: 100%;">
+                <tr>
+                    <td style="text-align: center;">
+                        <div>
+                            <p><i class="fa fa-cube"></i></p>
+                            <p style="font-size: 30px;">Not as individual machines</p>
+                        </div>
+                    </td>
+                    <td style="text-align: center;">
+                        <div class="fragment">
+                            <p><i class="fa fa-cubes"></i></p>
+                            <p style="font-size: 30px;">Not as VMs</p>
+                        </div>
+                    </td>
+                </tr>
+                </table>
+            </section>
+
+            <section data-background="assets/spices.jpg">
+                <div style="background-color:rgba(0, 0, 0, 0.5)">
+                    <h2>But as computational resources like cores, memory, disks, etc.</h2>
+                </div>
             </section>
 
             <section data-background="assets/heliocrystal.jpg">
@@ -296,6 +344,11 @@
             <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos: Architecture</h2>
                 <img src="assets/architecture-01.png">
+            </section>
+
+            <section data-background="assets/heliocrystal.jpg">
+                <h2>Mesos: Workflow</h2>
+                <img src="assets/mesos-simple.png"/>
             </section>
 
             <section data-background="assets/heliocrystal.jpg">
