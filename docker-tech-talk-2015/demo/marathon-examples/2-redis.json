@@ -1,0 +1,14 @@
+{
+  "id": "redis",
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "redis:3",
+      "network": "HOST"
+    }
+  },
+  "instances": 1,
+  "cpus": 0.25,
+  "mem": 64
+}
+

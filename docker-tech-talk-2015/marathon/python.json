@@ -1,0 +1,18 @@
+{
+  "id":"/python-app",
+  "cmd":"python app.py",
+  "instances":1,
+  "cpus":0.1,
+  "mem":256.0,
+  "ports":[
+    0
+  ],
+  "container":{
+    "type":"DOCKER",
+    "docker":{
+      "image":"mesosphere/python-redis-app:gitpro",
+      "network":"HOST"
+    }
+  },
+  "constraints": [["hostname", "UNIQUE"]]
+}
