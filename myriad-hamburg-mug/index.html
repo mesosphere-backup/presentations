@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Apache Mesos + Apache YARN = Myriad</title>
+
+		<meta name="description" content="Apache Mesos + Apache YARN = Myriad: Better Together">
+		<meta name="author" content="Adam Bordelon">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/mesosphere.css" id="theme">
+
+    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+        <section data-background="assets/front-page.jpg">
+					<h2>&nbsp; Apache Mesos</h2>
+					<h2>+ Apache YARN</h2>
+					<h1>= Myriad</h1>
+          <center>
+          <table>
+          <tr>
+            <td>
+            <p><a href="mailto:me@apache.org">Adam Bordelon</a></p>
+            </td>
+            <td>
+            <p align="right">Myriad Project Lead</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+            <p><a href="http://mesosphere.com">Mesosphere</a></p>
+            </td>
+            <td>
+            <p align="right">Apache Mesos Committer</p>
+            </td>
+          </tr>
+          </table>
+          </center>
+				</section>
+
+        <!--
+          Title
+          !Agenda
+            The problem
+            The solution(s?)
+              What's Mesos? YARN?
+            Why would I want both?
+            What's Myriad and how does it work?
+            (Use cases, Lessons, Future)
+
+          !Problem Scenarios
+            What's running on datacenters?
+              Tier 1 services: web-servers, databases, critical SOA, system processes; QoS, SLAs
+              Tier 2 services: dev/test environments, non-critical services, stream processing
+              Best effort jobs: batch analytics, build systems, interactive queries
+            What we need (Ted)
+              Programming models based on resources, not machines
+              Custom resource types, scheduling algorithms
+                Fast scheduling vs. careful/slow scheduling
+              Lightweight executors, fast task launch time
+              Multi-tenancy, strong isolation
+              Preemption/oversubscription, fault-tolerance
+              Support Hadoop/BigData ecosystem; arbitrary linux processes/containers
+            !Connect Big data to non-Hadoop apps, colocate (multi-tenancy)
+              !3x old static/dynamic slides?
+              Resource utilization
+            Resource isolation
+              Multiple isolated YARN clusters: different versions, dev/test/prod
+              Hadoop teams fine with isolated clusters, but Ops team unhappy; slow to provision
+              Run Hadoop on the same infra, without interrupting Tier-1 services
+              Hadoop/YARN users want to be able to run their apps without knowing/caring that other (non-Hadoop) apps are running on the cluster.
+            Elastic scaling; auto-scale, use idle resources
+            Fault-tolerant
+
+          Mesos Intro
+            Overview: Fault-tolerant, isolation, Multi-tenancy, scaling
+            vs. YARN
+              two-level scheduling
+              Actor-based bidirectional RPC (HTTP API); no waiting for heartbeats
+              User-defined resources, attributes
+            Who runs Mesos
+            DCOS stack (Marathon, Chronos)
+            Mesos arch
+          Hadoop/YARN arch
+            Hadoop standard, Derived from JT/TT
+            heartbeats, monolithic scheduler, predefined resource types
+            Preemption, strong ecosystem
+
+          Why would I want/need both Mesos and YARN?
+            Static partitioning (show marathon, etc.)
+              !Strong ecosystems (MUG)
+              !Resource lock-in, no elasticity (MUG)
+            Spin up a cluster on the fly (e.g. EMR)
+              Quick dev/QA clusters; compatibility testing
+              YARN doesn't run YARN well, Mesos does
+              Need data locality
+            YARN version upgrade, workload migration
+              Scale up new YARN cluster, scale down old
+              Same data layer (HDFS)
+            Fault-tolerance
+              Run RM on Marathon, auto-restart on another node
+            Multi-tenancy, resource sharing/isolation
+              New Stack
+              Dynamic sharing: node resources, DFS
+            Resource Slosh
+              Web servers, data ingestion (things that will never be Hadoop): write to HDFS
+              Followed by periodic Hadoop analytics
+
+          Myriad:
+            !Makes YARN (Yet Another) Mesos Framework (MUG)
+              Mesos manages DC, YARN mgs Hadoop
+              Get rsrcs from Mesos, grow YARN;
+              Reclaim rsrcs from YARN, give back to Mesos
+            !How? (MUG)
+              RM Plugin: Implements YARN scheduler and Mesos scheduler interfaces
+              Myriad Executor: Launches NM, mounts YARN cgroups under Mesos namespace
+            Myriad arch
+              !REST API
+            Myriad history: MesosCon, HackWeek, Group, incubator
+            !Myriad Incubator update: github page, incubator proposal
+              Proposal, Status pages
+              JIRA, git (empty), website, wiki
+              Naming
+            !Features In Progress (MUG)
+              Myriad scheduler HA
+              Distribution of hadoop binaries
+              Fine-grained scaling
+              Dockerization
+              Upcoming: Multiple isolated YARN clusters
+              Upcoming: Data locality optimizations
+
+          !Demo? Video
+
+          Takeaways
+            benefits to mesos users/admins
+            benefits to hadoop users/admins
+            Links: github, incubator, Mesos[phere]
+
+Mesos vs. YARN?
+* written in c++, supports many languages
+* Long-running services, like rails, go, python, memcache
+  * executors are long-running, per host/slave
+  * executor can run multiple tasks, container can resize; e.g. Spark uses
+* tight integration w/ resource isolation using containers, cgroups, namespaces, docker
+* designed with a two-level scheduling model (dive into resource allocations/offers)
+  - flexible, can be optimistic (Omega), pessimistic (like YARN)
+- faster task launch time
+  - fine-grained task running, vs. running containers (no llamas)
+- designed this way from the start, instead of adapting a batch-only model to handle other workloads
+~ Mesos is fault-tolerant everywhere, (YARN still working on it)
+  - Slave FT is more important for long-running service loads
+- Mesos master has no/soft state, less data to persist, fast failover
+...
+Slider: Like a baby Marathon (with persistence preference)
+Isolation: Now with CPU+Mem (vs. +Disk+Net, DRF)
+YARN-NodeLabels: Attributes+Reservations
+        -->
+
+        <!--section>
+          <img width="80%" src="assets/mesos-silos.png"/>
+        </section>
+
+        <section>
+          <img width="80%" src="assets/mesos-static.png"/>
+        </section>
+
+        <section>
+          <img width="100%" src="assets/mesos-dynamic.png"/>
+        </section-->
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Agenda</h2>
+          <h3> <ul>
+            <li>What's running in your Datacenter?
+            <li>Apache Mesos vs. Apache Hadoop/YARN?
+            <li>Why would you want/need both?
+            <li>Introducing Apache Myriad
+            <li>Myriad Use Cases
+            <li>Myriad: Past, Present, Future
+          </ul> </h3>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>What's running in your datacenter?</h2>
+          <h3> <ul>
+            <li class="fragment">Tier 1 services
+            <li class="fragment">Tier 2 services
+            <li class="fragment">High Priority Batch
+            <li class="fragment">Backfill with Best Effort Batch
+          </ul> </h3>
+					<aside class="notes">
+              Tier 1 services: web-servers, databases, critical SOA, system processes; QoS, SLAs
+              Tier 2 services: dev/test environments, non-critical services, stream processing
+              Best effort jobs: batch analytics, build systems, interactive queries
+          </aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Requirements</h2>
+          <h3> <ul>
+            <li>Programming models based on resources, <br>not machines
+            <li>Custom resource types
+            <li>Custom scheduling algorithms:
+              <br>Fast vs. careful/slow
+            <li>Lightweight executors, fast task launch time
+            <li>Multi-tenancy, utilization, strong isolation
+            <li>Preemption/oversubscription, fault-tolerance
+          </ul> </h3>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Hadoop and More</h2>
+          <h3> <ul>
+            <li>Support Hadoop/BigData ecosystem
+            <li>Support arbitrary (legacy) processes/containers
+            <li>Connect Big Data to non-Hadoop apps,
+                <br>share data, resources
+          </ul> </h3>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Mesos from 10,000 feet</h2>
+          <table>
+          <tr>
+            <td><h3><i class="fa fa-users"></i></h3></td><td><h3>Open Source Apache project</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-sitemap"></i></h3></td><td><h3>Cluster Resource Manager</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-signal"></i></h3></td><td><h3>Scalable to 10,000s of nodes</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-bomb"></i></h3></td><td><h3>Fault-tolerant, no SPOF</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-columns"></i></h3></td><td><h3>Multi-tenancy, Resource Isolation</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-tasks"></i></h3></td><td><h3>Improved resource utilization</h3></td>
+          </tr>
+          </table>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+        <h2>Mesos is more than</h2>
+        <h3><u>Y</u>et <u>A</u>nother <u>R</u>esource <u>N</u>egotiator</h3>
+          <table>
+          <tr>
+            <td><h3><i class="fa fa-tasks"></i></h3></td><td><h3>Long-running services; real-time jobs</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-columns"></i></h3></td><td><h3>Native Docker; cgroups for years; <br>Isolate cpu/mem/disk/net/other</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-file-code-o"></i></h3></td><td><h3>Distributed systems SDK; <br>~200 loc for a new app</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-code"></i></h3></td><td><h3>Core written in C++ for performance, <br>Apps in any language</h3></td>
+          </tr>
+          </table>
+          <aside class="notes">
+            two-level scheduling
+            Actor-based bidirectional RPC (HTTP API); no heartbeats
+            User-defined resources, attributes
+          </aside>
+        </section>
+
+        <section>
+          <img src="assets/companies.png"/>
+          <!---update: netflix, hedge?-->
+					<aside class="notes"></aside>
+				</section>
+
+        <section>
+          <h2>Mesosphere DCOS</h2>
+          <img src="assets/dcos.png"/>
+          <aside class="notes">
+          The OS for your Datacenter, with Mesos as the Kernel
+          HDFS, mesos-dns, CLI, Viz
+          Apps: SOA web-services, Jenkins/build-farm, memcache, cron-jobs, shell scripts, Kubernetes, Cassandra, (HDFS), ElasticSearch, MPI/HPC jobs, etc.
+          </aside>
+				</section>
+
+        <section>
+          <img src="assets/architecture-01.png"/>
+					<aside class="notes">
+          </aside>
+				</section>
+
+        <section>
+          <img width="500%" src="assets/yarn_architecture.gif"/>
+          <aside class="notes">
+            Hadoop standard, Derived from JT/TT
+            heartbeats, monolithic scheduler, predefined resource types
+            Preemption, strong ecosystem
+          </aside>
+				</section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Why two resource managers?</h2>
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section>
+          <img src="assets/static-partition.png">
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Static Partitioning sucks</h2>
+          <ul> <h3>
+              <li>Hadoop teams fine with isolated clusters,
+                <br>but Ops team unhappy; slow to provision
+              <li>Resource silos, no elasticity
+              <li>Want to run Hadoop on the same infrastructure,
+                <br>without interrupting Tier-1 services
+              <li>Want multi-tenancy, resource sharing/isolation
+          </ul> </h3>
+          <aside class="notes"> </aside>
+        </section>
+
+        <section>
+          <img src="assets/generic-nodes.png">
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Introducing Apache Myriad</h2>
+          <h3> <ul>
+            <li>Makes YARN (Yet Another) Mesos Framework
+            <li>Mesos manages DC, YARN manages Hadoop
+            <li>Get resources from Mesos, scale YARN
+            <li>Reclaim YARN resources, give back to Mesos
+          </ul> </h3>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <img src="assets/high-level-architecture.png">
+          <aside class="notes">
+          SOA web-services, Jenkins/build-farm, memcache, cron-jobs, shell scripts, Kubernetes, Cassandra, (HDFS), ElasticSearch, MPI/HPC jobs, etc.
+          </aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <img src="assets/how-it-works.png">
+          <aside class="notes">
+              RM Plugin: Implements YARN scheduler and Mesos scheduler interfaces
+              Myriad Executor: Launches NM, mounts YARN cgroups under Mesos namespace
+              REST API: scale up/down, declarative
+          </aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Myriad improves Mesos</h2>
+          <table>
+          <tr>
+            <td><h3><i class="fa fa-cogs"></i></h3></td><td><h3>Tighter integration with Hadoop frameworks like HBase, Hive, Pig</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-sliders fa-rotate-90"></i></h3></td><td><h3>Borrow resources from Hadoop <br>when traffic spikes for tier-1 services</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-sliders fa-rotate-270"></i></h3></td><td><h3>Backfill unused resource capacity <br>with best-effort Hadoop jobs</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-code-fork"></i></h3></td><td><h3>No Mesos code changes necessary</h3></td>
+          </tr>
+          </table>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Myriad improves Hadoop</h2>
+          <table>
+          <tr>
+            <td><h3><i class="fa fa-signal"></i></h3></td><td><h3>Elastic scaling</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-bomb"></i></h3></td><td><h3>Fault-tolerant: Maintain NM capacity</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-tasks"></i></h3></td><td><h3>Share resources with other workloads, <br>improve resource utilization</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-columns"></i></h3></td><td><h3>Multiple isolated Hadoop clusters <br>sharing node resources and DFS</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-code-fork"></i></h3></td><td><h3>No YARN/Hadoop code changes</h3></td>
+          </tr>
+          </table>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>YARN on the fly</h2>
+          <ul> <h3>
+            <li>Elastic: Scale up/down NMs as needed
+            <li>Fault-tolerance: Run RM on Marathon, auto-restart on another node
+            <li>Quick dev/QA clusters; compatibility testing
+          </ul> </h3>
+          <aside class="notes"> </aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2> Multiple YARNs </h2>
+          <ul> <h3>
+            <li>Multiple isolated YARN clusters:
+              <br>different versions, dev/test/prod
+            <li>YARN version upgrade, workload migration 
+            <li>Scale up new YARN cluster, scale down old
+            <li>Same data layer (HDFS)
+          </ul> </h3>
+          <aside class="notes"> </aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2> Sharing with non-Hadoop workloads</h2>
+          <ul> <h3>
+            <li>Web servers, data ingestion: write to HDFS
+            <li>Followed by periodic Hadoop analytics, <br>write to HDFS/HBase
+            <li>Which may feed back into the webserver, <br>or start another data ingestion cycle
+            <li>Different needs over time, dynamically adjust
+          </ul> </h3>
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>History of Myriad</h2>
+          <table>
+          <tr>
+            <td><h3><i class="fa fa-lightbulb-o"></i></h3></td><td><h3>Mohit Soni from eBay builds prototype, presents at MesosCon</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-flask"></i></h3></td><td><h3>Santosh Marella from MapR <br>attends Mesosphere HackWeek, <br>builds independent prototype</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-comments-o"></i></h3></td><td><h3>Adam introduces Mohit and Santosh, both prototypes merged together</h3></td>
+          </tr><tr>
+            <td><h3><i class="fa fa-group"></i></h3></td><td><h3>Myriad accepted into <a href="https://wiki.apache.org/incubator/MyriadProposal">Apache Incubator</a> March 1, 2015</h3></td>
+          </tr>
+          </table>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Features in Progress</h2>
+          <h3> <ul>
+            <li>Fine-grained scaling
+            <li>Myriad scheduler HA, task reconciliation
+            <li>RM discovery using Marathon/Mesos-DNS
+            <li>Mesosphere DCOS integration
+            <li>Upcoming: Multiple isolated YARN clusters
+            <li>Upcoming: Data locality optimizations
+          </ul> </h3>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Apache Incubator Podling Update</h2>
+          <h3> <ul>
+              <li>Done: Mailing lists, Trademark search, CLAs
+              <li>Ongoing: Status page, Monthly reports
+              <li>Mentors: benh, tdunning, danese, lresende
+              <li>Committers: Mohit, Santosh, Adam, KenSipe
+              <br><br>
+              <li>Legal: Software Grant Agreement
+              <li>INFRA: git repo, JIRA, website, wiki
+              <li>Release: version, vote, ShipIt!
+              <li>Community: more users, committers
+          </ul> </h3>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Learn More!</h2>
+
+          <h3><table>
+          <tr>
+          <td style="vertical-align: middle;">
+          <!--TODO:credit--><img width=150 src="assets/flying-art-birds-cute-Favim.com-669833.jpg"/></td>
+          <td style="vertical-align: middle;">
+            <p><a href="https://wiki.apache.org/incubator/MyriadProposal">Apache Myriad Incubator Proposal</a></p>
+            <p><a href="https://incubator.apache.org/projects/myriad.html">Apache Myriad Incubator Status Page</a></p>
+            <p><a href="https://github.com/mesos/myriad">https://github.com/mesos/myriad</a></p>
+            <p><a href="http://mail-archives.apache.org/mod_mbox/incubator-myriad-dev/">dev@myriad.incubator.apache.org</a></p>
+          </td>
+          </tr>
+          <tr>
+          <td>&nbsp;</td>
+          </tr>
+          <tr>
+          <td style="vertical-align: top;">
+          <img src="assets/mesos.png"/></td>
+          <td style="vertical-align: middle;">
+            <p><a href="http://mesos.apache.org">http://mesos.apache.org</a></p>
+            <p><a href="https://github.com/apache/mesos/">https://github.com/apache/mesos</a></p>
+            <p><a href="http://mesosphere.com">http://mesosphere.com</a></p>
+          </td>
+          </tr>
+          </table> </h3>
+
+          <aside class="notes">I have business cards and lots of stickers!</aside>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: false,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+    <!--script>
+      window.analytics||(window.analytics=[]),window.analytics.methods=["identify","track","trackLink","trackForm","trackClick","trackSubmit","page","pageview","ab","alias","ready","group","on","once","off"],window.analytics.factory=function(t){return function(){var a=Array.prototype.slice.call(arguments);return a.unshift(t),window.analytics.push(a),window.analytics}};for(var i=0;i<window.analytics.methods.length;i++){var method=window.analytics.methods[i];window.analytics[method]=window.analytics.factory(method)}window.analytics.load=function(t){var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"===document.location.protocol?"https://":"http://")+"d2dq2ahtl5zl1z.cloudfront.net/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n)},window.analytics.SNIPPET_VERSION="2.0.8",
+      window.analytics.load("7sgtwqvuai");
+      window.analytics.page();
+    </script-->
+
+	</body>
+</html>
