@@ -163,41 +163,45 @@ Check out the ssl guide on the mesos documentation website for more info
         <section data-background="assets/front-page.jpg">
           <h2><a href="https://github.com/apache/mesos/blob/master/docs/oversubscription.md">Oversubscription</a></h2>
           <ul style="line-height: 150%">
-            <li class="fragment"><h3>Clusters are Under-Utilized!</h3></li>
+            <li><h3>Clusters are Under-Utilized!</h3></li>
             <li class="fragment"><h3>Frameworks Use less than they Accept</h3></li>
             <li class="fragment"><h3>Slave has new Resource Estimator</h3></li>
-              <ul>
-                <li class="fragment">Computes Oversubscribable Resources</li>
-                <li class="fragment">Slave Updates Master when Oversubscribable Resources Change</li>
-              </ul>
             <li class="fragment"><h3>Slave has new Quality of Service Controller</h3></li>
-              <ul>
-                <li class="fragment">Monitors Tasks with Guaranteed Resources for Interference</li>
-                <li class="fragment">Generates Events for Slave to Kill Executors</li>
-              </ul>
             <li class="fragment"><h3>Master offers Oversubscribable Resources to Frameworks</h3></li>
             <li class="fragment"><h3>Frameworks Receive Task Updates as they Usually Would</h3></li>
           </ul>
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <h3>Resource Estimator is Modularized!</h2>
-          <ul>
-            <li class="fragment">Ability to Implement Custom Algorithms</li>
-          </ul>
-          <br>
-          <br>
-          <h3 class="fragment">Resource Estimator is Modularized!</h2>
+          <h2>Resource Estimator</h2>
           <ul style="line-height: 150%">
+            <li>Computes Oversubscribable Resources</li>
+            <li class="fragment">Slave Updates Master when Oversubscribable Resources Change</li>
+            <li class="fragment">It's Modularized!</h3>
+            <ul>
+              <li class="fragment">Ability to Implement Custom Algorithms</li>
+            </ul>
+          </ul>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>QoS Controller</h2>
+          <ul style="line-height: 150%">
+            <li>Monitors Tasks with Guaranteed Resources for Interference</li>
+            <li class="fragment">Generates Events for Slave to Kill Executors</li>
             <li class="fragment">Ability to Implement Custom Algorithms</li>
-            <li class="fragment">Ability to Implement Custom Rules</li>
-            <li class="fragment">Ability to Throttle Instead of Kill</li>
+            <li class="fragment">It's Modularized!</h3>
+            <ul style="line-height: 150%">
+              <li class="fragment">Ability to Implement Custom Algorithms</li>
+              <li class="fragment">Ability to Implement Custom Rules</li>
+              <li class="fragment">Ability to Throttle Instead of Kill</li>
+            </ul>
           </ul>
         </section>
 
         <section data-background="assets/front-page.jpg">
           <h2>Configuration</h2>
-          <h4 class="fragment">Interval Between Resource Estimate Updates to Master:
+          <h4>Interval Between Resource Estimate Updates to Master:
             <pre><code class="shell" data-trim>
             --oversubscribed_resources_interval=15secs
             </code></pre>
