@@ -97,14 +97,125 @@
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <h2><a href="https://github.com/apache/mesos/blob/master/docs/network-monitoring.md">Per-Container Network Isolation</a></h2>
+          <h2><a href="https://github.com/apache/mesos/blob/master/docs/network-monitoring.md">Per-Container<br> Network Isolation</a></h2>
           <!--Why? What? How(flags/API)?-->
+          <h3> <ul>
+            <li>Deployed in production at Twitter
+            <li class="fragment">Prevents a single container from:
+            <h4><ul>
+              <li>Exhausting the available network ports
+              <li>Consuming an unfair share of the network bandwidth
+              <li>Significantly delaying packet transmission for others
+            </ul></h4>
+            <li class="fragment">Publishes network stats to<br>
+              <code>/monitor/statistics.json</code>
+          </ul> </h3>
+<aside class="notes">
+</aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Installing</h2>
+          <h3> <ul>
+            <li>Requires Linux kernel versions 3.6+
+            <li>Also requires libnl3 and iproute
+          </ul> </h3>
+            <pre><code class="shell" data-trim>
+            ../configure --with-network-isolator && make
+            </code></pre>
+
+          <div class="fragment">
+          <h2><br>Enabling</h2>
+          <h3>New isolation option for slave </h3>
+            <pre><code class="shell" data-trim>
+            mesos-slave --isolation="network/port_mapping" ...
+            </code></pre>
+          <h3></h3>
+          </div>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Network Isolation</h2>
+          <h3> <ul>
+            <li>Each container has a separate network stack (via Linux network namespaces)
+            <li>All containers still share the same public IP of the slave <!--Svc Disc-->
+          </ul> </h3>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Port Isolation</h2>
+          <ul>
+            <li><h3>Host ephemeral ports</h3>
+              In <code>/etc/sysctl.conf</code>,<br>
+              set <code>net.ipv4.ip_local_port_range</code><br>
+              and reboot.
+            <li class="fragment"><h3>Mesos offered, non-ephemeral ports</h3>
+              <pre><code class="shell" data-trim>
+              --resources=ports:[31000-32000]
+              </code></pre>
+            <li class="fragment"><h3>Mesos ephemeral ports</h3>
+              <pre><code class="shell" data-trim>
+--resources=ports:[31000-32000];ephemeral_ports:[32768-57344] \
+--ephemeral_ports_per_container=512
+              </code></pre>
+              Tasks using port=0 will use a Mesos ephemeral port
+          </ul>
+<aside class="notes">
+The slave assigns each container a non-overlapping range of the ports and only packets to/from these assigned port ranges will be delivered
+Applications requesting the kernel assign a port (by binding to port 0) will be given ports from the container assigned range
+Applications can bind to ports outside the container assigned ranges but packets from to/from these ports will be silently dropped by the host.
+</aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Traffic Control</h2>
+          <h3> <ul>
+            <li>Rate limiting outbound traffic
+              <pre><code class="shell" data-trim>
+              --egress_rate_limit_per_container=100MB
+              </code></pre>
+            <li class="fragment">Egress traffic isolation
+              <pre><code class="shell" data-trim>
+              --egress_unique_flow_per_container
+              </code></pre>
+          </ul> </h3>
+<aside class="notes">
+Network traffic which would cause this limit to be exceeded is delayed for later transmission. The TCP protocol will adjust to the increased latency and reduce the transmission rate ensuring no packets need be dropped.
+We do not rate limit inbound traffic since we can only modify the network flows after they have been received by the host and any congestion has already occurred.
+Mesos can reduce the impact on other containers on the same host by using flow classification and isolation using the containers port ranges to maintain unique flows for each container and sending traffic from these flows fairly (using the FQ_Codel algorithm).
+</aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Network Monitoring</h2>
+          <h3>Under the <code>statistics</code> key in <br><code>/monitor/statistics.json</code></h3>
+<pre><code data-trim>
+net_rx_bytes    Received bytes
+net_rx_dropped  Packets dropped on receive
+net_rx_errors   Errors reported on receive
+net_rx_packets  Packets received
+net_tx_bytes    Sent bytes
+net_tx_dropped  Packets dropped on send
+net_tx_errors   Errors reported on send
+net_tx_packets  Packets sent
+</code></pre>
+          <h3>Under <code>statistics/<br>net_traffic_control_statistics</code></h3>
+<pre><code data-trim>
+backlog     Bytes queued for transmission
+bytes       Sent bytes
+drops       Packets dropped on send
+overlimits  # times the interface was over transmit limit when attempted to send a packet
+packets     Packets sent
+qlen        Packets queued for transmission
+</code></pre>
+<aside class="notes">
+</aside>
         </section>
 
         <section data-background="assets/front-page.jpg">
           <h2><a href="https://github.com/apache/mesos/blob/master/docs/mesos-ssl.md">SSL</a></h2>
           <h3> <ul style="line-height: 150%">
-            <li class="fragment">Feature-Complete, Ready to be Tested
+            <li>Feature-Complete, Ready to be Tested
             <li class="fragment">All Libprocess Communication
             <li class="fragment">Using Libevent + OpenSSL
             <li class="fragment">Configurable
@@ -121,7 +232,7 @@ Environment variable to control "downgrade support". Allows heterogenous cluster
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <div class="fragment">
+          <div>
             <h2>Configuration</h2>
             <pre><code class="shell" data-trim>
             ../configure --enable-libevent --enable-ssl
@@ -164,11 +275,11 @@ Check out the ssl guide on the mesos documentation website for more info
           <h2><a href="https://github.com/apache/mesos/blob/master/docs/oversubscription.md">Oversubscription</a></h2>
           <ul style="line-height: 150%">
             <li><h3>Clusters are Under-Utilized!</h3></li>
-            <li class="fragment"><h3>Frameworks Use less than they Accept</h3></li>
+            <li class="fragment"><h3>Frameworks use less than they Accept</h3></li>
             <li class="fragment"><h3>Slave has new Resource Estimator</h3></li>
             <li class="fragment"><h3>Slave has new Quality of Service Controller</h3></li>
             <li class="fragment"><h3>Master offers Oversubscribable Resources to Frameworks</h3></li>
-            <li class="fragment"><h3>Frameworks Receive Task Updates as they Usually Would</h3></li>
+            <li class="fragment"><h3>Frameworks receive Task Updates as they usually would</h3></li>
           </ul>
         </section>
 
@@ -176,7 +287,7 @@ Check out the ssl guide on the mesos documentation website for more info
           <h2>Resource Estimator</h2>
           <ul style="line-height: 150%">
             <li>Computes Oversubscribable Resources</li>
-            <li class="fragment">Slave Updates Master when Oversubscribable Resources Change</li>
+            <li class="fragment">Slave updates Master when Oversubscribable Resources Change</li>
             <li class="fragment">It's Modularized!</h3>
             <ul>
               <li class="fragment">Ability to Implement Custom Algorithms</li>
