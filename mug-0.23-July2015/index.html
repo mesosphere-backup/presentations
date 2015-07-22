@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Apache Mesos 0.23.0 Release Announcement</title>
+
+		<meta name="description" content="Apache Mesos 0.23.0 Release Announcement">
+		<meta name="author" content="Adam">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/mesosphere.css" id="theme">
+
+    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+        <section data-background="assets/front-page.jpg">
+					<h2>Apache Mesos 0.23.0</h2>
+					<h3>Release Announcement</h3>
+          <p><a href="mailto:joris@mesosphere.io">Joris Van Remoortere</a></p>
+          <p><a href="mailto:adam@mesosphere.io">Adam Bordelon</a></p>
+				</section>
+
+        <!--
+          https://docs.google.com/document/d/1xZg0fmNmS21w80iAMZyD-45xYub28dP8d8s2Ore5MSc/edit
+
+          [A] Release schedule/stats:
+            dates, patches, JIRAs, contributors (compare to previous, graph?)
+            Status: rc4 passed?
+
+          Major Feature highlights
+            Networking:
+              [A?] Per-Container Network Isolation (ports, egress)
+              [J] SSL (alpha)
+            [J] Oversubscription (alpha)
+              Revocable Resources
+              Resource Estimator Module
+              QoS Controller Module
+            [A] Stateful Primitives
+              Persistent Volumes (alpha)
+              Dynamic Reservations (alpha)
+
+          [A] And more:
+            MESOS-336: Fetcher Caching (alpha)
+            MESOS-2110: Configurable Ping Timeouts
+            MESOS-2115: Improved Dockerized Slave
+            MESOS-2160: Allocator Module
+            MESOS-2620: DisableEndpoints FirewallRule
+            MESOS-2604: Upgraded minimum compiler to gcc 4.8, clang 3.5
+
+          [A] Future work in the pipeline
+            Production-readiness for experimental/alpha features.
+            HTTP API
+            Maintenance Primitives
+            Resource Quotas (fka Offer Reservations)
+            Authorizer Modules
+            Systemd Support
+            Mesos Slave/Containerizer running on Windows Server
+            [Your new feature here]
+
+          [A] Conclusion: links, thanks
+        -->
+
+        <section data-background="assets/sf.jpg">
+          <h2>Learn More!</h2>
+          <table>
+          <tr>
+          <td style="vertical-align: top;">
+          <img src="assets/mesos.png"/></td>
+          <td style="vertical-align: middle;">
+            <p><a href="http://mesos.apache.org">http://mesos.apache.org</a></p>
+            <p><a href="https://github.com/apache/mesos">https://github.com/apache/mesos</a></p>
+            <p><a href="mailto://user@mesos.apache.org">user@</a>,
+               <a href="mailto://dev@mesos.apache.org">dev@mesos.apache.org</a></p>
+            <p><a href="http://mesosphere.com">http://mesosphere.com</a></p>
+          </td>
+          </tr>
+          </table>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: false,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
