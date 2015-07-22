@@ -103,6 +103,61 @@
 
         <section data-background="assets/front-page.jpg">
           <h2><a href="https://github.com/apache/mesos/blob/master/docs/mesos-ssl.md">SSL</a></h2>
+          <h3> <ul style="line-height: 150%">
+            <li class="fragment">Feature-Complete, Ready to be Tested
+            <li class="fragment">All Libprocess Communication
+            <li class="fragment">Using Libevent + OpenSSL
+            <li class="fragment">Configurable
+            <li class="fragment">Live Upgrade Support
+          </ul> </h3>
+<aside class="notes">
+Libprocess uses socket interface
+Refresher on Mesos bi-directional communication
+Implementation of socket interface using Libevent-Openssl
+Protocol support and ciphers can be configured via environment variables
+TLS 1.2 only protocol enabled by default
+Environment variable to control "downgrade support". Allows heterogenous cluster during upgrade
+</aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <div class="fragment">
+            <h2>Configuration</h2>
+            <pre><code class="shell" data-trim>
+            ../configure --enable-libevent --enable-ssl
+            </code></pre>
+          </div>
+          <br>
+          <div class="fragment">
+            <h2>Running</h2>
+            <font size="6"><pre><code class="shell" data-trim>
+SSL_ENABLED=1 SSL_KEY_FILE=key SSL_CERT_FILE=cert opt-flags binary
+SSL_ENABLED=1 SSL_KEY_FILE=key SSL_CERT_FILE=cert SSL_REQUIRE_CERT=1 SSL_ENABLE_TLS_V1_1=true master.sh
+            </code></pre></font>
+          </div>
+          <br>
+          <div class="fragment">
+            <h2>Upgrading</h2>
+            <font size="6"><pre><code class="shell" data-trim>
+// Restart each component with downgrade support (master, slave, framework):
+SSL_ENABLED=1 SSL_SUPPORT_DOWNGRADE=1 SSL_KEY_FILE=key SSL_CERT_FILE=cert opt-flags binary
+
+// Restart each component WITHOUT downgrade support (master, slave, framework):
+SSL_ENABLED=true SSL_SUPPORT_DOWNGRADE=false SSL_KEY_FILE=key SSL_CERT_FILE=cert opt-flags binary
+            </code></pre></font>
+          </div>
+<aside class="notes">
+Make sure to re-bootstrap and make a clean build
+The SSL configuration flags can be changed by the environment variables
+During a live cluster upgrade, update the components to use SSL_SUPPORT_DOWNGRADE=true so that they can maintain communication during the transition
+Check out the ssl guide on the mesos documentation website for more info
+</aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Scalability improvements planned</h2>
+          <br>
+          <h2 class="fragment">Try it out, let us know what you think!</h2>
         </section>
 
         <section data-background="assets/front-page.jpg">
