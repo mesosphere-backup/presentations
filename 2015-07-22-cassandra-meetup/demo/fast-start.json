@@ -1,0 +1,13 @@
+{
+  "cassandra": {
+    "resources": {
+      "cpus": 1.0,
+      "mem": 2048,
+      "disk": 6144
+    },
+    "health-check-interval-seconds": 15,
+    "bootstrap-grace-time-seconds": 15,
+    "node-count": 5,
+    "seed-count": 3
+  }
+}

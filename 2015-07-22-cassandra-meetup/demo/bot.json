@@ -1,0 +1,24 @@
+{
+  "id": "/oinker-bot",
+  "instances": 1,
+  "cpus": 1,
+  "mem": 512,
+  "ports": [
+    0
+  ],
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "mesosphere/oinker-bot:729afca08ea7159617c64413f26fdc796f4fc199"
+    },
+    "volumes": []
+  },
+  "uris": [],
+  "env": {
+    "OINKER_HOST": "oinker-router.marathon.mesos",
+    "OINKER_PORT": "80",
+    "OINK_COUNT": "100",
+    "JAVA_OPTS": "-Xmx512m"
+  },
+  "cmd": "while true; do java $JAVA_OPTS -jar /opt/oinker-bot-assembly-*.jar && sleep 30; done"
+}
