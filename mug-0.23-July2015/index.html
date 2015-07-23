@@ -300,7 +300,6 @@ Check out the ssl guide on the mesos documentation website for more info
           <ul style="line-height: 150%">
             <li>Monitors Tasks with Guaranteed Resources for Interference</li>
             <li class="fragment">Generates Events for Slave to Kill Executors</li>
-            <li class="fragment">Ability to Implement Custom Algorithms</li>
             <li class="fragment">It's Modularized!</h3>
             <ul style="line-height: 150%">
               <li class="fragment">Ability to Implement Custom Algorithms</li>
@@ -381,9 +380,7 @@ Future: Multiple disks/spindles, so volumes don't need to be under the work_dir.
       "type" : "SCALAR",
       "scalar" : { "value" : 2048 },
       "role" : &lt;framework_role>,
-      "reservation" : {
-        "principal" : &lt;framework_principal>
-      }
+      "reservation" : { "principal" : &lt;framework_principal> }
     }
   ]
 }
@@ -403,13 +400,9 @@ Future: Multiple disks/spindles, so volumes don't need to be under the work_dir.
         "type" : "SCALAR",
         "scalar" : { "value" : 2048 },
         "role" : &lt;framework_role>,
-        "reservation" : {
-          "principal" : &lt;framework_principal>
-        },
+        "reservation" : { "principal" : &lt;framework_principal> },
         "disk": {
-          "persistence": {
-            "id" : &lt;persistent_volume_id>
-          },
+          "persistence": { "id" : &lt;persistent_volume_id> },
           "volume" : {
             "container_path" : &lt;container_path>,
             "mode" : &lt;RW>
@@ -435,13 +428,9 @@ Future: Multiple disks/spindles, so volumes don't need to be under the work_dir.
       "type" : "SCALAR",
       "scalar" : { "value" : 2048 },
       "role" : &lt;framework_role>,
-      "reservation" : {
-        "principal" : &lt;framework_principal>
-      },
+      "reservation" : { "principal" : &lt;framework_principal> },
       "disk": {
-        "persistence": {
-          "id" : &lt;persistent_volume_id>
-        },
+        "persistence": { "id" : &lt;persistent_volume_id> },
         "volume" : {
           "container_path" : &lt;container_path>,
           "mode" : "RW"
@@ -466,13 +455,9 @@ Future: Multiple disks/spindles, so volumes don't need to be under the work_dir.
         "type" : "SCALAR",
         "scalar" : { "value" : 2048 },
         "role" : &lt;framework_role>,
-        "reservation" : {
-          "principal" : &lt;framework_principal>
-        },
+        "reservation" : { "principal" : &lt;framework_principal> },
         "disk": {
-          "persistence": {
-            "id" : &lt;persistent_volume_id>
-          },
+          "persistence": { "id" : &lt;persistent_volume_id> },
           "volume" : {
             "container_path" : &lt;container_path>,
             "mode" : &lt;mode>
@@ -500,9 +485,7 @@ Future: Multiple disks/spindles, so volumes don't need to be under the work_dir.
       "type" : "SCALAR",
       "scalar" : { "value" : 2048 },
       "role" : &lt;framework_role>,
-      "reservation" : {
-        "principal" : &lt;framework_principal>
-      }
+      "reservation" : { "principal" : &lt;framework_principal> }
     }
   ]
 }
@@ -510,11 +493,136 @@ Future: Multiple disks/spindles, so volumes don't need to be under the work_dir.
         </section>
 
         <section data-background="assets/front-page.jpg">
-          <h2><a href="https://github.com/apache/mesos/blob/master/docs/reservation.md">Dynamic Reservations</a></h2>
+          <h2><a href="https://github.com/apache/mesos/blob/master/docs/reservation.md">Static Reservations</a></h2>
+          <h3> <ul style="line-height: 150%">
+            <li>"Static" reservations existed since 0.14
+              <pre><code class="shell" data-trim>
+              --resources="cpus:4;mem:2048;cpus(ads):8;mem(ads):4096"
+              </code></pre>
+            <li class="fragment">Associated with role, not frameworkId.
+            <li class="fragment">Have to kill all tasks and restart the slave to change them.
+            <li class="fragment">Still supported, but being supplanted by...
+          </ul> </h3>
         </section>
 
         <section data-background="assets/front-page.jpg">
           <h2><a href="https://github.com/apache/mesos/blob/master/docs/reservation.md">Dynamic Reservations</a></h2>
+          <h3> <ul style="line-height: 150%">
+            <li>Allows frameworks to lazily reserve resources at task launch time using<br>
+              <code>Offer::Operation::Reserve</code> and <br><code>Offer::Operation::Unreserve</code>
+            <li class="fragment">Will allow operators to dynamically manipulate reservations after slave startup
+              using the upcoming <code>/reserve</code> and <code>/unreserve</code> endpoints.
+          </ul> </h3>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Reserve Resources</h2>
+          Receive an offer with unreserved resources
+          <pre><code class="shell" data-trim>
+{
+  "id": &lt;offer_id>,
+  "framework_id": &lt;framework_id>,
+  "slave_id": &lt;slave_id>,
+  "hostname": &lt;hostname>,
+  "resources": [
+    {
+      "name": "cpus",
+      "type": "SCALAR",
+      "scalar": { "value": 12 },
+      "role": "*",
+    },
+    {
+      "name": "mem",
+      "type": "SCALAR",
+      "scalar": { "value": 6144 },
+      "role": "*",
+    }
+  ]
+}
+          </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Reserve Resources</h2>
+          Given the offer, respond with <code>Offer::Operation::Reserve</code>
+          <pre><code class="shell" data-trim>
+{
+  "type": Offer::Operation::RESERVE,
+  "reserve": {
+    "resources": [
+      {
+        "name": "cpus",
+        "type": "SCALAR",
+        "scalar": { "value": 8 },
+        "role": &lt;framework_role>,
+        "reservation": { "principal": &lt;framework_principal> }
+      },
+      {
+        "name": "mem",
+        "type": "SCALAR",
+        "scalar": { "value": 4096 },
+        "role": &lt;framework_role>,
+        "reservation": { "principal": &lt;framework_principal> }
+      }
+    ]
+  }
+}
+          </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Reserve Resources</h2>
+          The subsequent offer will contain the reserved resources
+          <pre><code class="shell" data-trim>
+{
+  "id": &lt;offer_id>,
+  ...
+  "resources": [
+    {
+      "name": "cpus",
+      "type": "SCALAR",
+      "scalar": { "value": 8 },
+      "role": &lt;framework_role>,
+      "reservation": { "principal": &lt;framework_principal> }
+    },
+    {
+      "name": "mem",
+      "type": "SCALAR",
+      "scalar": { "value": 4096 },
+      "role": &lt;framework_role>,
+      "reservation": { "principal": &lt;framework_principal> }
+    },
+  ]
+}
+          </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Unreserve Resources</h2>
+          Given an offer with reserved resources, respond with <code>Offer::Operation::Unreserve</code>
+          <pre><code class="shell" data-trim>
+{
+  "type": Offer::Operation::UNRESERVE,
+  "unreserve": {
+    "resources": [
+      {
+        "name": "cpus",
+        "type": "SCALAR",
+        "scalar": { "value": 8 },
+        "role": &lt;framework_role>,
+        "reservation": { "principal": &lt;framework_principal> }
+      },
+      {
+        "name": "mem",
+        "type": "SCALAR",
+        "scalar": { "value": 4096 },
+        "role": &lt;framework_role>,
+        "reservation": { "principal": &lt;framework_principal> }
+      }
+    ]
+  }
+}
+          </code></pre>
         </section>
 
         <!--
