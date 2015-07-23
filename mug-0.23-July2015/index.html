@@ -341,6 +341,176 @@ Check out the ssl guide on the mesos documentation website for more info
 
         <section data-background="assets/front-page.jpg">
           <h2><a href="https://github.com/apache/mesos/blob/master/docs/persistent-volume.md">Persistent Volumes</a></h2>
+          <h3> <ul style="line-height: 150%">
+            <li>Sandboxes get garbage-collected.
+            <li class="fragment">Frameworks want to persist state outside of sandboxes.
+            <li class="fragment">Writing to local/network disk is not managed by Mesos resource allocation.<br>
+              <div class="fragment">Also a security hole.</div>
+            <li class="fragment">Mesos now provides a way to create persistent volumes from disk resources.
+          </ul> </h3>
+<aside class="notes">
+Framework API is stable, so you can start coding against it.
+Future: operator endpoints (with authz), so it can be recommended in production.
+Future: Garbage-collect Volumes; currently left on-disk for operators to clean up.
+Future: Multiple disks/spindles, so volumes don't need to be under the work_dir.
+</aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2><a href="https://github.com/apache/mesos/blob/master/docs/persistent-volume.md">Persistent Volumes</a></h2>
+          <h3> <ul style="line-height: 150%">
+            <li> Persistent volumes can only be created from reserved disk resources.
+            <li class="fragment"> <code>Offer::Operation::Create</code> and<br> <code>Offer::Operation::Destroy</code> messages for the new <code>acceptOffers</code> API.
+            <li class="fragment"> Persistent volumes are tied to the creating framework's role/principal.
+          </ul> </h3>
+<aside class="notes">
+</aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Creating a Persistent Volume</h2>
+          Receive an offer with reserved disk resources
+            <pre><code class="shell" data-trim>{
+  "id" : &lt;offer_id>,
+  "framework_id" : &lt;framework_id>,
+  "slave_id" : &lt;slave_id>,
+  "hostname" : &lt;hostname>,
+  "resources" : [
+    {
+      "name" : "disk",
+      "type" : "SCALAR",
+      "scalar" : { "value" : 2048 },
+      "role" : &lt;framework_role>,
+      "reservation" : {
+        "principal" : &lt;framework_principal>
+      }
+    }
+  ]
+}
+          </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Creating a Persistent Volume</h2>
+          Respond via <code>acceptOffers</code> with <code>Offer::Operation::Create</code>
+            <pre><code class="shell" data-trim>
+{
+  "type" : Offer::Operation::CREATE,
+  "create": {
+    "volumes" : [
+      {
+        "name" : "disk",
+        "type" : "SCALAR",
+        "scalar" : { "value" : 2048 },
+        "role" : &lt;framework_role>,
+        "reservation" : {
+          "principal" : &lt;framework_principal>
+        },
+        "disk": {
+          "persistence": {
+            "id" : &lt;persistent_volume_id>
+          },
+          "volume" : {
+            "container_path" : &lt;container_path>,
+            "mode" : &lt;RW>
+          }
+        }
+      }
+    ]
+  }
+}
+          </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Creating a Persistent Volume</h2>
+          Subsequent offers will include the volume
+            <pre><code class="shell" data-trim>
+{
+  "id" : &lt;offer_id>,
+  ...
+  "resources" : [
+    {
+      "name" : "disk",
+      "type" : "SCALAR",
+      "scalar" : { "value" : 2048 },
+      "role" : &lt;framework_role>,
+      "reservation" : {
+        "principal" : &lt;framework_principal>
+      },
+      "disk": {
+        "persistence": {
+          "id" : &lt;persistent_volume_id>
+        },
+        "volume" : {
+          "container_path" : &lt;container_path>,
+          "mode" : "RW"
+        }
+      }
+    }
+  ]
+}
+          </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Destroying a Persistent Volume</h2>
+          Given the previous offer, respond with <code>Offer::Operation::Destroy</code>
+          <pre><code class="shell" data-trim>
+{
+  "type" : Offer::Operation::DESTROY,
+  "destroy" : {
+    "volumes" : [
+      {
+        "name" : "disk",
+        "type" : "SCALAR",
+        "scalar" : { "value" : 2048 },
+        "role" : &lt;framework_role>,
+        "reservation" : {
+          "principal" : &lt;framework_principal>
+        },
+        "disk": {
+          "persistence": {
+            "id" : &lt;persistent_volume_id>
+          },
+          "volume" : {
+            "container_path" : &lt;container_path>,
+            "mode" : &lt;mode>
+          }
+        }
+      }
+    ]
+  }
+}
+          </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Destroying a Persistent Volume</h2>
+          Subsequent offers will no longer include the volume
+            <pre><code class="shell" data-trim>
+{
+  "id" : &lt;offer_id>,
+  "framework_id" : &lt;framework_id>,
+  "slave_id" : &lt;slave_id>,
+  "hostname" : &lt;hostname>,
+  "resources" : [
+    {
+      "name" : "disk",
+      "type" : "SCALAR",
+      "scalar" : { "value" : 2048 },
+      "role" : &lt;framework_role>,
+      "reservation" : {
+        "principal" : &lt;framework_principal>
+      }
+    }
+  ]
+}
+            </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2><a href="https://github.com/apache/mesos/blob/master/docs/reservation.md">Dynamic Reservations</a></h2>
         </section>
 
         <section data-background="assets/front-page.jpg">
