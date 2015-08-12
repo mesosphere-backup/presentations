@@ -70,8 +70,8 @@
           <h2>Intro</h2>
           <ul>
             <li>Engineering Manager @ Mesosphere</li>
-			<li>B.S. Computer Science with a Minor in Math, B.S. Policy and Management from Carnegie Mellon </li> 
 			<li>M.S. Computer Science with a Specialization in Artificial Intelligence from Stanford</li>
+			<li>B.S. Computer Science with a Minor in Math, B.S. Policy and Management from Carnegie Mellon </li> 
             <li>Experience in AI, Big Data, and Systems</li>
             <li>Enjoys applying Distributed Systems to Manage and Reason Over Large Amounts of Data</li>
           </ul>
@@ -180,7 +180,7 @@
 
         <section>
           <h2>DCOS UI</h2>
-          <img src="img/dcos_healthy.png" alt="" style="max-width: 100%"/>
+          <img src="img/dcos_healthy.png" alt="" style="max-width: 90%"/>
           <aside class="notes">
           </aside>
         </section>
@@ -209,9 +209,8 @@ Available DCOS commands:
 
         <section>
           <h2>Big Data Distributed Applications on DCOS</h2>
-          <h3 class="fragment">Features</h3>
           <ul class="fragment">
-            <li>Mesos Master and Mesos Workers Running in Docker Containers, communicating via host networking</li>
+            <li>Mesos Master and Mesos Workers Running in Docker Containers</li>
 		    <li>Distributed Applications Running in Containers on the Mesos Workers</li>
             <li>Container Orchestration done by Apache Mesos</li>
             <li>Resource Allocation and Scaling Managed by Apache Mesos</li>
@@ -223,19 +222,82 @@ Available DCOS commands:
 		
         <section>
           <h2>Big Data Distributed Applications on DCOS</h2>
-          <h3 class="fragment">Features</h3>
           <ul class="fragment">
             <li>Popular Distributed Apps easily deployed on a single DCOS Cluster</li>
-		    <li>Kafka, Cassandra, HDFS, MemSQL, Spark</li>
-            <li>Interact with the CLI or REST API's to interact with the services</li>
-            <li>Failure detection and health checks are automated</li>
+		    <li>Kafka, Cassandra, HDFS, Spark, and other Big Data Services</li>
+            <li>Health checks and failure recovery are automated</li>
           </ul>
           <aside class="notes">
           </aside>
         </section>
 		
+        <section>
+          <h2>Application Networking</h2>
+          <ul class="fragment">
+	        <li>Interact with the CLI or REST API's to interact with the services</li>
+			<li>Mesos DNS Resolution</li>
+            <li>Docker Networking mainly done through host mode networking, works seamlessly</li>
+          </ul>
+          <aside class="notes">
+          </aside>
+        </section>
+		
+        <section>
+          <h2>Data Security</h2>
+          <ul class="fragment">
+            <li>Services storing secure data run on private worker nodes in the cluster</li>
+		    <li>Private nodes can only be accessed through VPN</li>
+            <li>As needed, services choose what is exposed through a proxy running on a public node</li>
+            <li>Distributed Application can authenticate with the Master using Framework Authentication (Kerberos Option)</li>
+          </ul>
+          <aside class="notes">
+          </aside>
+        </section>
+		
+		
+        <section>
+          <h2>Example: Simple Docker App on DCOS</h2>
+		 <pre class="fragment"><code class="json" data-trim contenteditable>{
+		   "id": "/mesosphere/cd-demo-app",
+		   "instances": 1,
+		   "cpus": 1,
+		   "mem": 512,
+		   "container": {
+		     "type": "DOCKER",
+		     "docker": {
+		       "image": "mesosphere/cd-demo-app:$tag",
+		       "network": "BRIDGE",
+		       "portMappings": [
+		         {
+		           "servicePort": 28080,
+		           "containerPort": 80,
+		           "hostPort": 0,
+		           "protocol": "tcp"
+		         }
+		       ]
+		     }
+		   },
+		   "healthChecks": [
+		     {
+		       "gracePeriodSeconds": 120,
+		       "intervalSeconds": 30,
+		       "maxConsecutiveFailures": 3,
+		       "path": "/",
+		       "portIndex": 0,
+		       "protocol": "HTTP",
+		       "timeoutSeconds": 5
+		     }
+		   ],
+		   "constraints": [
+		     [ "hostname", "GROUP_BY" ]
+		   ]
+		 }</code><</pre>
+          <aside class="notes">
+          </aside>
+        </section>
+		
 		<section>
-          <h2>Cassandra DCOS Service</h2>
+          <h2>Example: Cassandra DCOS Service</h2>
           <h3 class="fragment">Features</h3>
           <ul class="fragment">
             <li>Managed node configuration</li>
@@ -269,14 +331,14 @@ Available DCOS commands:
 
         <section>
           <h2>Installing</h2>
-          <img src="img/dcos_unhealthy.png" alt="" style="max-width: 100%"/>
+          <img src="img/dcos_unhealthy.png" alt="" style="max-width: 90%"/>
           <aside class="notes">
           </aside>
         </section>
 
         <section>
           <h2>Healthy</h2>
-          <img src="img/dcos_healthy.png" alt="" style="max-width: 100%"/>
+          <img src="img/dcos_healthy.png" alt="" style="max-width: 90%"/>
           <aside class="notes">
           </aside>
         </section>
@@ -333,9 +395,6 @@ Available DCOS commands:
           <h3>Let's chat!</h3>
           <h4>We're hiring!</h4>
           <ul>
-            <li>Cassandra Framework: <a href="https://github.com/mesosphere/cassandra-mesos">github.com/mesosphere/cassandra-mesos</a></li>
-            <li>Docs: <a href="http://mesosphere.github.io/cassandra-mesos/">mesosphere.github.io/cassandra-mesos/</a></li>
-            <li>Rest API: <a href="http://mesosphere.github.io/cassandra-mesos/docs/rest-api.html">mesosphere.github.io/cassandra-mesos/docs/rest-api.html</a></li>
             <li>DCOS: <a href="http://mesosphere.com/">mesosphere.com</a></li>
             <li>Join: <a href="https://mesosphere.com/careers/">mesosphere.com/careers/</a></li>
           </ul>
