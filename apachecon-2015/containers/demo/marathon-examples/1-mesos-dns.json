@@ -11,6 +11,6 @@
   "cpus": 0.25,
   "mem": 256.0,
   "instances": 1,
-  "uris": [ "/home/vagrant/workspace/presentations-apachecon/demo/mesos-dns/config.json" ]
+  "uris": [ "/home/vagrant/demo/config.json" ]
 }
 
