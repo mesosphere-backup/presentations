@@ -160,6 +160,14 @@
         </section>
 
 <!-- API Overview -->
+		
+         <section data-background="assets/front-page.jpg">
+          <h2>Framework Architecture</h2>
+          <img src="assets/scheduler-executor-diagram.png" />
+          <aside class="notes"></aside>
+        </section>
+		
+		
         <section data-background="assets/front-page.jpg">
         <h2>FrameworkInfo</h2>
           <table style="width: 100%;">
@@ -407,7 +415,6 @@ message DockerInfo {
           <ul>
             <li>Run your scheduler with a meta-framework</li>
             <li>Re-register with the previous Framework ID</li>
-            <li>Pick up any persisted metadata</li>
             <li>Perform task reconciliation</li>
             <li>Continue as before</li>
           </ul>
@@ -563,31 +570,6 @@ class MyScheduler:
           <aside class="notes"></aside>
         </section>
 
-        <section data-background="assets/front-page.jpg">
-          <h3>Framework to executor</h3>
-          <ul>
-            <li class="fragment">Scheduler creates <span style="font-family:monospace;">FrameworkToExecutorMessage</span></li>
-            <li class="fragment">Scheduler determines how to send it: directly to the slave or via master</li>
-            <li class="fragment">[opt] Master performs various checks (e.g. slave is connected and registered)</li>
-            <li class="fragment">[opt] Master forwards the message to the slave</li>
-            <li class="fragment">Slave performs various checks (e.g. framework is not terminating and executor is running)</li>
-            <li class="fragment">Slave forwards the message to executor</li>
-          </ul>
-          <aside class="notes"></aside>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-          <h3>Executor to framework</h3>
-          <ul>
-            <li class="fragment">Executor creates <span style="font-family:monospace;">ExecutorToFrameworkMessage</span></li>
-            <li class="fragment">Executor sends it to the slave</li>
-            <li class="fragment">Slave performs various checks (framework is terminating, slave is not in RUNNING state, etc)</li>
-            <li class="fragment">Slave forwards the message to framework (scheduler)</li>
-            <li class="fragment">Scheduler processes the message</li>
-          </ul>
-          <aside class="notes"></aside>
-        </section>
-
 
         <section data-background="assets/front-page.jpg">
           <h2>Task Reconciliation</h2>
@@ -687,9 +669,21 @@ mesos-master ... --acls="{
             <li> No blocking in sched/exec callbacks
             <li> SchedulerDriver* will not change, included as convenience
             <li> TaskIDs must be unique within the same frameworkId
+          <aside class="notes"></aside>
+        </section>
+		
+        <section data-background="assets/front-page.jpg">
+          <h2>Additional Advice</h2>
+          <ul>
             <li> No state in sandbox
             <li> No implicit deps outside sandbox, node constraints
             <li> Exec/task binaries/data via HDFS/etc, no public internet
+          <aside class="notes"></aside>
+        </section>
+		
+        <section data-background="assets/front-page.jpg">
+          <h2>Additional Advice</h2>
+          <ul>
             <li> Allow co-tenancy of multiple execs on same machine; No static ports
             <li> Know and publish (& verify?) Mesos version compatibility
             <li> Don't hardcode params that should be configurable
