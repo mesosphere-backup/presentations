@@ -54,7 +54,7 @@
             How can Mesos prevent unauthorized users from intercepting sensitive data or forging communications?
             How can Mesos prevent unauthorized frameworks from launching malicious jobs and prevent unauthorized slaves from stealing tasks and data?
             How can Mesos ensure users and frameworks can only access their own tasks/data?
-          In this first ever MesosCon security deep-dive, Adam and Joris will walk through the best practices and latest advances in securing Mesos clusters, including encryption, authentication, and authorization features. 
+          In this first ever MesosCon security deep-dive, Adam and Joris will walk through the best practices and latest advances in securing Mesos clusters, including encryption, authentication, and authorization features.
 					30min talk + 10min Qs
 
           [] Intro
@@ -163,12 +163,74 @@
         </section>
 
         <section data-background="assets/cover-alt.jpg">
-          <h2>[SSL Encryption]</h2>
-          <aside class="notes">Joris
-						If you don't encrypt, attackers can eavesdrop, even impersonate
-						What flags to enable (configure/build, and startup)
-						Performance tradeoff
-					</aside>
+          <h2><a href="https://github.com/apache/mesos/blob/master/docs/mesos-ssl.md">SSL</a></h2>
+          <h3> <ul style="line-height: 150%">
+            <li>Feature-Complete, Ready to be Tested
+            <li class="fragment">All Libprocess Communication
+            <li class="fragment">Using Libevent + OpenSSL
+            <li class="fragment">Configurable
+            <li class="fragment">Live Upgrade Support
+          </ul> </h3>
+<aside class="notes">
+If you don't encrypt, attackers can eavesdrop, even impersonate
+Libprocess uses socket interface
+Implementation of socket interface using Libevent-Openssl
+Protocol support and ciphers can be configured via environment variables
+Environment variable to control "downgrade support". Allows heterogenous cluster during upgrade
+Explain peek to dispatch to correct socket handler for upgrade support
+</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <img src="assets/architecture-01.png"/>
+<aside class="notes">
+Point to all libprocess communication
+Webui traffic also served by libprocess
+Mesos only stores leading master in zookeeper
+Frameworks can use zookeeper through state abstraction. Encrypt your data!
+Use zookeeper authentication
+</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <div>
+            <h2>Configuration</h2>
+            <pre><code class="shell" data-trim>
+            ../configure --enable-libevent --enable-ssl
+            </code></pre>
+          </div>
+          <br>
+          <div class="fragment">
+            <h2>Running</h2>
+            <font size="6"><pre><code class="shell" data-trim>
+SSL_ENABLED=1 SSL_KEY_FILE=key SSL_CERT_FILE=cert opt-flags binary
+SSL_ENABLED=1 SSL_KEY_FILE=key SSL_CERT_FILE=cert SSL_REQUIRE_CERT=1 SSL_ENABLE_TLS_V1_1=true master.sh
+            </code></pre></font>
+          </div>
+          <br>
+          <div class="fragment">
+            <h2>Upgrading</h2>
+            <font size="6"><pre><code class="shell" data-trim>
+// Restart each component with downgrade support (master, slave, framework):
+SSL_ENABLED=1 SSL_SUPPORT_DOWNGRADE=1 SSL_KEY_FILE=key SSL_CERT_FILE=cert opt-flags binary
+
+// Restart each component WITHOUT downgrade support (master, slave, framework):
+SSL_ENABLED=true SSL_SUPPORT_DOWNGRADE=false SSL_KEY_FILE=key SSL_CERT_FILE=cert opt-flags binary
+            </code></pre></font>
+          </div>
+<aside class="notes">
+Make sure to re-bootstrap and make a clean build
+The SSL configuration flags can be changed by the environment variables
+During live cluster upgrade, use SSL_SUPPORT_DOWNGRADE=true to maintain communication during transition
+Explain webui issues with running HTTP and HTTPS simultaneously
+Check out the ssl guide on the mesos documentation website for more info
+</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Scalability improvements planned</h2>
+          <br>
+          <h2 class="fragment">Try it out, let us know what you think!</h2>
         </section>
 
         <section data-background="assets/cover-alt.jpg">
