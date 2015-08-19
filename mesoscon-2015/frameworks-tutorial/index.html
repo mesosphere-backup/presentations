@@ -174,15 +174,17 @@
             <tr>
               <td><pre><code class="protobuf" data-trim>
 message FrameworkInfo {
-  required string user = 1;
-  required string name = 2;
-  optional FrameworkID id = 3;
-  optional double failover_timeout = 4 [default = 0.0];
-  optional bool checkpoint = 5 [default = false];
-  optional string role = 6 [default = "*"];
-  optional string hostname = 7;
-  optional string principal = 8;
-  optional string webui_url = 9;
+  required string user
+  required string name
+  optional FrameworkID id 
+  optional double failover_timeout [default = 0.0]
+  optional bool checkpoint [default = false]
+  optional string role [default = "*"]
+  optional string hostname
+  optional string principal
+  optional string webui_url
+  repeated Capability capabilites
+  optional Labels labels
 }
         </code></pre></td>
         </tr></table>
@@ -284,6 +286,7 @@ message Offer {
   required FrameworkID framework_id
   required SlaveID slave_id
   required string hostname
+  optional URL url
   repeated Resource resources
   repeated Attribute attributes
   repeated ExecutorID executor_ids
@@ -296,8 +299,10 @@ message Resource {
   optional Value.Scalar scalar
   optional Value.Ranges ranges
   optional Value.Set set
-  optional string role [default = "*"];
+  optional string role [default = "*"]
+  optional ReservationInfo reservation
   optional DiskInfo disk
+  optional RevocableInfo revocable
 }
           </code></pre>
           <aside class="notes">
@@ -375,33 +380,36 @@ message ExecutorInfo {
             <tr>
               <td><pre><code class="protobuf" data-trim>
 message CommandInfo {
-  repeated URI uris;
-  optional Environment environment;
-  optional string user;
-  optional bool shell;
-  optional string value;
-  repeated string arguments;
-  //deprecated ContainerInfo container;
+  optional ContainerInfo container
+  repeated URI uris
+  optional Environment environment
+  optional bool shell
+  optional string value
+  repeated string arguments
+  optional string user
 }
 message ContainerInfo {
-  required Type type;
-  repeated Volume volumes;
-  optional DockerInfo docker;
+  required Type type
+  repeated Volume volumes
+  optional string hostname
+  optional DockerInfo docker
+  optional MesosInfo mesos
 }
         </code></pre></td>
         <td><pre><code class="protobuf" data-trim>
 message Volume {
-  required string container_path;
-  optional string host_path;
-  required Mode mode; //RW,RO
+  required Mode mode //RW,RO
+  required string container_path
+  optional string host_path
+  optional Image image
 }
 message DockerInfo {
-  required string image;
-  optional Network network [default = HOST];
-  repeated PortMapping port_mappings;
-  optional bool privileged [default = false];
-  optional bool force_pull_image;
-  repeated Parameter parameters;
+  required string image
+  optional Network network [default = HOST]
+  repeated PortMapping port_mappings
+  optional bool privileged [default = false]
+  repeated Parameter parameters
+  optional bool force_pull_image
 }
         </code></pre></td>
         </tr></table>
@@ -546,6 +554,8 @@ class MyScheduler:
                   REASON_TASK_INVALID = 14;
                   REASON_TASK_UNAUTHORIZED = 15;
                   REASON_TASK_UNKNOWN = 16;
+				  REASON_EXECUTOR_PREEMPTED = 17;
+				  REASON_RESOURCES_UNKNOWN = 18;
                 }
               </code></pre>
               <aside class="notes"></aside>
