@@ -102,16 +102,28 @@
 
         <section data-background="assets/cover-alt.jpg">
           <img src="assets/architecture-01.png"/>
-          <aside class="notes"> </aside>
+          <aside class="notes">
+You've probably seen this diagram a few times this week
+          </aside>
         </section>
 
         <section data-background="assets/cover-alt.jpg">
-          <h2>[Hackers!]</h2>
-          <aside class="notes"> </aside>
+          <!--img src="assets/Hackers.jpg"/-->
+          <img src="assets/computer-hacker.jpg"/>
+          <aside class="notes">
+http://preparingyourfamily.com/secure-internet-based-communication-options/computer-hacker/
+</aside>
         </section>
 
         <section data-background="assets/cover-alt.jpg">
-          <h2>[Attack Scenarios]</h2>
+          <h2>Attack Scenarios</h2>
+          <h3> <ul style="line-height: 150%">
+            <li>Eavesdropping
+            <li class="fragment">Impersonation
+            <li class="fragment">Rogue Frameworks
+            <li class="fragment">Rogue Slaves
+            <li class="fragment">Naive Users
+          </ul> </h3>
           <aside class="notes">
             prevent unauthorized users from intercepting sensitive data or forging communications?
             prevent unauthorized frameworks from launching malicious jobs and prevent unauthorized slaves from stealing tasks and data?
@@ -120,25 +132,37 @@
         </section>
 
         <section data-background="assets/cover-alt.jpg">
-          <h2>[Agenda]</h2>
+          <h2>Agenda</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> Cluster-wide security
+            <li> Security within Mesos
+            <li> Security for your Framework
+            <li> Protecting your Task
+            <li> Future Work
+          </ul> </h3>
           <aside class="notes">
-						Cluster-wide security
-						Security within Mesos
-						Security for your Framework
-						Protecting your Task
-						Future Work
 					</aside>
         </section>
 
         <section data-background="assets/cover-alt.jpg">
-          <h2>[Section] Cluster-wide security</h2>
-          <aside class="notes"> </aside>
+          <h2>Agenda</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> <b><u>Cluster-wide security</u></b>
+            <li> Security within Mesos
+            <li> Security for your Framework
+            <li> Protecting your Task
+            <li> Future Work
+          </ul> </h3>
+          <aside class="notes">
+!!! (clean up img)
+					</aside>
         </section>
 
         <section data-background="assets/cover-alt.jpg">
-          <h2>[Build a (fire)wall (great wall of china img?)]</h2>
+          <h2>Secure the perimeter!</h2>
+          <img width="80%" src="assets/The_Great_Wall_of_China_at_Jinshanling.jpg"/>
           <aside class="notes">
-							Secure the perimeter!
+Severin.stalder [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons
 							Firewall off the entire cluster
 								Either let users in through VPN
 								Or funnel all commm through an authenticating proxy
@@ -146,8 +170,10 @@
         </section>
 
         <section data-background="assets/cover-alt.jpg">
-          <h2>[Connecting to external services (update diagram?)]</h2>
+          <h2>Connecting to external services</h2>
+          <img width="70%" src="assets/architecture-01.png"/>
           <aside class="notes">
+!!! (update img)
 								Zookeeper Auth
 								S3, external storage
 								Config services, etc.
@@ -156,7 +182,14 @@
         </section>
 
         <section data-background="assets/cover-alt.jpg">
-          <h2>[Section] Security within Mesos</h2>
+          <h2>Agenda</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> Cluster-wide security
+            <li> <b><u>Security within Mesos</u></b>
+            <li> Security for your Framework
+            <li> Protecting your Task
+            <li> Future Work
+          </ul> </h3>
           <aside class="notes">
 							Encryption, Authentication, Authorization
 					</aside>
@@ -262,7 +295,14 @@ Check out the ssl guide on the mesos documentation website for more info
         </section>
 
         <section data-background="assets/cover-alt.jpg">
-          <h2>[Section] Security for your Framework</h2>
+          <h2>Agenda</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> Cluster-wide security
+            <li> Security within Mesos
+            <li> <b><u>Security for your Framework</u></b>
+            <li> Protecting your Task
+            <li> Future Work
+          </ul> </h3>
           <aside class="notes">Joris
               Https for your WebUI (and REST API)
               SSL to Mesos
@@ -271,7 +311,14 @@ Check out the ssl guide on the mesos documentation website for more info
         </section>
 
         <section data-background="assets/cover-alt.jpg">
-          <h2>[Section] Protecting your Task</h2>
+          <h2>Agenda</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> Cluster-wide security
+            <li> Security within Mesos
+            <li> Security for your Framework
+            <li> <b><u>Protecting your Task</u></b>
+            <li> Future Work
+          </ul> </h3>
           <aside class="notes">Joris
               Task user (disallow root), permissions
               Protecting your data
@@ -280,7 +327,14 @@ Check out the ssl guide on the mesos documentation website for more info
         </section>
 
         <section data-background="assets/cover-alt.jpg">
-          <h2>[Section] Future work</h2>
+          <h2>Agenda</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> Cluster-wide security
+            <li> Security within Mesos
+            <li> Security for your Framework
+            <li> Protecting your Task
+            <li> <b><u>Future Work</u></b>
+          </ul> </h3>
           <aside class="notes">
 							Authn for HTTP API (SPNEGO?)
 							Modularized Authorizer, to integrate with 3rd party systems
