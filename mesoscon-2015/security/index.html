@@ -125,12 +125,12 @@ What happens when this guy shows up?
             <li>Eavesdropping
             <li class="fragment">Impersonation
             <li class="fragment">Rogue Frameworks
-            <li class="fragment">Rogue Slaves
+            <li class="fragment">Rogue Slaves(/Agents)
             <li class="fragment">Naive Users
           </ul> </h3>
           <aside class="notes">
             prevent unauthorized users from intercepting sensitive data or forging communications?
-            prevent unauthorized frameworks from launching malicious jobs and prevent unauthorized slaves from stealing tasks and data?
+            prevent unauthorized frameworks from launching malicious jobs and prevent unauthorized agents from stealing tasks and data?
             ensure users and frameworks can only access their own tasks/data?
 					</aside>
         </section>
@@ -224,6 +224,7 @@ Severin.stalder [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0)], 
             <li class="fragment">Live Upgrade Support
           </ul> </h3>
 <aside class="notes">
+Landed in Mesos 0.23
 If you don't encrypt, attackers can eavesdrop, even impersonate
 Libprocess uses socket interface
 Implementation of socket interface using Libevent-Openssl
@@ -289,13 +290,14 @@ Check out the ssl guide on the mesos documentation website for more info
         <section data-background="assets/cover-alt.jpg">
           <h2>Authentication</h2>
           <h3> <ul style="line-height: 150%">
-            <li>How do you stop interns from running bitcoin miners?
-            <li class="fragment">Framework Authn introduced in Mesos 0.xx
-            <li class="fragment">How do you stop random laptops from joining your cluster and running sensitive tasks?
-            <li class="fragment">Slave(/Agent) Authn introduced in 0.xx
-            <li class="fragment">Modularized in Mesos 0.xx, to support custom implementations (e.g. Kerberos)
+            <li>Problem: Interns running bitcoin miners on the cluster?
+            <li class="fragment">Solution: Framework Authn (Mesos 0.15+)
+            <li class="fragment">Problem: Random laptops joining your cluster, running sensitive tasks?
+            <li class="fragment">Solution: Slave(/Agent) Authn (Mesos 0.19+)
+            <li class="fragment">Modularized in Mesos 0.21, to support custom implementations
           </ul> </h3>
           <aside class="notes">
+!!! Cleanup wording
 					SASL/CRAM_MD5
 					Module means dependency doesn't need to be built into Mesos,
 					can experiment with new behavior without having to push changes into Mesos
@@ -306,38 +308,84 @@ Check out the ssl guide on the mesos documentation website for more info
           <div>
             <h2>Configuration</h2>
             <pre><code class="shell" data-trim>
+						configure --with-sasl=/path/to/sasl2
             </code></pre>
           </div>
-          <br>
           <div class="fragment">
             <h2>Master</h2>
             <font size="6"><pre><code class="shell" data-trim>
+--authenticators (default: crammd5)
+--credentials (text/json file)
+--authenticate (frameworks)
+--authenticate_slaves
             </code></pre></font>
           </div>
-          <br>
           <div class="fragment">
             <h2>Slave/Agent</h2>
             <font size="6"><pre><code class="shell" data-trim>
+--authenticatee (default: crammd5)
+--credential (text/json file)
             </code></pre></font>
           </div>
-          <br>
           <div class="fragment">
             <h2>Framework</h2>
-            <font size="6"><pre><code class="shell" data-trim>
+            <font size="6"><pre><code class="cpp" data-trim>
+SchedulerDriver(Scheduler, FrameworkInfo, master, Credential);
+message Credential { required string principal = 1; optional bytes secret = 2; }
+FrameworkInfo.principal // for ACLs
             </code></pre></font>
           </div>
 <aside class="notes">
-(build with sasl, enable flags)
+!!! (build with sasl, enable flags)
 </aside>
         </section>
 
         <section data-background="assets/cover-alt.jpg">
           <h2>Authorization and ACLs</h2>
+          <h3> <ul style="line-height: 150%">
+            <li>What roles can frameworks register under?
+            <li class="fragment">What users can a framework launch tasks as? (not root)
+            <li class="fragment">What (http) users can shutdown a framework?
+            <li class="fragment">Modularized in Mesos 0.24
+          </ul> </h3>
           <aside class="notes">
 						Current ACLs, how to enable, what they do
 						WebUI ACLs too
 						Modularizing
 					</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <div>
+            <h2>Master Flags</h2>
+            <font size="6"><pre><code class="shell" data-trim>
+--authorizers (default: local)
+--acls
+      {
+        "register_frameworks": [
+                             {
+                                "principals": { "type": "ANY" },
+                                "roles": { "values": ["a"] }
+                             }
+                           ],
+        "run_tasks": [
+                        {
+                           "principals": { "values": ["a", "b"] },
+                           "users": { "values": ["c"] }
+                        }
+                      ],
+        "shutdown_frameworks": [
+                      {
+                         "principals": { "values": ["a", "b"] },
+                         "framework_principals": { "values": ["c"] }
+                      }
+                    ]
+      }
+            </code></pre></font>
+          </div>
+<aside class="notes">
+!!! (build with sasl, enable flags)
+</aside>
         </section>
 
         <section data-background="assets/cover-alt.jpg">
@@ -356,7 +404,7 @@ https://docs.google.com/document/d/1kM3_f7DSqXcE2MuERrLTGp_XMC6ss2wmpkNYDCY5rOM/
 !!! Bullets?
 					Modules can do anything! Replace or add functionality.
 					A misbehaving module could crash your cluster, fail tasks, steal data, change permissions, add new endpoints, etc.
-					Fortunately, only cluster admins should be starting the masters/slaves and specifying the modules to use.
+					Fortunately, only cluster admins should be starting the masters/agents and specifying the modules to use.
 					You better trust what you're deploying. Build it yourself, or download a pre-built module from a trusted source. Checksum.
 					</aside>
         </section>
@@ -404,8 +452,7 @@ https://docs.google.com/document/d/1kM3_f7DSqXcE2MuERrLTGp_XMC6ss2wmpkNYDCY5rOM/
           </ul> </h3>
           <aside class="notes">
 							Authn for HTTP API (SPNEGO?)
-							Modularized Authorizer, to integrate with 3rd party systems
-							Authz around more actons, including Slaves (sandboxes)
+							Authz around more actons, including Agent (sandboxes)
 							JIRA links?
 					</aside>
         </section>
