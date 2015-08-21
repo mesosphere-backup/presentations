@@ -68,9 +68,8 @@
             <li> Scheduler HA, Reconciliation, State Abstraction
             <li> Status Updates, Framework Messages
             <li> Authentication, ACLs
-<!--
+            <li> Maintenance Primitives, Revocable Offers
             <li> DCOS Integration, 1.0 HTTP API
--->
           </ul> </h3>
           <aside class="notes"></aside>
         </section>
@@ -191,8 +190,10 @@ message FrameworkInfo {
         </code></pre></td>
         </tr></table>
         <aside class="notes">
-          user, role (+master-roles/weights), reservations?
-          name, webUI, Hostname
+          Resources: user, role (+master-roles/weights), reservations?
+          Fault-tolerance: fwkId, checkpoint, failover_timeout
+          Security: principal
+          //name, webUI, Hostname
         </aside>
         </section>
 
@@ -559,8 +560,8 @@ enum Reason {
         <section data-background="assets/front-page.jpg">
           <h2>Delivery guarantees</h2>
           <ul>
-            <li class="fragment">At-least-once (status updates)</li>
             <li class="fragment">At-most-once (framework messages)</li>
+            <li class="fragment">At-least-once (status updates)</li>
           </ul>
           <aside class="notes"></aside>
           <!--!!!TODO-
@@ -706,55 +707,34 @@ mesos-master ... --acls="{
           <h2>Mesos 1.0 HTTP API</h2>
           <ul>
             <li class="fragment">Mesos will move to a pure HTTP scheduler API</li>
-            <li class="fragment">Two end-points will be available</li>
-            <li class="fragment">One for events, similar to the scheduler implementations</li>
-            <li class="fragment">One for calls, similar to the scheduler driver</li>
-            <li class="fragment">Stay tuned: not done yet - coming up soon</li>
+            <li class="fragment">One new end-point will be available</li>
+            <li class="fragment">Events (callbacks) streamed over HTTP</li>
+            <li class="fragment">Calls done through HTTP POST</li>
+            <li class="fragment">Stay tuned: not ready yet - early support in 0.24</li>
           </ul>
-          <aside class="notes"></aside>
+          <aside class="notes">
+            Schedulers POST registration data here<br/>
+              Expected to keep a persistent connection open<br/>
+              Replaces scheduler callback methods<br/>
+              Chunked-Transfer encoding, one chunk per update<br/>
+<br/>
+              calls:<br/>
+              Replaces scheduler driver methods<br/>
+              Standard HTTP Request/Response<br/>
+              Response acks message receipt, not completed action<br/>
+          </aside>
         </section>
-<!--
-          <ul>
-            <li>Events:
-            <ul>
-              <li> Schedulers POST registration data here
-              <li> Expected to keep a persistent connection open
-              <li> Replaces scheduler callback methods
-              <li> Chunked-Transfer encoding, one chunk per update
-            </ul>
-            <li>Calls:
-            <ul>
-              <li> Replaces scheduler driver methods
-              <li> Standard HTTP Request/Response
-              <li> Response acks message receipt, not completed action
-            </ul>
-          </ul>
--->
+
         <section data-background="assets/front-page.jpg">
           <h2>Let's try it out!</h2>
+          <h3><a href="https://github.com/mesosphere/rendler">https://github.com/mesosphere/rendler</a></h3>
           <ul>
             <h4> 1) Break into groups based on your language of choice: </h4>
 			<h4> <i> C++, Go, Haskell, Java, Python, Scala </i> </h4>
             <h4> 2) Work with your team on adding one of the production level features mentioned to the RENDLER </h4>
             <h4> <i> Note that you may want to break into smaller teams based on feature. </i> </h4>
+          </ul>
         </section>
-
-        <section data-background="assets/sf.jpg">
-          <h2>Learn More!</h2>
-          <table>
-          <tr>
-          <td style="vertical-align: top;">
-          <img src="assets/mesos.png"/></td>
-          <td style="vertical-align: middle;">
-            <p><a href="http://mesos.apache.org">http://mesos.apache.org</a></p>
-            <p><a href="https://github.com/apache/mesos">https://github.com/apache/mesos</a></p>
-            <p><a href="mailto://user@mesos.apache.org">user@</a>,
-               <a href="mailto://dev@mesos.apache.org">dev@mesos.apache.org</a></p>
-            <p><a href="http://mesosphere.com/careers">http://mesosphere.com/careers</a></p>
-          </td>
-          </tr>
-          </table>
-				</section>
 
 			</div>
 
