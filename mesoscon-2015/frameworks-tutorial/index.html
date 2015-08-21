@@ -68,7 +68,9 @@
             <li> Scheduler HA, Reconciliation, State Abstraction
             <li> Status Updates, Framework Messages
             <li> Authentication, ACLs
+<!--
             <li> DCOS Integration, 1.0 HTTP API
+-->
           </ul> </h3>
           <aside class="notes"></aside>
         </section>
@@ -162,14 +164,12 @@
 
 <!-- Elizabeth's section -->
 <!-- API Overview -->
-		
          <section data-background="assets/front-page.jpg">
           <h2>Framework Architecture</h2>
           <img src="assets/scheduler-executor-diagram.png" />
           <aside class="notes"></aside>
         </section>
-		
-		
+
         <section data-background="assets/front-page.jpg">
         <h2>FrameworkInfo</h2>
           <table style="width: 100%;">
@@ -559,8 +559,8 @@ enum Reason {
         <section data-background="assets/front-page.jpg">
           <h2>Delivery guarantees</h2>
           <ul>
-            <li>At-least-once (status updates)</li>
-            <li>At-most-once (framework messages)</li>
+            <li class="fragment">At-least-once (status updates)</li>
+            <li class="fragment">At-most-once (framework messages)</li>
           </ul>
           <aside class="notes"></aside>
           <!--!!!TODO-
@@ -628,27 +628,28 @@ mesos-master ... --acls="{
               </code></pre>
           <aside class="notes"></aside>
         </section>
-		
+
         <section data-background="assets/front-page.jpg">
           <h2>Dynamic Reservations</h2>
           <ul>
-            <li> Use Call::ACCEPT (a.k.a., acceptOffers)
-            <li> Offer::Operation::Reserve
-            <li> Offer::Operation::Unreserve
-          </ul>
-          <aside class="notes"></aside>
-        </section>
-		
-        <section data-background="assets/front-page.jpg">
-          <h2>Persistent Volumes</h2>
-          <ul>
-            <li> Allow tasks to write persistent data which avoids garbage collection
-            <li> When task X finishes, the framework can launch a new task Y 
-            <li> When task Y launches, it is able to access the persistent data previously written by task X
+            <li class="fragment"> Use Call::ACCEPT (a.k.a., acceptOffers)
+            <li class="fragment"> Offer::Operation::Reserve
+            <li class="fragment"> Offer::Operation::Unreserve
           </ul>
           <aside class="notes"></aside>
         </section>
 
+        <section data-background="assets/front-page.jpg">
+          <h2>Persistent Volumes</h2>
+          <ul>
+            <li class="fragment"> Allow tasks to write persistent data which avoids garbage collection
+            <li class="fragment"> When task X finishes, the framework can launch a new task Y
+            <li class="fragment"> When task Y launches, it is able to access the persistent data previously written by task X
+          </ul>
+          <aside class="notes"></aside>
+        </section>
+
+<!--
         <section data-background="assets/front-page.jpg">
           <h2>DCOS Integration</h2>
           <ul>
@@ -659,9 +660,60 @@ mesos-master ... --acls="{
           </ul>
           <aside class="notes"></aside>
         </section>
+-->
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Operational Advice</h2>
+          <ul>
+            <li class="fragment"> Avoid blocking operations in callbacks
+            <li class="fragment"> SchedulerDriver* will not change
+            <li class="fragment"> TaskIDs must be unique within the same framework
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Operational Advice</h2>
+          <ul>
+            <li class="fragment"> Avoid saving state in your sandbox
+            <li class="fragment"> Be careful about making assumptions about the environment
+            <li class="fragment"> Distribute task artifacts via HDFS or other distributed filesystem
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Operational Advice</h2>
+          <ul>
+            <li class="fragment"> Allow co-tenancy of multiple executors on same machine
+            <li class="fragment"> Know and publish (& verify?) Mesos version compatibility
+            <li class="fragment"> Encourage configuration through the task and executor info
+            <li class="fragment"> Pure bindings? Check out mesos-go, pesos, jesos
+          <aside class="notes"></aside>
+        </section>
 
         <section data-background="assets/front-page.jpg">
           <h2>Mesos 1.0 HTTP API</h2>
+          <ul>
+            <li class="fragment">Traditional language bindings HAVE to use libmesos</li>
+            <li class="fragment">This has shown to be a limitation</li>
+            <li class="fragment">Distribution is hard</li>
+            <li class="fragment">Error prone when mixing runtimes</li>
+            <li class="fragment">We can do better</li>
+          </ul>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Mesos 1.0 HTTP API</h2>
+          <ul>
+            <li class="fragment">Mesos will move to a pure HTTP scheduler API</li>
+            <li class="fragment">Two end-points will be available</li>
+            <li class="fragment">One for events, similar to the scheduler implementations</li>
+            <li class="fragment">One for calls, similar to the scheduler driver</li>
+            <li class="fragment">Stay tuned: not done yet - coming up soon</li>
+          </ul>
+          <aside class="notes"></aside>
+        </section>
+<!--
           <ul>
             <li>Events:
             <ul>
@@ -677,37 +729,7 @@ mesos-master ... --acls="{
               <li> Response acks message receipt, not completed action
             </ul>
           </ul>
-          <aside class="notes"></aside>
-        </section>
-
-        <section data-background="assets/front-page.jpg">
-          <h2>Additional Advice</h2>
-          <ul>
-            <li> No blocking in sched/exec callbacks
-            <li> SchedulerDriver* will not change, included as convenience
-            <li> TaskIDs must be unique within the same frameworkId
-          <aside class="notes"></aside>
-        </section>
-		
-        <section data-background="assets/front-page.jpg">
-          <h2>Additional Advice</h2>
-          <ul>
-            <li> No state in sandbox
-            <li> No implicit deps outside sandbox, node constraints
-            <li> Exec/task binaries/data via HDFS/etc, no public internet
-          <aside class="notes"></aside>
-        </section>
-		
-        <section data-background="assets/front-page.jpg">
-          <h2>Additional Advice</h2>
-          <ul>
-            <li> Allow co-tenancy of multiple execs on same machine; No static ports
-            <li> Know and publish (& verify?) Mesos version compatibility
-            <li> Don't hardcode params that should be configurable
-            <li> Pure bindings? Check out mesos-go, pesos, jesos
-          <aside class="notes"></aside>
-        </section>
-
+-->
         <section data-background="assets/front-page.jpg">
           <h2>Let's try it out!</h2>
           <ul>
