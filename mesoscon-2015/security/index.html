@@ -159,7 +159,7 @@ We'll break down the system into a few different attack surfaces and approach th
             <li> Task/Resource Isolation
           </ul> </h3>
           <aside class="notes">
-If you don't remember anything else this from this talk, I hope you'll at least remember these 5 solutions 
+If you don't remember anything else this from this talk, I hope you'll at least remember these 5 solutions
 I suppose you could leave now that you have all the answers, but you might need a little more detail.
 					</aside>
         </section>
@@ -390,16 +390,34 @@ FrameworkInfo.principal // for ACLs
 
         <section data-background="assets/cover-alt.jpg">
           <h2>WebUI Security</h2>
-          <aside class="notes">Joris
-						HTTP Authn (current, future)
-https://docs.google.com/document/d/1kM3_f7DSqXcE2MuERrLTGp_XMC6ss2wmpkNYDCY5rOM/edit#heading=h.bbxx6wwg3tpe
-						HTTPS
-						DisableEndpoints FirewallRule
-					</aside>
+          <h3> <ul style="line-height: 120%">
+            <li>Network Firewall rules
+            <li class="fragment">HTTPS
+            <li class="fragment">Endpoint Firewall Rules
+                <font size="6"><pre><code class="shell" data-trim>--firewall_rules=
+{
+  "disabled_endpoints" : {
+    "paths" : [
+      "/files/browse.json",
+      "/slave(0)/stats.json",
+    ]
+  }
+}
+            </code></pre></font>
+            <li class="fragment">Dev Proposal: <a href="https://docs.google.com/document/d/1kM3_f7DSqXcE2MuERrLTGp_XMC6ss2wmpkNYDCY5rOM">HTTP Authentication</a>
+            </ul>
+          <br>
+          <h2 class="fragment">Existing tools are coarse grained!</h2>
+<aside class="notes">
+</aside>
         </section>
 
         <section data-background="assets/cover-alt.jpg">
           <h2>Trusting your Modules</h2>
+          <h3> <ul style="line-height: 150%">
+            <li>Anonymous Modules
+            <li class="fragment">Leaky Modules
+            <li class="fragment">Dynamic Modules Expose All "Private" Data in Memory
           <aside class="notes">
 !!! Bullets?
 					Modules can do anything! Replace or add functionality.
@@ -418,11 +436,26 @@ https://docs.google.com/document/d/1kM3_f7DSqXcE2MuERrLTGp_XMC6ss2wmpkNYDCY5rOM/
             <li> Protecting your Task
             <li> Future Work
           </ul> </h3>
-          <aside class="notes">Joris
-              Https for your WebUI (and REST API)
-              SSL to Mesos
-              Authn/z for your users
-					</aside>
+<aside class="notes">
+Joris
+</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Security for your Framework</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> Enable SSL!
+            <li class="fragment"> SSL Only Protects Scheduler <-> Master Data
+            <li class="fragment"> Encrypt Task <-> Task Data
+            <li class="fragment"> Use Authorization / Authentication for Framework WebUI
+            <li class="fragment"> Follow Mesos Pattern of Safety Limits
+          </ul> </h3>
+<aside class="notes">Joris
+Https for your WebUI (and REST API)
+SSL to Mesos
+Authn/z for your users
+Mention Joe Smith's Aurora Talk RE: Safety Limits
+</aside>
         </section>
 
         <section data-background="assets/cover-alt.jpg">
@@ -434,11 +467,25 @@ https://docs.google.com/document/d/1kM3_f7DSqXcE2MuERrLTGp_XMC6ss2wmpkNYDCY5rOM/
             <li> <b><u>Protecting your Task</u></b>
             <li> Future Work
           </ul> </h3>
-          <aside class="notes">Joris
-              Task user (disallow root), permissions
-              Protecting your data
-              Isolation from other tasks
-					</aside>
+<aside class="notes">
+Joris
+</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Protecting your Task</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> <a href="http://mesos.apache.org/documentation/latest/authorization/">run_rasks ACL</a> to Limit User Privilges
+            <li class="fragment"> Encrypt Your Data!
+            <li class="fragment"> Enable Isolators
+            <li class="fragment"> Statically Reserve Super Secure Trusted Machine Set
+          </ul> </h3>
+<aside class="notes">
+Task user (disallow root), permissions
+Protecting your data
+Isolation from other tasks
+Only allow specific frameworks to run on trusted machines
+</aside>
         </section>
 
         <section data-background="assets/cover-alt.jpg">
