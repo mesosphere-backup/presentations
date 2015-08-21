@@ -119,13 +119,6 @@ What happens when this guy shows up?
           </aside>
         </section>
 
-        <!--!!!section data-background="assets/cover-alt.jpg">
-          <img src="assets/architecture-01.png"/>
-          <aside class="notes">
-					Your cluster is vulnerable here, here, here...
-          </aside>
-        </section-->
-
         <section data-background="assets/cover-alt.jpg">
           <h2>Attack Scenarios</h2>
           <h3> <ul style="line-height: 150%">
@@ -191,19 +184,22 @@ I suppose you could leave now that you have all the answers, but you might need 
 Severin.stalder [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons
 							Firewall off the entire cluster<br>
 								Either let users in through VPN<br>
-								Or funnel all commm through an authenticating proxy
+								Or funnel all incoming comm through an authenticating proxy
 					</aside>
         </section>
 
         <section data-background="assets/cover-alt.jpg">
           <h2>Connecting to external services</h2>
-          <img width="70%" src="assets/architecture-01.png"/>
+          <h3> <ul style="line-height: 150%">
+            <li> Zookeeper Auth
+            <li> S3 or other external storage
+            <li> Config services
+            <li> Credential Services
+          </ul> </h3>
           <aside class="notes">
-!!! (update img, firewall, users, svcs)<br>
-								Zookeeper Auth<br>
-								S3, external storage<br>
-								Config services, etc.<br>
-								Distributing credentials to tasks?
+            Either in the firewall, or open the firewall for the outgoing comm<br>
+            Mutual authentication<br>
+            Encrypted channels
 					</aside>
         </section>
 
@@ -242,9 +238,8 @@ Explain peek to dispatch to correct socket handler for upgrade support
         </section>
 
         <section data-background="assets/cover-alt.jpg">
-          <img src="assets/architecture-01.png"/>
+          <img src="assets/architecture-ssl.png"/>
 <aside class="notes">
-!!! (update image, highlight comm)<br>
 Point to all libprocess communication<br>
 Webui traffic also served by libprocess<br>
 Mesos only stores leading master in zookeeper<br>
@@ -286,12 +281,6 @@ During live cluster upgrade, use SSL_SUPPORT_DOWNGRADE=true to maintain communic
 Explain webui issues with running HTTP and HTTPS simultaneously<br>
 Check out the ssl guide on the mesos documentation website for more info
 </aside>
-        </section>
-
-        <section data-background="assets/cover-alt.jpg">
-          <h2>Scalability improvements planned</h2>
-          <br>
-          <h2 class="fragment">Try it out, let us know what you think!</h2>
         </section>
 
         <section data-background="assets/cover-alt.jpg">
@@ -477,9 +466,9 @@ Joris
           <h2>Protecting your Task</h2>
           <h3> <ul style="line-height: 150%">
             <li> <a href="http://mesos.apache.org/documentation/latest/authorization/">run_tasks ACL</a> to Limit User Privilges
-            <li class="fragment"> Encrypt Your Data!
-            <li class="fragment"> Enable Isolators
-            <li class="fragment"> Statically Reserve Super Secure Trusted Machine Set
+            <li class="fragment"> Encrypt your data (over the wire & on disk)
+            <li class="fragment"> Enable isolators
+            <li class="fragment"> Statically reserve a set of trusted machines for sensitive frameworks
           </ul> </h3>
 <aside class="notes">
 Task user (disallow root), permissions<br>
@@ -509,13 +498,13 @@ Only allow specific frameworks to run on trusted machines
 						<li> More (fine-grained) ACLs
 						<li> Multiple authenticators/authorizers
 						<li> Integration with 3rd party security
+						<li> Module certification
 						<li> Credential storage/distribution
 						<li> More resource isolators
           </ul> </h3>
           <aside class="notes">
-							Authn for HTTP API (SPNEGO?)
-							Authz around more actons, including Agent (sandboxes)
-							JIRA links?
+Authn for HTTP API (SPNEGO?)<br>
+Authz around more actons, including Agent (sandboxes)
 					</aside>
         </section>
 
@@ -532,26 +521,6 @@ Only allow specific frameworks to run on trusted machines
 If you don't remember anything else this from this talk, I hope you'll at least remember these 5 solutions
 					</aside>
         </section>
-
-        <section data-background="assets/sf.jpg">
-          <h2>Learn More!</h2>
-          <table>
-          <tr>
-          <td style="vertical-align: top;">
-          <img src="assets/mesos.png"/></td>
-          <td style="vertical-align: middle;">
-            <p><a href="http://mesos.apache.org">http://mesos.apache.org</a></p>
-            <p><a href="https://github.com/apache/mesos">https://github.com/apache/mesos</a></p>
-            <p><a href="mailto://user@mesos.apache.org">user@</a>,
-               <a href="mailto://dev@mesos.apache.org">dev@mesos.apache.org</a></p>
-            <p><a href="http://mesosphere.com/careers">http://mesosphere.com/careers</a></p>
-          </td>
-          </tr>
-          </table>
-          <aside class="notes">
-						Takeaways
-					</aside>
-				</section>
 
 			</div>
 
