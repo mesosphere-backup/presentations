@@ -643,6 +643,37 @@ mesos-master ... --acls="{
               </code></pre>
           <aside class="notes"></aside>
         </section>
+		
+        <section data-background="assets/front-page.jpg">
+          <h2>Dynamic Reservations</h2>
+          <ul>
+            <li> Framework API
+            <li> Use Call::ACCEPT (a.k.a., acceptOffers)
+            <li> Offer::Operation::Reserve
+            <li> Offer::Operation::Unreserve
+          </ul>
+          <aside class="notes"></aside>
+        </section>
+		
+        <section data-background="assets/front-page.jpg">
+          <h2>Dynamic Reservations</h2>
+          <ul>
+            <li> Operator API
+            <li> /reserve
+            <li> /unreserve
+          </ul>
+          <aside class="notes"></aside>
+        </section>
+		
+        <section data-background="assets/front-page.jpg">
+          <h2>Persistent Volumes</h2>
+          <ul>
+            <li> Allow tasks to write persistent data which avoids garbage collection
+            <li> When task X finishes, the framework can launch a new task Y 
+            <li> When task Y launches, it is able to access the persistent data previously written by task X
+          </ul>
+          <aside class="notes"></aside>
+        </section>
 
         <section data-background="assets/front-page.jpg">
           <h2>DCOS Integration</h2>
