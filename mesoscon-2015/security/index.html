@@ -119,6 +119,13 @@ What happens when this guy shows up?
           </aside>
         </section>
 
+        <!--!!!section data-background="assets/cover-alt.jpg">
+          <img src="assets/architecture-01.png"/>
+          <aside class="notes">
+					Your cluster is vulnerable here, here, here...
+          </aside>
+        </section-->
+
         <section data-background="assets/cover-alt.jpg">
           <h2>Attack Scenarios</h2>
           <h3> <ul style="line-height: 150%">
@@ -291,13 +298,12 @@ Check out the ssl guide on the mesos documentation website for more info
           <h2>Authentication</h2>
           <h3> <ul style="line-height: 150%">
             <li>Problem: Interns running bitcoin miners on the cluster?
-            <li class="fragment">Solution: Framework Authn (Mesos 0.15+)
+            <li class="fragment">Solution: Framework Authn (0.15+)
             <li class="fragment">Problem: Random laptops joining your cluster, running sensitive tasks?
-            <li class="fragment">Solution: Slave(/Agent) Authn (Mesos 0.19+)
+            <li class="fragment">Solution: Slave(/Agent) Authn (0.19+)
             <li class="fragment">Modularized in Mesos 0.21, to support custom implementations
           </ul> </h3>
           <aside class="notes">
-!!! Cleanup wording
 					SASL/CRAM_MD5
 					Module means dependency doesn't need to be built into Mesos,
 					can experiment with new behavior without having to push changes into Mesos
@@ -313,40 +319,40 @@ Check out the ssl guide on the mesos documentation website for more info
           </div>
           <div class="fragment">
             <h2>Master</h2>
-            <font size="6"><pre><code class="shell" data-trim>
+            <pre><code class="shell" data-trim>
 --authenticators (default: crammd5)
 --credentials (text/json file)
---authenticate (frameworks)
+--authenticate (for frameworks)
 --authenticate_slaves
-            </code></pre></font>
+            </code></pre>
           </div>
           <div class="fragment">
             <h2>Slave/Agent</h2>
-            <font size="6"><pre><code class="shell" data-trim>
+            <pre><code class="shell" data-trim>
 --authenticatee (default: crammd5)
 --credential (text/json file)
-            </code></pre></font>
+            </code></pre>
           </div>
           <div class="fragment">
             <h2>Framework</h2>
-            <font size="6"><pre><code class="cpp" data-trim>
+            <pre><code class="cpp" data-trim>
 SchedulerDriver(Scheduler, FrameworkInfo, master, Credential);
 message Credential { required string principal = 1; optional bytes secret = 2; }
 FrameworkInfo.principal // for ACLs
-            </code></pre></font>
+            </code></pre>
           </div>
 <aside class="notes">
-!!! (build with sasl, enable flags)
 </aside>
         </section>
 
         <section data-background="assets/cover-alt.jpg">
           <h2>Authorization and ACLs</h2>
           <h3> <ul style="line-height: 150%">
-            <li>What roles can frameworks register under?
-            <li class="fragment">What users can a framework launch tasks as? (not root)
+            <li>What roles can frameworks register as?
+            <li class="fragment">What users can a framework launch tasks as?
             <li class="fragment">What (http) users can shutdown a framework?
             <li class="fragment">Modularized in Mesos 0.24
+            <li class="fragment">Many more to come
           </ul> </h3>
           <aside class="notes">
 						Current ACLs, how to enable, what they do
@@ -357,34 +363,31 @@ FrameworkInfo.principal // for ACLs
 
         <section data-background="assets/cover-alt.jpg">
           <div>
-            <h2>Master Flags</h2>
-            <font size="6"><pre><code class="shell" data-trim>
+            <h2>Master Authorization Flags</h2>
+            <pre><code class="json" data-trim>
 --authorizers (default: local)
---acls
-      {
+--acls = {
         "register_frameworks": [
-                             {
-                                "principals": { "type": "ANY" },
-                                "roles": { "values": ["a"] }
-                             }
-                           ],
+                {
+                   "principals": { "type": "ANY" },
+                   "roles": { "values": ["a"] }
+                }
+        ],
         "run_tasks": [
-                        {
-                           "principals": { "values": ["a", "b"] },
-                           "users": { "values": ["c"] }
-                        }
-                      ],
+                {
+                   "principals": { "values": ["a", "b"] },
+                   "users": { "values": ["c"] }
+                }
+        ],
         "shutdown_frameworks": [
-                      {
-                         "principals": { "values": ["a", "b"] },
-                         "framework_principals": { "values": ["c"] }
-                      }
-                    ]
-      }
-            </code></pre></font>
+                {
+                   "principals": { "values": ["a", "b"] },
+                   "framework_principals": { "values": ["c"] }
+                }
+        ] }
+            </code></pre>
           </div>
 <aside class="notes">
-!!! (build with sasl, enable flags)
 </aside>
         </section>
 
@@ -394,20 +397,19 @@ FrameworkInfo.principal // for ACLs
             <li>Network Firewall rules
             <li class="fragment">HTTPS
             <li class="fragment">Endpoint Firewall Rules
-                <font size="6"><pre><code class="shell" data-trim>--firewall_rules=
+                <pre><code class="shell" data-trim>--firewall_rules=
 {
   "disabled_endpoints" : {
     "paths" : [
       "/files/browse.json",
-      "/slave(0)/stats.json",
+      "/slave(0)/stats.json"
     ]
   }
 }
-            </code></pre></font>
-            <li class="fragment">Dev Proposal: <a href="https://docs.google.com/document/d/1kM3_f7DSqXcE2MuERrLTGp_XMC6ss2wmpkNYDCY5rOM">HTTP Authentication</a>
+            </code></pre>
             </ul>
           <br>
-          <h2 class="fragment">Existing tools are coarse grained!</h2>
+          <h3 class="fragment">Existing tools are coarse grained!</h3>
 <aside class="notes">
 </aside>
         </section>
@@ -419,7 +421,6 @@ FrameworkInfo.principal // for ACLs
             <li class="fragment">Leaky Modules
             <li class="fragment">Dynamic Modules Expose All "Private" Data in Memory
           <aside class="notes">
-!!! Bullets?
 					Modules can do anything! Replace or add functionality.
 					A misbehaving module could crash your cluster, fail tasks, steal data, change permissions, add new endpoints, etc.
 					Fortunately, only cluster admins should be starting the masters/agents and specifying the modules to use.
@@ -475,7 +476,7 @@ Joris
         <section data-background="assets/cover-alt.jpg">
           <h2>Protecting your Task</h2>
           <h3> <ul style="line-height: 150%">
-            <li> <a href="http://mesos.apache.org/documentation/latest/authorization/">run_rasks ACL</a> to Limit User Privilges
+            <li> <a href="http://mesos.apache.org/documentation/latest/authorization/">run_tasks ACL</a> to Limit User Privilges
             <li class="fragment"> Encrypt Your Data!
             <li class="fragment"> Enable Isolators
             <li class="fragment"> Statically Reserve Super Secure Trusted Machine Set
@@ -498,9 +499,37 @@ Only allow specific frameworks to run on trusted machines
             <li> <b><u>Future Work</u></b>
           </ul> </h3>
           <aside class="notes">
+					</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Future Work</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> <a href="https://docs.google.com/document/d/1kM3_f7DSqXcE2MuERrLTGp_XMC6ss2wmpkNYDCY5rOM">HTTP Authentication</a> 
+						<li> More (fine-grained) ACLs
+						<li> Multiple authenticators/authorizers
+						<li> Integration with 3rd party security 
+						<li> Credential storage/distribution
+						<li> More resource isolators
+          </ul> </h3>
+          <aside class="notes">
 							Authn for HTTP API (SPNEGO?)
 							Authz around more actons, including Agent (sandboxes)
 							JIRA links?
+					</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Takeaways</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> Firewall
+            <li> Encryption
+            <li> Authentication
+            <li> Authorization (ACLs)
+            <li> Task/Resource Isolation
+          </ul> </h3>
+          <aside class="notes">
+If you don't remember anything else this from this talk, I hope you'll at least remember these 5 solutions
 					</aside>
         </section>
 
