@@ -66,15 +66,12 @@
     </p>
 
     <aside class="notes">
-      <ul>
-        <li>Who has contributed to Mesos?</li>
-        <li>Who has written a Mesos framework?</li>
-        <li>Who has used or tried out Mesos?</li>
-        <li>Who has heard about Mesos?</li>
-        <li>Who has heard or familiar with other cluster managers, like Borg, Omega, Kubernetes, Yarn?</li>
-      </ul>
-
-      <p>I'll try not to bore folks who are already familiar with Mesos and the ecosystem, nor lose people who are just jumping onto the ship.</p>
+      <p>Who has contributed to Mesos?</p>
+      <p>Who has written a Mesos framework?</p>
+      <p>Who has used or tried out Mesos?</p>
+      <p>Who has heard about Mesos?</p>
+      <p>Who has heard or familiar with other cluster managers, like Borg, Omega, Kubernetes, Yarn?</p>
+      <p>Try not to bore folks who are already familiar with Mesos and the ecosystem, nor lose people who are just jumping onto the ship</p>
     </aside>
   </section>
 
@@ -93,6 +90,8 @@
 
       <aside class="notes">
         <p>Aurora, Cook, Jarvis, Marathon — all these general-purpose Mesos frameworks are complex distributed systems with distinct features and lots of users.</p>
+        <p>Distributed systems are hard, why re-invent the same thing all the time?</p>
+        <p>Mesos is general purpose, compare to YARN or k8s</p>
       </aside>
     </section>
 
@@ -129,6 +128,10 @@
       <div style="background-color: rgba(0, 0, 0, 0.5); color: #fff; padding: 20px;">
         <h2>But as computational resources like cores, memory, disks, etc.</h2>
       </div>
+
+      <aside class="notes">
+        <p>BenH: no nodes, a bus with pluggable components and common address space</p>
+      </aside>
     </section>
 
     <section>
@@ -136,7 +139,8 @@
       <img style="width: 80%;" src="assets/windows_[unknown].png" />
 
       <aside class="notes">
-        <p>This is the direction of evolution for datacenters</p>
+        <p>This is how we operate datacenters now. Direction of evolution is clear?</p>
+        <p>Some, very few apps need to have the low-level control</p>
       </aside>
     </section>
 
@@ -229,7 +233,7 @@
       <p>Containerization in Mesos, a brief history</p>
 
       <aside class="notes">
-        <p>Less than a year ago I was talking about adding Docker in Mesos</p>
+        <p>Half a year ago I was talking about adding Docker support in Mesos</p>
         <p>Today you cannot surprise people with that, it's the new normal</p>
         <p>Containers provide isolation, without which resource allocation is senseless</p>
       </aside>
@@ -240,23 +244,24 @@
       <table>
         <tr class="fragment">
           <td><i class="fa fa-lock"></i></td>
-          <td>SSL</td>
+          <td>SSL: <a href="http://mesos.apache.org/documentation/latest/mesos-ssl">documentation</a>
+          </td>
         </tr>
         <tr class="fragment">
           <td><i class="fa fa-plug"></i></td>
-          <td>Task hooks</td>
+          <td>Task hooks: <a href="http://mesos.apache.org/documentation/latest/modules">how to use</a></td>
         </tr>
         <tr class="fragment">
           <td><i class="fa fa-exchange"></i></td>
-          <td>IP per container</td>
+          <td>IP per container (WIP)</td>
         </tr>
         <tr class="fragment">
           <td><i class="fa fa-pie-chart"></i></td>
-          <td>Network isolation</td>
+          <td>Network isolation: <a href="https://www.youtube.com/watch?v=SCYmAd8cwSE">MesosCon Seattle 2015 talk</a> by Christos Kozyrakis (Mesosphere) and Spike Curtis (Project Calico)</td>
         </tr>
         <tr class="fragment">
           <td><i class="fa fa-support"></i></td>
-          <td>Maintenance primitives</td>
+          <td>Maintenance primitives (landed)</td>
         </tr>
         <tr class="fragment">
           <td><i class="fa fa-key"></i></td>
@@ -286,6 +291,7 @@
       <div style="position: absolute; top: -150px; left: 0px; text-align: right; color">
         <small>&copy; belladivalifestyle.com</small>
       </div>
+
       <aside class="notes">
         <p>Why would you want to try DCOS instead? The question we ask ourselves as a company</p>
       </aside>
@@ -336,7 +342,7 @@ dcos package install cassandra
       </div>
 
       <aside class="notes">
-        <p>Something people are not always aware of and do not ask for</p>
+        <p>Something people are not always aware of and usually do not ask for</p>
         <p>Smart allocation can save you tons of money!</p>
       </aside>
     </section>
@@ -350,11 +356,11 @@ dcos package install cassandra
       <h2 class="fragment">But what is fair?</h2>
 
       <aside class="notes">
-        <p>A new framework</p>
+        <p>New framework joins the cluster</p>
         <p>No competition may lead to starvation</p>
         <p>Preemption and SLA</p>
         <p>Cook by TwoSigma</p>
-        <p>There is no silver bullet, we create primitives to enable others to </p>
+        <p>There is no silver bullet, we create primitives to enable others to set up what they need</p>
       </aside>
     </section>
 
@@ -370,7 +376,8 @@ dcos package install cassandra
 
       <aside class="notes">
         <p>A module developed by IBM</p>
-        <p>Oversubscription: no-one asks yet, but can cut your costs drastically</p>
+        <p>Oversubscription: no-one really asks yet, but can cut your costs drastically</p>
+        <p>Zombie servers</p>
         <p>Quota: elaborate, with use case</p>
       </aside>
     </section>
@@ -382,6 +389,10 @@ dcos package install cassandra
       <div style="position: absolute; top: -150px; left: 0px; text-align: right; color">
         <small>&copy; belladivalifestyle.com</small>
       </div>
+
+      <aside class="notes">
+        <p>Why would you want to try DCOS instead? The question we ask ourselves as a company</p>
+      </aside>
     </section>
 
     <section data-background="assets/heliocrystal.jpg">
@@ -428,6 +439,7 @@ open.mesosphere.com/reference/packages
       </div>
 
       <aside class="notes">
+        <p>Slightly faster, but still a lot to configure manually</p>
       </aside>
     </section>
 
@@ -440,6 +452,7 @@ mesosphere.com/product
       </div>
 
       <aside class="notes">
+        <p>DCOS community edition provides you with a preconfigured cluster</p>
       </aside>
     </section>
 
@@ -450,13 +463,14 @@ github.com/mesosphere/marathon
 github.com/mesos/chronos
 github.com/twosigma/Cook
 github.com/mesosphere/mesos-dns
+...
       </code></pre>
       <div style="position: absolute; top: -150px; left: 0px; text-align: right; color">
         <small>&copy; reddit.com</small>
       </div>
 
       <aside class="notes">
-        <p>As a bigger company you need a lot of moving parts</p>
+        <p>As a bigger company you need a lot of moving parts: various frameworks, discovery, logs aggregation, zk caches, etc</p>
       </aside>
     </section>
 
@@ -469,6 +483,7 @@ mesosphere.com/product
       </div>
 
       <aside class="notes">
+        <p>DCOS on-prem</p>
       </aside>
     </section>
 
