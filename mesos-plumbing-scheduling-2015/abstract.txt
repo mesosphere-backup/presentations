@@ -1,0 +1,4 @@
+
+Operating apps at scale is the new normal, but is still out of reach for most companies. With Mesosphere DCOS—the distributed analog to a traditional single-host operating system—building and managing highly-available fault-tolerant apps becomes easy. DCOS combines notable open source projects with Mesosphere components to provide the key building blocks of an operating system (kernel, init, scheduler, CLI, API). During the talk, I will give a technical overview of the Mesosphere DCOS and show how it plays with Docker, give a live demo of some of its capabilities, and wrap up with upcoming new features.
+
+Alex Rukletsov is on the Mesosphere core team in Hamburg and focuses on open source Apache Mesos. During past years Alex was segmenting medical images and investigating behaviour of human vessels in several German research institutes. His areas of interests include distributed systems, object recognition, probabilistic and heuristic algorithms.
