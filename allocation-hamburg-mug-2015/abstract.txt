@@ -1,0 +1,2 @@
+
+Alex Rukletsov is on the Mesosphere core team in Hamburg and focuses on open source Apache Mesos. During past years Alex was segmenting medical images and investigating behaviour of human vessels in several German research institutes. His areas of interests include distributed systems, object recognition, probabilistic and heuristic algorithms.

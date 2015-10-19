@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Apache Mesos 0.23.0 Release Announcement</title>
+
+		<meta name="description" content="Apache Mesos 0.23.0 Release Announcement">
+		<meta name="author" content="Adam">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/mesosphere.css" id="theme">
+
+    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+        <section data-background="assets/front-page.jpg">
+					<h2>Apache Mesos 0.23.0</h2>
+					<h3>Release Announcement</h3>
+          <p><a href="mailto:joris@mesosphere.io">Joris Van Remoortere</a></p>
+          <p><a href="mailto:adam@mesosphere.io">Adam Bordelon</a></p>
+				</section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>3/24 - Mesos 0.22.0</h2>
+          <h2 class="fragment">5/04 - Mesos 0.22.1&nbsp;</h2>
+          <h2 class="fragment">7/22 - Mesos 0.23.0</h2>
+        </section>
+
+        <!--TODO: Graphs for these?-->
+        <section data-background="assets/front-page.jpg">
+          <h1>803</h1>
+          <h2>patches</h2>
+          <h4>(up from 486)</h4>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h1>263</h1>
+          <h2>JIRAs</h2>
+          <h4>(up from 113)</h4>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h1>52</h1>
+          <h2>contributors</h2>
+          <h4>(up from 37)</h4>
+        </section>
+
+        <!--TODO: Vote passed? Confetti slide?-->
+
+        <section data-background="assets/front-page.jpg">
+          <h3>Thanks:</h3>
+          <div>
+          Aaron Bell, Adam B, Aditi Dixit, Akanksha Agrawal, Alexander Rojas, Alexander Rukletsov, Anand Mazumdar, Artem Harutyunyan, Bartek Plotka, Benjamin Hindman, Benjamin Mahler, Bernd Mathiske, Brendan Chang, Brian Wickman, Chi Zhang, Christos Kozyrakis, Cody Maloney, Cong Wang, Connor Doyle, Dave Lester, Dominic Hamon, Evelina Dumitrescu, Gajewski, Greg Mann, haosdent huang, Ian Babrou, Ian Downes, Isabel Jimenez, Itamar Ostricher, James Peach, Jan Schlicht, Jay Buffington, Jiang Yan Xu, Jie Yu, Joerg Schad, Jojy Varghese, Joris Van Remoortere, Kapil Arya, Marco Massenzio, Mark Wang, Michael Park, Nancy  Ko, Niklas Q. Nielsen, Oliver Nicholas, Paul Brett, Ricardo Cervera-Navarro, Stan Teresen, Till Toenshoff, Timothy Chen, Vinod Kone, weitao zhou, and Zhiwei Chen
+          </div>
+        </section>
+
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Feature Highlights</h2>
+          <h3> <ul>
+            <li>Network Security
+            <li>Oversubscription
+            <li>Stateful Primitives
+            <li>So much more...
+          </ul> </h3>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2><a href="https://github.com/apache/mesos/blob/master/docs/network-monitoring.md">Per-Container<br> Network Isolation</a></h2>
+          <!--Why? What? How(flags/API)?-->
+          <h3> <ul>
+            <li>Deployed in production at Twitter
+            <li class="fragment">Prevents a single container from:
+            <h4><ul>
+              <li>Exhausting the available network ports
+              <li>Consuming an unfair share of the network bandwidth
+              <li>Significantly delaying packet transmission for others
+            </ul></h4>
+            <li class="fragment">Publishes network stats to<br>
+              <code>/monitor/statistics.json</code>
+          </ul> </h3>
+<aside class="notes">
+</aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Installing</h2>
+          <h3> <ul>
+            <li>Requires Linux kernel versions 3.6+
+            <li>Also requires libnl3 and iproute
+          </ul> </h3>
+            <pre><code class="shell" data-trim>
+            ../configure --with-network-isolator && make
+            </code></pre>
+
+          <div class="fragment">
+          <h2><br>Enabling</h2>
+          <h3>New isolation option for slave </h3>
+            <pre><code class="shell" data-trim>
+            mesos-slave --isolation="network/port_mapping" ...
+            </code></pre>
+          <h3></h3>
+          </div>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Network Isolation</h2>
+          <h3> <ul>
+            <li>Each container has a separate network stack (via Linux network namespaces)
+            <li>All containers still share the same public IP of the slave <!--Svc Disc-->
+          </ul> </h3>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Port Isolation</h2>
+          <ul>
+            <li><h3>Host ephemeral ports</h3>
+              In <code>/etc/sysctl.conf</code>,<br>
+              set <code>net.ipv4.ip_local_port_range</code><br>
+              and reboot.
+            <li class="fragment"><h3>Mesos offered, non-ephemeral ports</h3>
+              <pre><code class="shell" data-trim>
+              --resources=ports:[31000-32000]
+              </code></pre>
+            <li class="fragment"><h3>Mesos ephemeral ports</h3>
+              <pre><code class="shell" data-trim>
+--resources=ports:[31000-32000];ephemeral_ports:[32768-57344] \
+--ephemeral_ports_per_container=512
+              </code></pre>
+              Tasks using port=0 will use a Mesos ephemeral port
+          </ul>
+<aside class="notes">
+The slave assigns each container a non-overlapping range of the ports and only packets to/from these assigned port ranges will be delivered
+Applications requesting the kernel assign a port (by binding to port 0) will be given ports from the container assigned range
+Applications can bind to ports outside the container assigned ranges but packets from to/from these ports will be silently dropped by the host.
+</aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Traffic Control</h2>
+          <h3> <ul>
+            <li>Rate limiting outbound traffic
+              <pre><code class="shell" data-trim>
+              --egress_rate_limit_per_container=100MB
+              </code></pre>
+            <li class="fragment">Egress traffic isolation
+              <pre><code class="shell" data-trim>
+              --egress_unique_flow_per_container
+              </code></pre>
+          </ul> </h3>
+<aside class="notes">
+Network traffic which would cause this limit to be exceeded is delayed for later transmission. The TCP protocol will adjust to the increased latency and reduce the transmission rate ensuring no packets need be dropped.
+We do not rate limit inbound traffic since we can only modify the network flows after they have been received by the host and any congestion has already occurred.
+Mesos can reduce the impact on other containers on the same host by using flow classification and isolation using the containers port ranges to maintain unique flows for each container and sending traffic from these flows fairly (using the FQ_Codel algorithm).
+</aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Network Monitoring</h2>
+          <h3>Under the <code>statistics</code> key in <br><code>/monitor/statistics.json</code></h3>
+<pre><code data-trim>
+net_rx_bytes    Received bytes
+net_rx_dropped  Packets dropped on receive
+net_rx_errors   Errors reported on receive
+net_rx_packets  Packets received
+net_tx_bytes    Sent bytes
+net_tx_dropped  Packets dropped on send
+net_tx_errors   Errors reported on send
+net_tx_packets  Packets sent
+</code></pre>
+          <h3>Under <code>statistics/<br>net_traffic_control_statistics</code></h3>
+<pre><code data-trim>
+backlog     Bytes queued for transmission
+bytes       Sent bytes
+drops       Packets dropped on send
+overlimits  # times the interface was over transmit limit when attempted to send a packet
+packets     Packets sent
+qlen        Packets queued for transmission
+</code></pre>
+<aside class="notes">
+</aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2><a href="https://github.com/apache/mesos/blob/master/docs/mesos-ssl.md">SSL</a></h2>
+          <h3> <ul style="line-height: 150%">
+            <li>Feature-Complete, Ready to be Tested
+            <li class="fragment">All Libprocess Communication
+            <li class="fragment">Using Libevent + OpenSSL
+            <li class="fragment">Configurable
+            <li class="fragment">Live Upgrade Support
+          </ul> </h3>
+<aside class="notes">
+Libprocess uses socket interface
+Refresher on Mesos bi-directional communication
+Implementation of socket interface using Libevent-Openssl
+Protocol support and ciphers can be configured via environment variables
+TLS 1.2 only protocol enabled by default
+Environment variable to control "downgrade support". Allows heterogenous cluster during upgrade
+</aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <div>
+            <h2>Configuration</h2>
+            <pre><code class="shell" data-trim>
+            ../configure --enable-libevent --enable-ssl
+            </code></pre>
+          </div>
+          <br>
+          <div class="fragment">
+            <h2>Running</h2>
+            <font size="6"><pre><code class="shell" data-trim>
+SSL_ENABLED=1 SSL_KEY_FILE=key SSL_CERT_FILE=cert opt-flags binary
+SSL_ENABLED=1 SSL_KEY_FILE=key SSL_CERT_FILE=cert SSL_REQUIRE_CERT=1 SSL_ENABLE_TLS_V1_1=true master.sh
+            </code></pre></font>
+          </div>
+          <br>
+          <div class="fragment">
+            <h2>Upgrading</h2>
+            <font size="6"><pre><code class="shell" data-trim>
+// Restart each component with downgrade support (master, slave, framework):
+SSL_ENABLED=1 SSL_SUPPORT_DOWNGRADE=1 SSL_KEY_FILE=key SSL_CERT_FILE=cert opt-flags binary
+
+// Restart each component WITHOUT downgrade support (master, slave, framework):
+SSL_ENABLED=true SSL_SUPPORT_DOWNGRADE=false SSL_KEY_FILE=key SSL_CERT_FILE=cert opt-flags binary
+            </code></pre></font>
+          </div>
+<aside class="notes">
+Make sure to re-bootstrap and make a clean build
+The SSL configuration flags can be changed by the environment variables
+During a live cluster upgrade, update the components to use SSL_SUPPORT_DOWNGRADE=true so that they can maintain communication during the transition
+Check out the ssl guide on the mesos documentation website for more info
+</aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Scalability improvements planned</h2>
+          <br>
+          <h2 class="fragment">Try it out, let us know what you think!</h2>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2><a href="https://github.com/apache/mesos/blob/master/docs/oversubscription.md">Oversubscription</a></h2>
+          <ul style="line-height: 150%">
+            <li><h3>Clusters are Under-Utilized!</h3></li>
+            <li class="fragment"><h3>Frameworks Tend to use Resources in a Coarse Grained Fashion</h3></li>
+            <li class="fragment"><h3>Slave has new Resource Estimator</h3></li>
+            <li class="fragment"><h3>Slave has new Quality of Service Controller</h3></li>
+            <li class="fragment"><h3>Master offers Oversubscribable Resources to Frameworks</h3></li>
+            <li class="fragment"><h3>Frameworks receive Task Updates as they usually would</h3></li>
+          </ul>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Resource Estimator</h2>
+          <ul style="line-height: 150%">
+            <li>Computes Oversubscribable Resources</li>
+            <li class="fragment">Slave updates Master when Oversubscribable Resources Change</li>
+            <li class="fragment">It's Modularized!</h3>
+            <ul>
+              <li class="fragment">Ability to Implement Custom Algorithms</li>
+            </ul>
+          </ul>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>QoS Controller</h2>
+          <ul style="line-height: 150%">
+            <li>Monitors Tasks with Guaranteed Resources for Interference</li>
+            <li class="fragment">Generates Events for Slave to Kill Executors</li>
+            <li class="fragment">It's Modularized!</h3>
+            <ul style="line-height: 150%">
+              <li class="fragment">Ability to Implement Custom Algorithms</li>
+              <li class="fragment">Ability to Implement Custom Rules</li>
+              <li class="fragment">Ability to Throttle Instead of Kill</li>
+            </ul>
+          </ul>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Configuration</h2>
+          <h4>Interval Between Resource Estimate Updates to Master:
+            <pre><code class="shell" data-trim>
+            --oversubscribed_resources_interval=15secs
+            </code></pre>
+          </h4>
+          <h4 class="fragment">Resource Estimator Implementation:
+            <pre><code class="shell" data-trim>
+            --resource_estimator=VALUE
+            </code></pre>
+          </h4>
+          <h4 class="fragment">Interval Between Monitoring Calls by Resource Monitor:
+            <pre><code class="shell" data-trim>
+            --resource_monitoring_interval=1secs
+            </code></pre>
+          </h4>
+          <h4 class="fragment">QoS Implementation:
+            <pre><code class="shell" data-trim>
+            --qos_controller=VALUE
+            </code></pre>
+          </h4>
+          <h4 class="fragment">Interval Between QoS Corrections:
+            <pre><code class="shell" data-trim>
+            --qos_correction_interval_min=0ns
+            </code></pre>
+          </h4>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2><a href="https://github.com/apache/mesos/blob/master/docs/persistent-volume.md">Persistent Volumes</a></h2>
+          <h3> <ul style="line-height: 150%">
+            <li>Sandboxes get garbage-collected.
+            <li class="fragment">Frameworks want to persist state outside of sandboxes.
+            <li class="fragment">Writing to local/network disk is not managed by Mesos resource allocation.<br>
+              <div class="fragment">Also a security hole.</div>
+            <li class="fragment">Mesos now provides a way to create persistent volumes from disk resources.
+          </ul> </h3>
+<aside class="notes">
+Framework API is stable, so you can start coding against it.
+Future: operator endpoints (with authz), so it can be recommended in production.
+Future: Garbage-collect Volumes; currently left on-disk for operators to clean up.
+Future: Multiple disks/spindles, so volumes don't need to be under the work_dir.
+</aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2><a href="https://github.com/apache/mesos/blob/master/docs/persistent-volume.md">Persistent Volumes</a></h2>
+          <h3> <ul style="line-height: 150%">
+            <li> Persistent volumes can only be created from reserved disk resources.
+            <li class="fragment"> <code>Offer::Operation::Create</code> and<br> <code>Offer::Operation::Destroy</code> messages for the new <code>acceptOffers</code> API.
+            <li class="fragment"> Persistent volumes are tied to the creating framework's role/principal.
+          </ul> </h3>
+<aside class="notes">
+</aside>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Creating a Persistent Volume</h2>
+          Receive an offer with reserved disk resources
+            <pre><code class="shell" data-trim>{
+  "id" : &lt;offer_id>,
+  "framework_id" : &lt;framework_id>,
+  "slave_id" : &lt;slave_id>,
+  "hostname" : &lt;hostname>,
+  "resources" : [
+    {
+      "name" : "disk",
+      "type" : "SCALAR",
+      "scalar" : { "value" : 2048 },
+      "role" : &lt;framework_role>,
+      "reservation" : { "principal" : &lt;framework_principal> }
+    }
+  ]
+}
+          </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Creating a Persistent Volume</h2>
+          Respond via <code>acceptOffers</code> with <code>Offer::Operation::Create</code>
+            <pre><code class="shell" data-trim>
+{
+  "type" : Offer::Operation::CREATE,
+  "create": {
+    "volumes" : [
+      {
+        "name" : "disk",
+        "type" : "SCALAR",
+        "scalar" : { "value" : 2048 },
+        "role" : &lt;framework_role>,
+        "reservation" : { "principal" : &lt;framework_principal> },
+        "disk": {
+          "persistence": { "id" : &lt;persistent_volume_id> },
+          "volume" : {
+            "container_path" : &lt;container_path>,
+            "mode" : &lt;RW>
+          }
+        }
+      }
+    ]
+  }
+}
+          </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Creating a Persistent Volume</h2>
+          Subsequent offers will include the volume
+            <pre><code class="shell" data-trim>
+{
+  "id" : &lt;offer_id>,
+  ...
+  "resources" : [
+    {
+      "name" : "disk",
+      "type" : "SCALAR",
+      "scalar" : { "value" : 2048 },
+      "role" : &lt;framework_role>,
+      "reservation" : { "principal" : &lt;framework_principal> },
+      "disk": {
+        "persistence": { "id" : &lt;persistent_volume_id> },
+        "volume" : {
+          "container_path" : &lt;container_path>,
+          "mode" : "RW"
+        }
+      }
+    }
+  ]
+}
+          </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Destroying a Persistent Volume</h2>
+          Given the previous offer, respond with <code>Offer::Operation::Destroy</code>
+          <pre><code class="shell" data-trim>
+{
+  "type" : Offer::Operation::DESTROY,
+  "destroy" : {
+    "volumes" : [
+      {
+        "name" : "disk",
+        "type" : "SCALAR",
+        "scalar" : { "value" : 2048 },
+        "role" : &lt;framework_role>,
+        "reservation" : { "principal" : &lt;framework_principal> },
+        "disk": {
+          "persistence": { "id" : &lt;persistent_volume_id> },
+          "volume" : {
+            "container_path" : &lt;container_path>,
+            "mode" : &lt;mode>
+          }
+        }
+      }
+    ]
+  }
+}
+          </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Destroying a Persistent Volume</h2>
+          Subsequent offers will no longer include the volume
+            <pre><code class="shell" data-trim>
+{
+  "id" : &lt;offer_id>,
+  "framework_id" : &lt;framework_id>,
+  "slave_id" : &lt;slave_id>,
+  "hostname" : &lt;hostname>,
+  "resources" : [
+    {
+      "name" : "disk",
+      "type" : "SCALAR",
+      "scalar" : { "value" : 2048 },
+      "role" : &lt;framework_role>,
+      "reservation" : { "principal" : &lt;framework_principal> }
+    }
+  ]
+}
+            </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2><a href="https://github.com/apache/mesos/blob/master/docs/reservation.md">Static Reservations</a></h2>
+          <h3> <ul style="line-height: 150%">
+            <li>"Static" reservations existed since 0.14
+              <pre><code class="shell" data-trim>
+              --resources="cpus:4;mem:2048;cpus(ads):8;mem(ads):4096"
+              </code></pre>
+            <li class="fragment">Associated with role, not frameworkId.
+            <li class="fragment">Have to kill all tasks and restart the slave to change them.
+            <li class="fragment">Still supported, but being supplanted by...
+          </ul> </h3>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2><a href="https://github.com/apache/mesos/blob/master/docs/reservation.md">Dynamic Reservations</a></h2>
+          <h3> <ul style="line-height: 150%">
+            <li>Allows frameworks to lazily reserve resources at task launch time using<br>
+              <code>Offer::Operation::Reserve</code> and <br><code>Offer::Operation::Unreserve</code>
+            <li class="fragment">Will allow operators to dynamically manipulate reservations after slave startup
+              using the upcoming <code>/reserve</code> and <code>/unreserve</code> endpoints.
+          </ul> </h3>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Reserve Resources</h2>
+          Receive an offer with unreserved resources
+          <pre><code class="shell" data-trim>
+{
+  "id": &lt;offer_id>,
+  "framework_id": &lt;framework_id>,
+  "slave_id": &lt;slave_id>,
+  "hostname": &lt;hostname>,
+  "resources": [
+    {
+      "name": "cpus",
+      "type": "SCALAR",
+      "scalar": { "value": 12 },
+      "role": "*",
+    },
+    {
+      "name": "mem",
+      "type": "SCALAR",
+      "scalar": { "value": 6144 },
+      "role": "*",
+    }
+  ]
+}
+          </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Reserve Resources</h2>
+          Given the offer, respond with <code>Offer::Operation::Reserve</code>
+          <pre><code class="shell" data-trim>
+{
+  "type": Offer::Operation::RESERVE,
+  "reserve": {
+    "resources": [
+      {
+        "name": "cpus",
+        "type": "SCALAR",
+        "scalar": { "value": 8 },
+        "role": &lt;framework_role>,
+        "reservation": { "principal": &lt;framework_principal> }
+      },
+      {
+        "name": "mem",
+        "type": "SCALAR",
+        "scalar": { "value": 4096 },
+        "role": &lt;framework_role>,
+        "reservation": { "principal": &lt;framework_principal> }
+      }
+    ]
+  }
+}
+          </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Reserve Resources</h2>
+          The subsequent offer will contain the reserved resources
+          <pre><code class="shell" data-trim>
+{
+  "id": &lt;offer_id>,
+  ...
+  "resources": [
+    {
+      "name": "cpus",
+      "type": "SCALAR",
+      "scalar": { "value": 8 },
+      "role": &lt;framework_role>,
+      "reservation": { "principal": &lt;framework_principal> }
+    },
+    {
+      "name": "mem",
+      "type": "SCALAR",
+      "scalar": { "value": 4096 },
+      "role": &lt;framework_role>,
+      "reservation": { "principal": &lt;framework_principal> }
+    },
+  ]
+}
+          </code></pre>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Unreserve Resources</h2>
+          Given an offer with reserved resources, respond with <code>Offer::Operation::Unreserve</code>
+          <pre><code class="shell" data-trim>
+{
+  "type": Offer::Operation::UNRESERVE,
+  "unreserve": {
+    "resources": [
+      {
+        "name": "cpus",
+        "type": "SCALAR",
+        "scalar": { "value": 8 },
+        "role": &lt;framework_role>,
+        "reservation": { "principal": &lt;framework_principal> }
+      },
+      {
+        "name": "mem",
+        "type": "SCALAR",
+        "scalar": { "value": 4096 },
+        "role": &lt;framework_role>,
+        "reservation": { "principal": &lt;framework_principal> }
+      }
+    ]
+  }
+}
+          </code></pre>
+        </section>
+
+        <!--
+          https://docs.google.com/document/d/1xZg0fmNmS21w80iAMZyD-45xYub28dP8d8s2Ore5MSc/edit
+
+          [A] Release schedule/stats:
+
+          Feature highlights
+            [A?] Per-Container Network Isolation (ports, egress)
+
+            [J] SSL (alpha)
+
+            [J] Oversubscription (alpha)
+              Revocable Resources
+              Resource Estimator Module
+              QoS Controller Module
+
+            [A] Stateful Primitives
+              Persistent Volumes (alpha)
+              Dynamic Reservations (alpha)
+
+          [A] And more
+          [A] Future work in the pipeline
+          [A] Conclusion: links, call to action
+        -->
+
+        <section data-background="assets/front-page.jpg">
+          <h2>And more:</h2>
+          <h3> <ul>
+            <li>MESOS-336: Fetcher Caching
+            <li class="fragment">M-2110: Configurable Ping Timeouts
+            <li class="fragment">M-2115: Improved Dockerized Slave
+            <li class="fragment">M-2160: Allocator Module
+            <li class="fragment">M-2620: DisableEndpoints FirewallRule
+            <li class="fragment">M-2604: Upgraded minimum compiler to gcc 4.8, clang 3.5
+          </ul> </h3>
+        </section>
+
+        <section data-background="assets/front-page.jpg">
+          <h2>Sneak Peek:</h2>
+          <h3> <ul>
+            <li>HTTP API
+            <li>Maintenance Primitives
+            <li>Resource Quotas
+            <li>Authorizer Modules
+            <li>Systemd Support
+            <li>Mesos on Windows
+            <li>[Your new feature here]
+          </ul> </h3>
+        </section>
+
+        <section data-background="assets/sf.jpg">
+          <h2>Learn More!</h2>
+          <table>
+          <tr>
+          <td style="vertical-align: top;">
+          <img src="assets/mesos.png"/></td>
+          <td style="vertical-align: middle;">
+            <p><a href="http://mesos.apache.org">http://mesos.apache.org</a></p>
+            <p><a href="https://github.com/apache/mesos">https://github.com/apache/mesos</a></p>
+            <p><a href="mailto://user@mesos.apache.org">user@</a>,
+               <a href="mailto://dev@mesos.apache.org">dev@mesos.apache.org</a></p>
+            <p><a href="http://mesosphere.com">http://mesosphere.com</a></p>
+          </td>
+          </tr>
+          </table>
+        <aside class="notes">
+Try it out! Pull down the 0.23.0 tag from git. Packages will soon be available from Mesosphere.
+        </aside>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: false,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

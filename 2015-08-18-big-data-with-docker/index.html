@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Doing Big Data for Real with Docker : Mesosphere DCOS</title>
+
+		<meta name="author" content="Ben Whitehead">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/mesosphere-dark.css" id="theme">
+		<link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+	    	<div class="slides">
+
+		  <section>
+          <h1>Doing Big Data for Real with Docker</h1>
+          <h2>Mesosphere DCOS</h2>
+					<p>
+            Elizabeth Lingg <br/>
+            <small>
+              <a href="mailto:elizabeth@mesosphere.io">elizabeth@mesosphere.io</a> <br/>
+            </small>
+          </p>
+		  <aside class="notes">
+		  </aside>
+     	  </section>
+
+
+        <section>
+          <h2>Agenda</h2>
+          <ol>
+            <li>Intro</li>
+            <li>Mesosphere, Docker, and DCOS Overview</li>
+            <li>Big Data Container Orchestration using DCOS and Docker</li>
+            <li>Demo</li>
+            <li>Q & A</li>
+          </ol>
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section>
+          <h2>Intro</h2>
+          <ul>
+            <li>Engineering Manager @ Mesosphere</li>
+			<li>M.S. Computer Science with a Specialization in Artificial Intelligence from Stanford</li>
+			<li>B.S. Computer Science with a Minor in Math, B.S. Policy and Management from Carnegie Mellon </li> 
+            <li>Experience in AI, Big Data, and Systems</li>
+            <li>Enjoys applying Distributed Systems to Manage and Reason Over Large Amounts of Data</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Mesos</h2>
+          <p class="fragment">Provides primitives to author datacenter-native apps.</p>
+          <h4 class="fragment">Primitives</h4>
+          <ul class="fragment">
+            <li>Resources (cpu, mem, disk, ports)</li>
+            <li>Asset fetching</li>
+            <li>Task state tracking</li>
+            <li>API for the datacenter</li>
+          </ul>
+          <aside class="notes">
+          </aside>
+        </section>
+		
+       <section>
+          <h2>Status quo is static partitioning <br />
+            and use of virtual machines</h2>
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <h2>Mesos let us treat a cluster of nodes...</h2>
+          <img src="img/cluster.png" />
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <h2>As one big computer</h2>
+          <img alt="" style="width: 70%;" src="img/dc.png" />
+          <aside class="notes"></aside>
+        </section>
+
+        <section>
+          <table style="font-size: 6em; width: 100%;">
+          <tr>
+          <td style="text-align: center;">
+            <div>
+              <p><i class="fa fa-cube"></i></p>
+              <p style="font-size: 30px;">Not as individual machines</p>
+            </div>
+          </td>
+          <td style="text-align: center;">
+            <div class="fragment">
+              <p><i class="fa fa-cubes"></i></p>
+              <p style="font-size: 30px;">Not as VMs</p>
+            </div>
+          </td>
+          </tr>
+          </table>
+          <aside class="notes"></aside>
+        </section>
+
+        <section data-background="img/spices.jpg">
+          <div style="background-color:rgba(0, 0, 0, 0.5)">
+            <h2>But as computational resources like cores, memory, disks, etc.</h2>
+          </div>
+          <aside class="notes"></aside>
+        </section>
+		
+        <section>
+          <img src="img/mesos-simple.png" alt="" style="background: none; border: none; box-shadow: none; width: 70%;"/>
+          <aside class="notes">
+          </aside>
+        </section>
+		
+
+        <section>
+          <h3> We love containers </h3>
+          <img src="img/container.png" />
+        </section>
+
+        <section>
+          <h3> Most modern applications are a web of containers </h3>
+          <img src="img/containers.png" />
+        </section>
+		
+        <section>
+          <h3>a container orchestration platform</h3>
+          <img src="img/container-port.jpg"/>
+        </section>
+		
+        <section>
+          <img alt="" src="img/timeline.png" />
+          <br /> <br />
+          <p>Containerization in Mesos, a brief history</p>
+        </section>
+       
+        <section>
+          <h2>Mesosphere DCOS</h2>
+          <ul class="fragment">
+            <li>Software to provide a complete OS: init, cron, apt-get, discovery, routing</li>
+            <li>Beautiful web UI and CLI</li>
+            <li>Support</li>
+            <li>Ecosystem of DCOS Services</li>
+			<li>Mesos Master and Mesos Workers Running in Docker Containers</li>
+          </ul>
+          <aside class="notes">
+            Why DCOS? Mesos is just a kernel
+          </aside>
+        </section>
+
+        <section>
+          <h2>DCOS UI</h2>
+          <img src="img/dcos_healthy.png" alt="" style="max-width: 100%"/>
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section>
+          <h2>DCOS CLI</h2>
+          <pre><code class="bash">$ dcos
+
+Command line utility for the Mesosphere Datacenter Operating
+System (DCOS). The Mesosphere DCOS is a distributed operating
+system built around Apache Mesos. This utility provides tools
+for easy management of a DCOS installation.
+
+Available DCOS commands:
+
+        config          Get and set DCOS CLI configuration properties
+        help            Display command line usage information
+        marathon        Deploy and manage applications on the DCOS
+        node            Manage DCOS nodes
+        package         Install and manage DCOS software packages
+        service         Manage DCOS services
+        task            Manage DCOS tasks</code></pre>
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section>
+          <h2>Big Data Distributed Applications on DCOS</h2>
+          <ul class="fragment">
+            <li>Mesos Master and Mesos Workers Running in Docker Containers</li>
+		    <li>Distributed Applications Running in Containers on the Mesos Workers</li>
+            <li>Container Orchestration done by Apache Mesos</li>
+            <li>Resource Allocation and Scaling Managed by Apache Mesos</li>
+          </ul>
+          <aside class="notes">
+          </aside>
+        </section>
+		
+		
+        <section>
+          <h2>Big Data Distributed Applications on DCOS</h2>
+          <ul class="fragment">
+            <li>Popular Distributed Apps easily deployed on a single DCOS Cluster</li>
+		    <li>Kafka, Cassandra, HDFS, Spark, and other Big Data Services</li>
+            <li>Health checks and failure recovery are automated</li>
+          </ul>
+          <aside class="notes">
+          </aside>
+        </section>
+		
+        <section>
+          <h2>Application Networking</h2>
+          <ul class="fragment">
+	        <li>Interact with the CLI or REST API's to interact with the services</li>
+			<li>Mesos DNS Resolution</li>
+            <li>Docker Networking mainly done through host mode networking, works seamlessly</li>
+          </ul>
+          <aside class="notes">
+          </aside>
+        </section>
+		
+        <section>
+          <h2>Data Security</h2>
+          <ul class="fragment">
+            <li>Services storing secure data run on private worker nodes in the cluster</li>
+		    <li>Private nodes can only be accessed through VPN</li>
+            <li>As needed, services choose what is exposed through a proxy running on a public node</li>
+            <li>Distributed Application can authenticate with the Master using Framework Authentication (Kerberos Option)</li>
+          </ul>
+          <aside class="notes">
+          </aside>
+        </section>
+		
+		
+        <section>
+          <h2>Example: Simple Docker App on DCOS</h2>
+		 <pre class="fragment"><code class="json" data-trim contenteditable>{
+		   "id": "/mesosphere/cd-demo-app",
+		   "instances": 1,
+		   "cpus": 1,
+		   "mem": 512,
+		   "container": {
+		     "type": "DOCKER",
+		     "docker": {
+		       "image": "mesosphere/cd-demo-app:$tag",
+		       "network": "BRIDGE",
+		       "portMappings": [
+		         {
+		           "servicePort": 28080,
+		           "containerPort": 80,
+		           "hostPort": 0,
+		           "protocol": "tcp"
+		         }
+		       ]
+		     }
+		   },
+		   "healthChecks": [
+		     {
+		       "gracePeriodSeconds": 120,
+		       "intervalSeconds": 30,
+		       "maxConsecutiveFailures": 3,
+		       "path": "/",
+		       "portIndex": 0,
+		       "protocol": "HTTP",
+		       "timeoutSeconds": 5
+		     }
+		   ],
+		   "constraints": [
+		     [ "hostname", "GROUP_BY" ]
+		   ]
+		 }</code><</pre>
+          <aside class="notes">
+          </aside>
+        </section>
+		
+		<section>
+          <h2>Example: Cassandra DCOS Service</h2>
+          <h3 class="fragment">Features</h3>
+          <ul class="fragment">
+            <li>Managed node configuration</li>
+            <li>Health Monitoring</li>
+            <li>Rest API</li>
+            <li>DNS Names for nodes</li>
+            <li>Multiple Rings in one cluster</li>
+          </ul>
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section>
+          <h2>Install</h2>
+          <pre class="fragment"><code class="bash">$ dcos package install cassandra</code></pre>
+          <h5 class="fragment">Customizable Install Options</h5>
+          <pre class="fragment"><code class="json" data-trim contenteditable>{
+  "cassandra": {
+    "cluster-name": "dev",
+    "resources": {
+      "cpus": 3.0,
+      "mem": 6144,
+      "disk": 30720
+    }
+  }
+}</code></pre>
+          <pre class="fragment"><code class="bash">$ dcos package install cassandra --options=options.json</code></pre>
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section>
+          <h2>Installing</h2>
+          <img src="img/dcos_unhealthy.png" alt="" style="max-width: 100%"/>
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section>
+          <h2>Healthy</h2>
+          <img src="img/dcos_healthy.png" alt="" style="max-width: 100%"/>
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section>
+          <h2>Rest API</h2>
+          <table style="width: 800px;">
+            <tr>
+              <td>
+                <pre><code>GET /node/all</code></pre>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <pre><code>GET /health/cluster/report</code></pre>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <pre><code>POST /node/{node}/replace</code></pre>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <pre><code>POST /cluster/repair/start</code></pre>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <pre><code>POST /scale/nodes?nodeCount={count}</code></pre>
+              </td>
+            </tr>
+          </table>
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section>
+          <h2>Demo!</h2>
+          <p></p>
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section>
+          <h2>Q & A</h2>
+          <p></p>
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section>
+          <h2>Thanks!</h2>
+          <h3>Let's chat!</h3>
+          <h4>We're hiring!</h4>
+          <ul>
+            <li>DCOS: <a href="http://mesosphere.com/">mesosphere.com</a></li>
+            <li>Join: <a href="https://mesosphere.com/careers/">mesosphere.com/careers/</a></li>
+          </ul>
+          <aside class="notes">
+          </aside>
+        </section>
+
+      </div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: false,
+				history: true,
+				center: false,
+
+				transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

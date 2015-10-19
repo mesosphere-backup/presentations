@@ -16,7 +16,7 @@
 		<link rel="stylesheet" href="css/reveal.css" />
 		<link rel="stylesheet" href="css/theme/mesosphere.css" id="theme" />
 
-        <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet" />
+        <link href="font-awesome-4.3.0/css/font-awesome.min.css" rel="stylesheet" />
 
 		<!-- For syntax highlighting -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -46,13 +46,22 @@
 
         <!-- Title -->
         <div class="slides">
-        <section data-background="assets/front-page.jpg">
+        <section data-background="assets/heliocrystal.jpg">
             <h1>Apache Mesos</h1>
-            <h2>In a Nutshell</h2>
+            <h2>(In a Nutshell)</h2>
             <br>
             <p>
-                <a href="mailto:alex@mesosphere.io">Alexander Rukletsov</a>
+                Alexander Rukletsov
+                <br>
+                <small><a href="mailto:alex@mesosphere.com">alex@mesosphere.com</a></small>
             </p>
+            <p>
+                Jörg Schad
+                <br>
+                <small><a href="mailto:joerg@mesosphere.com">joerg@mesosphere.com</a></small>
+            </p>
+            <br>
+            <br>
             <p>
                 <a href="http://mesos.apache.org">mesos.apache.org</a>
                 &nbsp;|&nbsp;
@@ -66,7 +75,7 @@
         <section>
 
             <section data-background="assets/matterhorn_Fabioberni.jpg">
-                <div style="background-color: rgba(20, 20, 20, 0.8); color: #fff; padding: 20px;">
+                <div style="background-color: rgba(0, 0, 0, 0.5); color: #fff; padding: 20px;">
                     <h2>Motivation</h2>
                     <p>Increase performance and utilization of clusters</p>
                 </div>
@@ -76,7 +85,7 @@
             </section>
 
             <section data-background="assets/sniffing-dog_hightimes.com.jpg">
-                <div style="background-color: rgba(20, 20, 20, 0.8); color: #fff; padding: 20px;">
+                <div style="background-color: rgba(0, 0, 0, 0.5); color: #fff; padding: 20px;">
                     <h2>Intuition</h2>
                     <h3>Static partitioning is considered harmful</h3>
                 </div>
@@ -85,54 +94,67 @@
                 </div>
             </section>
 
-<section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Static partitioning is harmful</h2>
                 <table style="width:75%;">
                     <tr>
-                        <td><img src="assets/icon-service-spark-medium@2x.png" width=64px height=64px> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
-                        <td><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
-                        <td><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
-                        <td><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><img src="assets/icon-service-spark-medium@2x.png" width=64px height=64px></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
                     </tr>
                     <tr>
-                        <td><img src="assets/marathon-favicon-64x64.png" width=64px height=64px> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
-                        <td class="fragment fade-out" data-fragment-index="1"><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
-                        <td class="fragment fade-out" data-fragment-index="1"><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
-                        <td class="fragment fade-out" data-fragment-index="1"><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><img src="assets/marathon-favicon-64x64.png" width=64px height=64px></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fragment fade-out fa fa-server fa-3x" data-fragment-index="1"></i></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fragment fade-out fa fa-server fa-3x" data-fragment-index="1"></i></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fragment fade-out fa fa-server fa-3x" data-fragment-index="1"></i></td>
                     </tr>
                     <tr>
-                        <td><img src="assets/hadoop-elephant.png" width=64px height=64px> &nbsp;&nbsp;&nbsp;&nbsp; </td>
-                        <td><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
-                        <td><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
-                        <td><img src="assets/node_Ocean-Bussard.png" width=40px height=40px></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><img src="assets/hadoop-elephant.png" width=64px height=64px></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
+                        <td style="text-align: center; padding: 5px; vertical-align: middle;"><i class="fa fa-server fa-3x"></i></td>
                     </tr>
                 </table>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section>
                 <h2>Static partitioning is harmful</h2>
-                <img src="assets/utilization.png">
+                <img src="assets/dynamic-partition.png">
             </section>
 
-            <section data-background="assets/front-page.jpg">
-                <h2>A little history</h2>
-                <ul>
-                    <li> Research project at Berkeley in early 2009 by Benjamin Hindman, Andy Konwinski, Matei Zaharia, Ali Ghodsi, Anthony D. Joseph, Randy Katz, Scott Shenker, Ion Stoica
-                    <li> Hardened at Twitter
-                    <li> Top-level Apache Project
-                </ul>
+            <section data-background="assets/heliocrystal.jpg">
+                <h2>Mesos is...</h2>
+                <table>
+                    <tr>
+                        <td><i class="fa fa-users"></i></td>
+                        <td>A top-level Apache project</td>
+                    </tr>
+                    <tr class="fragment">
+                        <td><i class="fa fa-sitemap"></i></td>
+                        <td>A cluster resource negotiator</td>
+                    </tr>
+                    <tr class="fragment">
+                        <td><i class="fa fa-signal"></i></td>
+                        <td>Scalable to 10,000s of nodes</td>
+                    </tr>
+                    <tr class="fragment">
+                        <td><i class="fa fa-code-fork"></i></td>
+                        <td>Supported and developed by Mesosphere, Twitter and other companies</td>
+                    </tr>
+                    <tr class="fragment">
+                        <td><i class="fa fa-bomb"></i></td>
+                        <td>Fault-tolerant, battle-tested</td>
+                    </tr>
+                    <tr class="fragment">
+                        <td><i class="fa fa-indent"></i></td>
+                        <td>An SDK for distributed apps</td>
+                    </tr>
+                </table>
             </section>
 
-            <section data-background="assets/front-page.jpg">
-                <h2>Some random Mesos facts</h2>
-                <ul>
-                    <li> Mesosphere, Twitter are major users and contributors
-                    <li> Scales to 10 000s of nodes, production grade
-                    <li> Packages and support through Mesosphere
-                    <li> APIs in C++, Python, JVM-languages, Go and counting
-                    <li> Built-in containerization, including Docker
-                    <li> Multi-tenant workloads, failure detection, easy failover and HA
-                </ul>
+            <section>
+                <img src="assets/Mesosphere-Adopters-for-dark.png">
             </section>
 
         </section>
@@ -142,7 +164,7 @@
         <!-- Mesos architecture -->
         <section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Apps in the Cloud Era</h2>
                 <br>
                 <table style="width:100%; border-spacing: 5px">
@@ -176,26 +198,47 @@
                 </table>
             </section>
 
-            <section data-background="assets/front-page.jpg">
-                <h2>Mesos: Level of abstraction</h2>
-                <br>
-                <table style="width:100%; border-spacing: 5px">
-                    <tr class="fragment" data-fragment-index="2">
-                        <td style="background-color: rgba(243, 131, 55, 0.8); color: #fff; text-align: center; padding: 5px;" width=40%>PaaS</td>
-                        <td style="text-align: center; padding: 5px; font-size: smaller;">Deploy and manage applications/services</td>
-                    </tr>
-                    <tr>
-                        <td style="background-color: rgba(63, 108, 175, 0.8); color: #fff; text-align: center; padding: 5px;" width=40%>Mesos</td>
-                        <td style="text-align: center; padding: 5px; font-size: smaller;">Build and run frameworks using resources</td>
-                    </tr>
-                    <tr class="fragment" data-fragment-index="1">
-                        <td style="background-color: rgba(176, 59, 61, 0.8); color: #fff; text-align: center; padding: 5px;" width=40%>IaaS</td>
-                        <td style="text-align: center; padding: 5px; font-size: smaller;">Provision and manage machines</td>
-                    </tr>
+            <section data-background="assets/heliocrystal.jpg">
+                <h2>Mesos lets us treat a cluster of nodes...</h2>
+                <img src="assets/cluster.png" />
+            </section>
+
+            <section>
+                <h2>... as <u>one big computer</u></h2>
+                <img style="width: 70%;" src="assets/dc.png" />
+            </section>
+
+            <section>
+                <table style="font-size: 6em; width: 100%;">
+                <tr>
+                    <td style="text-align: center;">
+                        <div>
+                            <p><i class="fa fa-cube"></i></p>
+                            <p style="font-size: 30px;">Not as individual machines</p>
+                        </div>
+                    </td>
+                    <td style="text-align: center;">
+                        <div class="fragment">
+                            <p><i class="fa fa-cubes"></i></p>
+                            <p style="font-size: 30px;">Not as VMs</p>
+                        </div>
+                    </td>
+                </tr>
                 </table>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/spices.jpg">
+                <div style="background-color: rgba(0, 0, 0, 0.5); color: #fff; padding: 20px;">
+                    <h2>But as computational resources like cores, memory, disks, etc.</h2>
+                </div>
+            </section>
+
+            <section>
+                <h2>Ridiculous?</h2>
+                <img style="width: 80%;" src="assets/windows_[unknown].png" />
+            </section>
+
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos: Level of abstraction</h2>
                 <br>
                 <table style="width:100%; border-spacing: 5px">
@@ -213,7 +256,7 @@
                 </table>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos on IaaS++</h2>
                 <br>
                 <table style="width:100%; border-spacing: 5px">
@@ -232,7 +275,7 @@
                 </table>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos: A level of indirection</h2>
                 <br>
                 <table style="width:100%; border-spacing: 5px">
@@ -248,10 +291,10 @@
                     </tr>
 
                     <tr>
-                        <td style="background-color: rgba(176, 59, 61, 0.8); color: #fff; text-align: center; padding: 5px;" width=15%><img src="assets/node_Ocean-Bussard.png" width=64px height=64px></td>
-                        <td style="background-color: rgba(176, 59, 61, 0.8); color: #fff; text-align: center; padding: 5px;" width=15%><img src="assets/node_Ocean-Bussard.png" width=64px height=64px></td>
-                        <td style="background-color: rgba(176, 59, 61, 0.8); color: #fff; text-align: center; padding: 5px;" width=15%><img src="assets/node_Ocean-Bussard.png" width=64px height=64px></td>
-                        <td style="background-color: rgba(176, 59, 61, 0.8); color: #fff; text-align: center; padding: 5px;" width=15%><img src="assets/node_Ocean-Bussard.png" width=64px height=64px></td>
+                        <td style="background-color: rgba(176, 59, 61, 0.8); color: #fff; text-align: center; padding: 5px; vertical-align: middle;" width=15%><i class="fa fa-server"></i></td>
+                        <td style="background-color: rgba(176, 59, 61, 0.8); color: #fff; text-align: center; padding: 5px; vertical-align: middle;" width=15%><i class="fa fa-server"></i></td>
+                        <td style="background-color: rgba(176, 59, 61, 0.8); color: #fff; text-align: center; padding: 5px; vertical-align: middle;" width=15%><i class="fa fa-server"></i></td>
+                        <td style="background-color: rgba(176, 59, 61, 0.8); color: #fff; text-align: center; padding: 5px; vertical-align: middle;" width=15%><i class="fa fa-server"></i></td>
                         <td style="text-align: center; vertical-align: middle;  padding: 5px; font-size: smaller;">
                             <p class="fragment fade-out" data-fragment-index="1">Workers</p>
                             <p class="fragment roll-in" data-fragment-index="1">Mesos nodes running tasks</p>
@@ -260,7 +303,7 @@
                 </table>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos: A level of indirection</h2>
                 <p>Provides common functionality every new distributed system re-implements:</p>
                 <ul>
@@ -271,12 +314,19 @@
                     <li> Task killing
                     <li> Task cleanup
                 </ul>
-                <br>
-                <p class="fragment">Apache Mesos is a distributed system for building and running other distributed systems</p>
+            </section>
+
+            <section data-background="assets/matreshka_[lavka-podarkov.ru].jpg">
+                <div style="background-color: rgba(0, 0, 0, 0.5); color: #fff; padding: 20px;">
+                    <h3>Apache Mesos is a distributed system for building and running other distributed systems</h3>
+                </div>
+                <div style="position: absolute; top: -150px; left: 0px; text-align: right; color">
+                    <small>&copy; lavka-podarkov.ru</small>
+                </div>
             </section>
 
             <section data-background="assets/re-inventing_stebok.net.jpg">
-                <div style="background-color: rgba(20, 20, 20, 0.8); color: #fff; padding: 20px;">
+                <div style="background-color: rgba(0, 0, 0, 0.5); color: #fff; padding: 20px;">
                     <h3>Why reinventing the wheel?</h3>
                 </div>
                 <div style="position: absolute; top: -150px; left: 0px; text-align: right; color">
@@ -284,12 +334,12 @@
                 </div>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos: Architecture</h2>
-                <img src="assets/architecture-01.png">
+                <img style="width: 80%;" src="assets/architecture-01.png">
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos: Two level scheduling</h2>
                 <ul>
                     <li> Framework gets allocated resources from the master
@@ -314,7 +364,7 @@
         <!-- Anatomy of a framework -->
         <section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Anatomy of a framework</h2>
                 <ul class="fragment">
                     <li> Roles, Reservations, Persistence
@@ -325,7 +375,7 @@
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>The core dynamic</h2>
                 <ul>
                     <li>Receive resource offers</li>
@@ -335,7 +385,14 @@
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
+                <h2>The core dynamic</h2>
+                <img style="width: 80%;" src="assets/mesos-simple.png"/>
+            </section>
+
+<!-- For framework writers
+
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Tools at your disposal</h2>
                 <ul>
                     <li>The State abstraction</li>
@@ -345,7 +402,7 @@
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Resource offers</h2>
                 <pre><code class="protobuf" data-trim>
     message Offer {
@@ -372,7 +429,7 @@
                 <p class="fragment">Resources are consumed by launching, declining, or accepting offers</p>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Scheduler calls</h2>
                 <table style="width: 100%;">
                     <tr>
@@ -416,7 +473,7 @@
                 </table>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Executor events</h2>
                 <table style="width: 100%;">
                     <tr>
@@ -448,7 +505,9 @@
                 </table>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+-->
+
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Framework pattern: Resource math</h2>
                 <ul>
                     <li>Tasks are typically launched on partial offers</li>
@@ -457,8 +516,8 @@
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
-                <h2>Framework Pattern: Tracking task metadata</h2>
+            <section data-background="assets/heliocrystal.jpg">
+                <h2>Framework pattern: Tracking task metadata</h2>
                 <ul>
                     <li>Scheduler state is usually associated with TaskIDs</li>
                     <li>Update state upon receiving status updates</li>
@@ -466,7 +525,9 @@
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+<!-- Handling failures, status updates and framework messages, delivery guarantee
+
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Handling failures: Keeping the scheduler up</h2>
                 <ul>
                     <li>Run your scheduler with a meta-framework</li>
@@ -477,7 +538,7 @@
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Handling failures: Status updates</h2>
                 <pre><code class="python" data-trim>
     class MyScheduler:
@@ -496,7 +557,7 @@
                 </code></pre>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Delivery guarantee</h2>
                 <ul>
                     <li>At-least-once (status updates)</li>
@@ -504,7 +565,11 @@
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+-->
+
+<!-- Reconciliation, Authorization, etc
+
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Task reconciliation</h2>
                 <pre><code>
                    let start = now()
@@ -517,7 +582,7 @@
                 </code></pre>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Authorization and ACLs</h2>
                 <pre><code class="protobuf" data-trim>
 message FrameworkInfo {
@@ -547,7 +612,7 @@ mesos-master ... --acls="{
                 </code></pre>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos 1.0 HTTP API</h2>
                 <ul>
                     <li>/events endpoint
@@ -564,6 +629,8 @@ mesos-master ... --acls="{
                 </ul>
             </section>
 
+-->
+
         </section>
 
 
@@ -571,7 +638,7 @@ mesos-master ... --acls="{
         <!-- Docker support -->
         <section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Containerization and isolation</h2>
                 <ul>
                     <li> Static application composition
@@ -582,7 +649,7 @@ mesos-master ... --acls="{
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Docker</h2>
                 <ul>
                     <li> Open source
@@ -592,15 +659,15 @@ mesos-master ... --acls="{
                     <li> Plenty of other people's containers
                     <li class="fragment"> First-class citizen in Mesos and the Mesosphere stack
                     <li class="fragment"> Kubernetes employs and promotes Docker
-                    <li class="fragment roll-in highlight-red"> Security (isolator that does not isolate)
-                    <li class="fragment roll-in highlight-red"> Big images, long fetch time
-                    <li class="fragment roll-in highlight-red"> Vendor lock
-                    <li class="fragment roll-in highlight-red"> Persistent volumes
+                    <li class="fragment roll-in"><i class="fa fa-warning"></i> Security (isolator that does not isolate)
+                    <li class="fragment roll-in"><i class="fa fa-warning"></i> Big images, long fetch time
+                    <li class="fragment roll-in"><i class="fa fa-warning"></i> Vendor lock
+                    <li class="fragment roll-in"><i class="fa fa-warning"></i> Persistent volumes
                 </ul>
             </section>
 
             <section data-background="assets/container_Gerard-Julien-AFP.jpg">
-                <div style="background-color: rgba(20, 20, 20, 0.8); color: #fff; padding: 20px;">
+                <div style="background-color: rgba(0, 0, 0, 0.5); color: #fff; padding: 20px;">
                     <h3>Run everything in containers</h3>
                 </div>
                 <div style="position: absolute; top: -150px; left: 0px; text-align: right">
@@ -621,7 +688,7 @@ mesos-master ... --acls="{
             </section>
 
             <section data-background="assets/harbour-Aeroview_[ect.nl].jpg">
-                <div style="background-color: rgba(20, 20, 20, 0.8); color: #fff; padding: 20px;">
+                <div style="background-color: rgba(0, 0, 0, 0.5); color: #fff; padding: 20px;">
                     <h3>Manage containers with Mesos</h3>
                 </div>
                 <div style="position: absolute; top: -150px; left: 0px; text-align: right">
@@ -636,12 +703,12 @@ mesos-master ... --acls="{
         <!-- MoM -->
         <section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos on Mesosphere</h2>
                 <img src="assets/mom1.png">
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>Mesos on Mesosphere</h2>
                 <img src="assets/mom2.png">
             </section>
@@ -653,17 +720,17 @@ mesos-master ... --acls="{
         <!-- DCOS -->
         <section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>The Mesosphere stack</h2>
                 <img src="assets/mesosphere-stack.png">
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>The DCOS stack</h2>
                 <img src="assets/dcos-stack.png">
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>DCOS: Contributions to Mesos</h2>
                 <ul>
                     <li> Module subsystem (lifecycle, python)
@@ -674,7 +741,7 @@ mesos-master ... --acls="{
                 </ul>
             </section>
 
-            <section data-background="assets/front-page.jpg">
+            <section data-background="assets/heliocrystal.jpg">
                 <h2>DCOS: Mesosphere open source efforts</h2>
                 <ul>
                     <li> Mesosphere package repo [github://mesosphere/universe]
@@ -686,6 +753,47 @@ mesos-master ... --acls="{
                 </ul>
             </section>
 
+        </section>
+
+
+
+        <!-- Stateful frameworks -->
+        <section>
+
+            <section data-background="assets/heliocrystal.jpg">
+                <h2>Stateful frameworks</h2>
+            </section>
+
+        </section>
+
+
+
+        <!-- Demo -->
+        <section>
+
+            <section data-background="assets/heliocrystal.jpg">
+                <h2>Demo time!</h2>
+            </section>
+
+            <section data-background="assets/heliocrystal.jpg">
+                <h2>DCOS dashboard</h2>
+                <img src="assets/dcos-dashboardsmall.png">
+            </section>
+
+            <section data-background="assets/heliocrystal.jpg">
+                <h2>DCOS CLI</h2>
+                <pre><code class="protobuf" data-trim>
+dcos package install hdfs
+                </code></pre>
+            </section>
+
+        </section>
+
+
+
+        <!-- Finalization -->
+        <section data-background="assets/heliocrystal.jpg">
+            <h2>Thanks!</h2>
         </section>
 
 

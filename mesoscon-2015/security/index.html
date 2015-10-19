@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Securing your Mesos Cluster</title>
+
+		<meta name="description" content="Securing your Mesos Cluster">
+		<meta name="author" content="Adam">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/mesosphere.css" id="theme">
+
+    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+        <section data-background="assets/cover-alt.jpg">
+					<h1>Securing your Mesos Cluster</h1>
+          <p><a href="mailto:adam@mesosphere.io">Adam Bordelon</a>, <a href="mailto:joris@mesosphere.io">Joris Van Remoortere</a></p>
+				</section>
+
+        <!--
+          Security features are in high demand as organizations increasingly trust their Mesos clusters with critical production workloads and sensitive data, while at the same time providing cluster access to naive/untrusted users. The same questions keep coming up:
+            How can Mesos prevent unauthorized users from intercepting sensitive data or forging communications?
+            How can Mesos prevent unauthorized frameworks from launching malicious jobs and prevent unauthorized slaves from stealing tasks and data?
+            How can Mesos ensure users and frameworks can only access their own tasks/data?
+          In this first ever MesosCon security deep-dive, Adam and Joris will walk through the best practices and latest advances in securing Mesos clusters, including encryption, authentication, and authorization features.
+					30min talk + 10min Qs
+
+          [] Intro
+              System Architecture Diagram (plus webUIs)
+							Funny gif? (malicious hackers, naive users)
+              Attack Scenarios (at least the ones from the abstract)
+							Agenda/Outline
+
+					[] Cluster-wide security
+							Firewall off the entire cluster
+								Either let users in through VPN
+								Or funnel all commm through an authenticating proxy
+							Connecting to external systems
+								Zookeeper Auth
+								S3, external storage
+								Config services, etc.
+
+          [] Security within Mesos
+              SSL Encryption
+              Authentication in Mesos
+                Modules
+              Authorization in Mesos
+              Web UI
+								HTTP Authn (current,future)
+                Https
+                DisableEndpoints FirewallRule?
+
+          [] Security for your Framework
+              Https for your WebUI (and REST API)
+              SSL to Mesos
+              Authn/z for your users
+
+          [] Protecting your Task
+              Task user (disallow root), permissions
+              Protecting your data
+              Isolation from other tasks
+
+          [] Future work in the pipeline
+							Authn for HTTP API (SPNEGO?)
+							Modularized Authorizer, to integrate with 3rd party systems
+							Authz around more actons, including Slaves (sandboxes)
+
+          [] Conclusion: takeaways, links
+        -->
+
+        <section data-background="assets/cover-alt.jpg">
+          <img width="80%" src="assets/architecture-01.png"/>
+          <aside class="notes">
+You've probably seen this diagram a few times before<br>
+There are a lot of different components talking to each other<br>
+There can be multiple frameworks, each having multiple distinct users<br>
+It all works fine as long as everybody's well-behaved and doesn't get in each others' way, but...
+          </aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <!--img src="assets/Hackers.jpg"/-->
+          <img src="assets/computer-hacker.jpg"/>
+          <aside class="notes">
+http://preparingyourfamily.com/secure-internet-based-communication-options/computer-hacker/
+What happens when this guy shows up?
+          </aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Attack Scenarios</h2>
+          <h3> <ul style="line-height: 150%">
+            <li>Eavesdropping
+            <li class="fragment">Impersonation
+            <li class="fragment">Rogue Frameworks
+            <li class="fragment">Rogue Slaves(/Agents)
+            <li class="fragment">Naive Users
+          </ul> </h3>
+          <aside class="notes">
+            prevent unauthorized users from intercepting sensitive data or forging communications?<br>
+            prevent unauthorized frameworks from launching malicious jobs and prevent unauthorized agents from stealing tasks and data?<br>
+            ensure users and frameworks can only access their own tasks/data?
+					</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Agenda</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> Cluster-wide security
+            <li> Security within Mesos
+            <li> Security for your Framework
+            <li> Protecting your Task
+            <li> Future Work
+          </ul> </h3>
+          <aside class="notes">
+We'll break down the system into a few different attack surfaces and approach them independently.
+					</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>The Answers</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> Firewall
+            <li> Encryption
+            <li> Authentication
+            <li> Authorization (ACLs)
+            <li> Task/Resource Isolation
+          </ul> </h3>
+          <aside class="notes">
+If you don't remember anything else this from this talk, I hope you'll at least remember these 5 solutions<br>
+I suppose you could leave now that you have all the answers, but you might need a little more detail.
+					</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Agenda</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> <b><u>Cluster-wide security</u></b>
+            <li> Security within Mesos
+            <li> Security for your Framework
+            <li> Protecting your Task
+            <li> Future Work
+          </ul> </h3>
+          <aside class="notes">
+					</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Secure the perimeter!</h2>
+          <img width="80%" src="assets/The_Great_Wall_of_China_at_Jinshanling.jpg"/>
+          <aside class="notes">
+Severin.stalder [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons
+							Firewall off the entire cluster<br>
+								Either let users in through VPN<br>
+								Or funnel all incoming comm through an authenticating proxy
+					</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Connecting to external services</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> Zookeeper
+            <li> S3 or other external storage
+            <li> Config services
+            <li> Credential Services
+          </ul> </h3>
+          <aside class="notes">
+            Either in the firewall, or open the firewall for the outgoing comm<br>
+            Mutual authentication<br>
+            Encrypted channels
+					</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Agenda</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> Cluster-wide security
+            <li> <b><u>Security within Mesos</u></b>
+            <li> Security for your Framework
+            <li> Protecting your Task
+            <li> Future Work
+          </ul> </h3>
+          <aside class="notes">
+							Encryption, Authentication, Authorization
+					</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2><a href="http://mesos.apache.org/documentation/latest/mesos-ssl/">SSL</a></h2>
+          <h3> <ul style="line-height: 150%">
+            <li>Feature-Complete, Ready to be Tested
+            <li class="fragment">All Libprocess Communication
+            <li class="fragment">Using Libevent + OpenSSL
+            <li class="fragment">Configurable
+            <li class="fragment">Live Upgrade Support
+          </ul> </h3>
+<aside class="notes">
+Landed in Mesos 0.23<br>
+If you don't encrypt, attackers can eavesdrop, even impersonate<br>
+Libprocess uses socket interface<br>
+Implementation of socket interface using Libevent-Openssl<br>
+Protocol support and ciphers can be configured via environment variables<br>
+Environment variable to control "downgrade support". Allows heterogenous cluster during upgrade<br>
+Explain peek to dispatch to correct socket handler for upgrade support
+</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <img width="80%" src="assets/architecture-ssl.png"/>
+<aside class="notes">
+Point to all libprocess communication<br>
+Webui traffic also served by libprocess<br>
+Mesos only stores leading master in zookeeper<br>
+Frameworks can use zookeeper through state abstraction. Encrypt your data!<br>
+Use zookeeper authentication
+</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <div>
+            <h2>Configuration</h2>
+            <pre><code class="shell" data-trim>
+            ../configure --enable-libevent --enable-ssl
+            </code></pre>
+          </div>
+          <br>
+          <div class="fragment">
+            <h2>Running</h2>
+            <font size="6"><pre><code class="shell" data-trim>
+SSL_ENABLED=1 SSL_KEY_FILE=key SSL_CERT_FILE=cert opt-flags binary
+SSL_ENABLED=1 SSL_KEY_FILE=key SSL_CERT_FILE=cert SSL_REQUIRE_CERT=1 SSL_ENABLE_TLS_V1_1=true master.sh
+            </code></pre></font>
+          </div>
+          <br>
+          <div class="fragment">
+            <h2>Upgrading</h2>
+            <font size="6"><pre><code class="shell" data-trim>
+// Restart each component with downgrade support (master, slave, framework):
+SSL_ENABLED=1 SSL_SUPPORT_DOWNGRADE=1 SSL_KEY_FILE=key SSL_CERT_FILE=cert opt-flags binary
+
+// Restart each component WITHOUT downgrade support (master, slave, framework):
+SSL_ENABLED=true SSL_SUPPORT_DOWNGRADE=false SSL_KEY_FILE=key SSL_CERT_FILE=cert opt-flags binary
+            </code></pre></font>
+          </div>
+<aside class="notes">
+Make sure to re-bootstrap and make a clean build<br>
+The SSL configuration flags can be changed by the environment variables<br>
+During live cluster upgrade, use SSL_SUPPORT_DOWNGRADE=true to maintain communication during transition<br>
+Explain webui issues with running HTTP and HTTPS simultaneously<br>
+Check out the ssl guide on the mesos documentation website for more info
+</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Authentication</h2>
+          <h3> <ul style="line-height: 150%">
+            <li>Problem: Interns running bitcoin miners on the cluster?
+            <li class="fragment">Solution: Framework Authn (0.15+)
+            <li class="fragment">Problem: Random laptops joining your cluster, running sensitive tasks?
+            <li class="fragment">Solution: Slave(/Agent) Authn (0.19+)
+            <li class="fragment">Modularized in Mesos 0.21, to support custom implementations
+          </ul> </h3>
+          <aside class="notes">
+					SASL/CRAM_MD5
+					Module means dependency doesn't need to be built into Mesos,
+					can experiment with new behavior without having to push changes into Mesos
+					</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <div>
+            <h2>Configuration</h2>
+            <pre><code class="shell" data-trim>
+						configure --with-sasl=/path/to/sasl2
+            </code></pre>
+          </div>
+          <div class="fragment">
+            <h2>Master</h2>
+            <pre><code class="shell" data-trim>
+--authenticators (default: crammd5)
+--credentials (text/json file)
+--authenticate (for frameworks)
+--authenticate_slaves
+            </code></pre>
+          </div>
+          <div class="fragment">
+            <h2>Slave/Agent</h2>
+            <pre><code class="shell" data-trim>
+--authenticatee (default: crammd5)
+--credential (text/json file)
+            </code></pre>
+          </div>
+          <div class="fragment">
+            <h2>Framework</h2>
+            <pre><code class="cpp" data-trim>
+SchedulerDriver(Scheduler, FrameworkInfo, master, Credential);
+message Credential { required string principal = 1; optional bytes secret = 2; }
+FrameworkInfo.principal // for ACLs
+            </code></pre>
+          </div>
+<aside class="notes">
+</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Authorization and ACLs</h2>
+          <h3> <ul style="line-height: 150%">
+            <li>What roles can frameworks register as?
+            <li class="fragment">What users can a framework launch tasks as?
+            <li class="fragment">What (http) users can shutdown a framework?
+            <li class="fragment">Modularized in Mesos 0.24
+            <li class="fragment">Many more to come
+          </ul> </h3>
+          <aside class="notes">
+						Current ACLs, how to enable, what they do
+						WebUI ACLs too
+						Modularizing
+					</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <div>
+            <h2>Master Authorization Flags</h2>
+            <pre><code class="json" data-trim>
+--authorizers (default: local)
+--acls = {
+        "register_frameworks": [
+                {
+                   "principals": { "type": "ANY" },
+                   "roles": { "values": ["a"] }
+                }
+        ],
+        "run_tasks": [
+                {
+                   "principals": { "values": ["a", "b"] },
+                   "users": { "values": ["c"] }
+                }
+        ],
+        "shutdown_frameworks": [
+                {
+                   "principals": { "values": ["a", "b"] },
+                   "framework_principals": { "values": ["c"] }
+                }
+        ] }
+            </code></pre>
+          </div>
+<aside class="notes">
+</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>WebUI Security</h2>
+          <h3> <ul style="line-height: 120%">
+            <li>Network Firewall rules
+            <li class="fragment">HTTPS
+            <li class="fragment">Endpoint Firewall Rules
+                <pre><code class="shell" data-trim>--firewall_rules=
+{
+  "disabled_endpoints" : {
+    "paths" : [
+      "/files/browse.json",
+      "/slave(0)/stats.json"
+    ]
+  }
+}
+            </code></pre>
+            </ul>
+          <br>
+          <h3 class="fragment">Existing tools are coarse grained!</h3>
+<aside class="notes">
+</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Trusting your Modules</h2>
+          <h3> <ul style="line-height: 150%">
+            <li>Anonymous Modules
+            <li class="fragment">Leaky Modules
+            <li class="fragment">Dynamic Modules Expose All "Private" Data in Memory
+<aside class="notes">
+Modules can do anything! Replace or add functionality.<br>
+A misbehaving module could crash your cluster, fail tasks, steal data, change permissions, add new endpoints, etc.<br><br>
+Fortunately, only cluster admins should be starting the masters/agents and specifying the modules to use.<br><br>
+You better trust what you're deploying. Build it yourself, or download a pre-built module from a trusted source. Checksum.
+</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Agenda</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> Cluster-wide security
+            <li> Security within Mesos
+            <li> <b><u>Security for your Framework</u></b>
+            <li> Protecting your Task
+            <li> Future Work
+          </ul> </h3>
+<aside class="notes">
+Joris
+</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Security for your Framework</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> Enable SSL!
+            <li class="fragment"> SSL Only Protects Scheduler <-> Master Data
+            <li class="fragment"> Encrypt Task <-> Task Data
+            <li class="fragment"> Use Authorization / Authentication for Framework WebUI
+            <li class="fragment"> Follow Mesos Pattern of Safety Limits
+          </ul> </h3>
+<aside class="notes">
+Https for your WebUI (and REST API)<br>
+SSL to Mesos<br>
+Authn/z for your users<br>
+Mention Joe Smith's Aurora Talk RE: Safety Limits
+</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Agenda</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> Cluster-wide security
+            <li> Security within Mesos
+            <li> Security for your Framework
+            <li> <b><u>Protecting your Task</u></b>
+            <li> Future Work
+          </ul> </h3>
+<aside class="notes">
+Joris
+</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Protecting your Task</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> <a href="http://mesos.apache.org/documentation/latest/authorization/">run_tasks ACL</a> to Limit User Privilges
+            <li class="fragment"> Encrypt your data (over the wire & on disk)
+            <li class="fragment"> Enable isolators
+            <li class="fragment"> Statically reserve a set of trusted machines for sensitive frameworks
+          </ul> </h3>
+<aside class="notes">
+Task user (disallow root), permissions<br>
+Protecting your data<br>
+Isolation from other tasks<br>
+Only allow specific frameworks to run on trusted machines
+</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Agenda</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> Cluster-wide security
+            <li> Security within Mesos
+            <li> Security for your Framework
+            <li> Protecting your Task
+            <li> <b><u>Future Work</u></b>
+          </ul> </h3>
+          <aside class="notes">
+					</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Future Work</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> <a href="https://docs.google.com/document/d/1kM3_f7DSqXcE2MuERrLTGp_XMC6ss2wmpkNYDCY5rOM">HTTP Authentication</a>
+						<li> More (fine-grained) ACLs
+						<li> Multiple authenticators/authorizers
+						<li> Integration with 3rd party security
+						<li> Module certification
+						<li> Credential storage/distribution
+						<li> More resource isolators
+          </ul> </h3>
+          <aside class="notes">
+Authn for HTTP API (SPNEGO?)<br>
+Authz around more actons, including Agent (sandboxes)
+					</aside>
+        </section>
+
+        <section data-background="assets/cover-alt.jpg">
+          <h2>Takeaways</h2>
+          <h3> <ul style="line-height: 150%">
+            <li> Firewall
+            <li> Encryption
+            <li> Authentication
+            <li> Authorization (ACLs)
+            <li> Task/Resource Isolation
+          </ul> </h3>
+          <aside class="notes">
+If you don't remember anything else this from this talk, I hope you'll at least remember these 5 solutions
+					</aside>
+        </section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: false,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
