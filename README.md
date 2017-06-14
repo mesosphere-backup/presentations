@@ -2,6 +2,10 @@
 Slide decks from presentations given around the world. Slides are served up on
 [http://mesosphere.github.io/presentations](http://mesosphere.github.io/presentations).
 
+Additional slide decks which can be copied and modified from their Google
+Slides source can also be found in a public [Google Drive
+folder](https://drive.google.com/drive/u/1/folders/0B2NZScv1BP0HWHZkZE5iNXZILUk).
+
 ## Adding a presentation
 Adding a new presentation?
 
